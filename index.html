@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div class="app-container">
@@ -34,7 +35,7 @@
                 <h1 class="gradient-text">Biochemistry Digital Library</h1>
                 <p>Access lecture notes, past questions, research materials, and more for all levels of your Biochemistry journey at Umaru Musa Yar'adua University Katsina</p>
                 <div class="hero-buttons">
-                    <button class="btn-primary" id="getStartedBtn"><i class="fas fa-graduation-cap"></i> Get Started</button>
+                    <button class="btn-primary" id="getStartedBtn">Get Started</button>
                     <button class="btn-outline" id="exploreBtn"><i class="fas fa-book"></i> Explore Materials</button>
                 </div>
             </div>
@@ -96,59 +97,220 @@
             </div>
         </section>
 
-        <!-- Auth Modals -->
-        <div class="modal" id="loginModal">
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal">
             <div class="modal-content glass">
-                <span class="close-modal">&times;</span>
-                <div class="auth-tabs">
-                    <button class="auth-tab active" data-tab="login">Login</button>
-                    <button class="auth-tab" data-tab="signup">Sign Up</button>
-                </div>
-                <form id="loginForm">
-                    <input type="email" placeholder="University Email" required>
-                    <input type="password" placeholder="Password" required>
-                    <button type="submit" class="btn-primary full-width">Login</button>
-                    <button type="button" id="googleAuthBtn" class="btn-google"><i class="fab fa-google"></i> Continue with Google</button>
-                    <a href="#" id="forgotPasswordLink" class="forgot-link">Forgot Password?</a>
-                </form>
+                <span class="close-modal" onclick="closeModals()">&times;</span>
+                <h2>Login to Your Account</h2>
+                <input type="email" id="loginEmail" placeholder="University Email">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button class="btn-primary" onclick="handleLogin()">Login</button>
+                <button class="btn-google" onclick="handleGoogleLogin()"><i class="fab fa-google"></i> Continue with Google</button>
+                <p style="margin-top: 1rem; text-align: center;">
+                    Don't have an account? <a href="#" onclick="showSignupModal(); return false;">Sign Up</a>
+                </p>
+                <p style="text-align: center;">
+                    <a href="#" onclick="showForgotPassword(); return false;">Forgot Password?</a>
+                </p>
             </div>
         </div>
 
-        <div class="modal" id="signupModal">
+        <!-- Signup Modal -->
+        <div id="signupModal" class="modal">
             <div class="modal-content glass">
-                <span class="close-modal">&times;</span>
+                <span class="close-modal" onclick="closeModals()">&times;</span>
                 <h2>Student Registration</h2>
-                <form id="signupForm">
-                    <input type="text" placeholder="Full Name" required>
-                    <input type="email" placeholder="University Email (@umyu.edu.ng)" required>
-                    <input type="text" placeholder="Matric Number" required>
-                    <select required>
-                        <option value="">Select Level</option>
-                        <option>100 Level</option>
-                        <option>200 Level</option>
-                        <option>300 Level</option>
-                        <option>400 Level</option>
-                        <option>500 Level</option>
-                    </select>
-                    <input type="password" placeholder="Password" required>
-                    <input type="password" placeholder="Confirm Password" required>
-                    <button type="submit" class="btn-primary full-width">Register</button>
-                    <button type="button" id="googleSignupBtn" class="btn-google"><i class="fab fa-google"></i> Sign up with Google</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="modal" id="forgotModal">
-            <div class="modal-content glass">
-                <h2>Reset Password</h2>
-                <form id="forgotForm">
-                    <input type="email" placeholder="University Email" required>
-                    <button type="submit" class="btn-primary full-width">Send Reset Link</button>
-                </form>
+                <input type="text" id="signupName" placeholder="Full Name">
+                <input type="email" id="signupEmail" placeholder="University Email (@umyu.edu.ng)">
+                <input type="text" id="signupMatric" placeholder="Matric Number">
+                <select id="signupLevel">
+                    <option value="">Select Level</option>
+                    <option value="100">100 Level</option>
+                    <option value="200">200 Level</option>
+                    <option value="300">300 Level</option>
+                    <option value="400">400 Level</option>
+                    <option value="500">500 Level</option>
+                </select>
+                <input type="password" id="signupPassword" placeholder="Password">
+                <input type="password" id="signupConfirm" placeholder="Confirm Password">
+                <button class="btn-primary" onclick="handleSignup()">Register</button>
+                <p style="margin-top: 1rem; text-align: center;">
+                    Already have an account? <a href="#" onclick="showLoginModal(); return false;">Login</a>
+                </p>
             </div>
         </div>
     </div>
 
-    <script src="js/auth.js"></script>
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://psojlbebapzgclighavti.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD6hkyrXvOIta235rg_jiiHOGdwF';
+        
+        let supabase;
+        
+        // Initialize Supabase
+        function initSupabase() {
+            if (typeof supabaseJs !== 'undefined') {
+                supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase connected!');
+            } else {
+                console.log('Waiting for Supabase...');
+                setTimeout(initSupabase, 500);
+            }
+        }
+        initSupabase();
+        
+        // Modal functions
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+            document.getElementById('signupModal').style.display = 'none';
+        }
+        
+        function showSignupModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('signupModal').style.display = 'flex';
+        }
+        
+        function closeModals() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('signupModal').style.display = 'none';
+        }
+        
+        // Handle Signup
+        async function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const matric = document.getElementById('signupMatric').value;
+            const level = document.getElementById('signupLevel').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            
+            if (!name || !email || !matric || !level || !password) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            if (password !== confirm) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: name,
+                            matric_number: matric,
+                            level: level
+                        }
+                    }
+                });
+                
+                if (error) throw error;
+                
+                alert('✅ Registration successful! Please check your email to verify your account.');
+                showLoginModal();
+                
+                // Clear form
+                document.getElementById('signupName').value = '';
+                document.getElementById('signupEmail').value = '';
+                document.getElementById('signupMatric').value = '';
+                document.getElementById('signupLevel').value = '';
+                document.getElementById('signupPassword').value = '';
+                document.getElementById('signupConfirm').value = '';
+                
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        // Handle Login
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                alert('Please enter email and password');
+                return;
+            }
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                alert('✅ Login successful! Redirecting to dashboard...');
+                window.location.href = 'dashboard.html';
+                
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+        
+        function handleGoogleLogin() {
+            supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.origin + '/dashboard.html'
+                }
+            });
+        }
+        
+        function showForgotPassword() {
+            const email = prompt('Enter your email address to reset password:');
+            if (email) {
+                supabase.auth.resetPasswordForEmail(email);
+                alert('Password reset link sent to your email!');
+            }
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get Started button
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            if (getStartedBtn) {
+                getStartedBtn.addEventListener('click', showLoginModal);
+            }
+            
+            // Explore button
+            const exploreBtn = document.getElementById('exploreBtn');
+            if (exploreBtn) {
+                exploreBtn.addEventListener('click', function() {
+                    window.location.href = 'dashboard.html';
+                });
+            }
+            
+            // Auth nav button
+            const authNavBtn = document.getElementById('authNavBtn');
+            if (authNavBtn) {
+                authNavBtn.addEventListener('click', showLoginModal);
+            }
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    closeModals();
+                }
+            });
+            
+            // Theme toggle
+            const themeToggle = document.querySelector('.theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('light-mode');
+                });
+            }
+        });
+    </script>
 </body>
 </html>
