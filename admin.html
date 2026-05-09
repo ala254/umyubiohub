@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - UMYU BioHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        .admin-sidebar {
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            padding: 2rem 1rem;
+            border-right: 1px solid var(--glass-border);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .admin-nav {
+            list-style: none;
+        }
+        
+        .admin-nav li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .admin-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .admin-nav a:hover, .admin-nav li.active a {
+            background: var(--secondary);
+            color: white;
+        }
+        
+        .admin-main {
+            margin-left: 280px;
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card-admin {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .stat-info h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.7;
+        }
+        
+        .data-table {
+            width: 100%;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .data-table th {
+            background: rgba(0,0,0,0.2);
+            font-weight: 600;
+        }
+        
+        .upload-form {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border);
+            color: inherit;
+        }
+        
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 100;
+            }
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            .admin-main {
+                margin-left: 0;
+            }
+            .menu-toggle {
+                display: block;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 101;
+                background: var(--secondary);
+                padding: 0.5rem;
+                border-radius: 10px;
+                cursor: pointer;
+            }
+        }
+        
+        .menu-toggle {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-wrapper">
+        <div class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        
+        <div class="admin-sidebar" id="adminSidebar">
+            <div class="admin-logo">
+                <i class="fas fa-dna"></i>
+                <span>UMYU BioHub Admin</span>
+            </div>
+            <ul class="admin-nav">
+                <li class="active" data-tab="dashboard"><a href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li data-tab="materials"><a href="#"><i class="fas fa-book"></i> Materials</a></li>
+                <li data-tab="upload"><a href="#"><i class="fas fa-upload"></i> Upload</a></li>
+                <li data-tab="users"><a href="#"><i class="fas fa-users"></i> Users</a></li>
+                <li data-tab="notifications"><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li data-tab="analytics"><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li data-tab="settings"><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
+        </div>
+        
+        <div class="admin-main">
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content active">
+                <h1>Admin Dashboard</h1>
+                <div class="stats-grid" id="adminStats">
+                    <div class="stat-card-admin">
+                        <div class="stat-info">
+                            <h3 id="totalMaterials">0</h3>
+                            <p>Total Materials</p>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    </div>
+                    <div class="stat-card-admin">
+                        <div class="stat-info">
+                            <h3 id="totalUsers">0</h3>
+                            <p>Total Users</p>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="stat-card-admin">
+                        <div class="stat-info">
+                            <h3 id="totalDownloads">0</h3>
+                            <p>Total Downloads</p>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-download"></i></div>
+                    </div>
+                    <div class="stat-card-admin">
+                        <div class="stat-info">
+                            <h3 id="pendingApprovals">0</h3>
+                            <p>Pending Approvals</p>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    </div>
+                </div>
+                
+                <h2>Recent Activity</h2>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>User</th><th>Action</th><th>Material</th><th>Time</th></tr>
+                    </thead>
+                    <tbody id="recentActivity"></tbody>
+                </table>
+            </div>
+            
+            <!-- Materials Tab -->
+            <div id="materialsTab" class="tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h1>Manage Materials</h1>
+                    <input type="text" id="materialSearch" placeholder="Search materials..." style="padding: 0.5rem; border-radius: 8px;">
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Title</th><th>Course</th><th>Level</th><th>Downloads</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="materialsList"></tbody>
+                </table>
+            </div>
+            
+            <!-- Upload Tab -->
+            <div id="uploadTab" class="tab-content">
+                <h1>Upload New Material</h1>
+                <form id="uploadForm" class="upload-form">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="materialTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Course Code</label>
+                        <input type="text" id="courseCode" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Level</label>
+                        <select id="level">
+                            <option>100</option><option>200</option><option>300</option><option>400</option><option>500</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Material Type</label>
+                        <select id="materialType">
+                            <option>lecture_note</option><option>past_question</option><option>practical</option>
+                            <option>assignment</option><option>research</option><option>project</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>File (PDF, DOCX, PPT)</label>
+                        <input type="file" id="materialFile" accept=".pdf,.docx,.ppt,.pptx" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="description" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload Material</button>
+                </form>
+            </div>
+            
+            <!-- Users Tab -->
+            <div id="usersTab" class="tab-content">
+                <h1>Manage Users</h1>
+                <table class="data-table">
+                    <thead><tr><th>Name</th><th>Email</th><th>Matric No</th><th>Level</th><th>Role</th><th>Actions</th></tr></thead>
+                    <tbody id="usersList"></tbody>
+                </table>
+            </div>
+            
+            <!-- Notifications Tab -->
+            <div id="notificationsTab" class="tab-content">
+                <h1>Send Notification</h1>
+                <form id="notificationForm" class="upload-form">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="notifTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message</label>
+                        <textarea id="notifMessage" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Send to</label>
+                        <select id="notifAudience">
+                            <option value="all">All Students</option>
+                            <option value="100">100 Level</option>
+                            <option value="200">200 Level</option>
+                            <option value="300">300 Level</option>
+                            <option value="400">400 Level</option>
+                            <option value="500">500 Level</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Notification</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/admin.js"></script>
+</body>
+</html>

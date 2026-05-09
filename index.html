@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMYU BioHub | Biochemistry Digital Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="glass-nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-dna"></i>
+                    <span>UMYU BioHub</span>
+                </div>
+                <div class="nav-links" id="navLinks">
+                    <a href="index.html" class="active">Home</a>
+                    <a href="dashboard.html">Library</a>
+                    <a href="#" id="authNavBtn">Login</a>
+                </div>
+                <div class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="gradient-text">Biochemistry Digital Library</h1>
+                <p>Access lecture notes, past questions, research materials, and more for all levels of your Biochemistry journey at Umaru Musa Yar'adua University Katsina</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary" id="getStartedBtn"><i class="fas fa-graduation-cap"></i> Get Started</button>
+                    <button class="btn-outline" id="exploreBtn"><i class="fas fa-book"></i> Explore Materials</button>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <i class="fas fa-file-pdf"></i>
+                    <h3>2,500+</h3>
+                    <p>Academic Materials</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <h3>3,200+</h3>
+                    <p>Active Students</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-chalkboard-user"></i>
+                    <h3>45+</h3>
+                    <p>Course Modules</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <h2 class="section-title">Smart Features for Modern Learning</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>AI Study Assistant</h3>
+                    <p>Get instant answers and PDF summaries with our intelligent chatbot</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-search"></i>
+                    <h3>Smart Search</h3>
+                    <p>Search by course code, level, lecturer, or title</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-calculator"></i>
+                    <h3>CGPA Calculator</h3>
+                    <p>Track your academic performance</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Academic Calendar</h3>
+                    <p>Stay updated with university schedule</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Course Levels -->
+        <section class="levels">
+            <h2 class="section-title">Browse by Level</h2>
+            <div class="level-buttons">
+                <button class="level-btn" data-level="100">100 Level</button>
+                <button class="level-btn" data-level="200">200 Level</button>
+                <button class="level-btn" data-level="300">300 Level</button>
+                <button class="level-btn" data-level="400">400 Level</button>
+                <button class="level-btn" data-level="500">500 Level</button>
+            </div>
+        </section>
+
+        <!-- Auth Modals -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content glass">
+                <span class="close-modal">&times;</span>
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Login</button>
+                    <button class="auth-tab" data-tab="signup">Sign Up</button>
+                </div>
+                <form id="loginForm">
+                    <input type="email" placeholder="University Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit" class="btn-primary full-width">Login</button>
+                    <button type="button" id="googleAuthBtn" class="btn-google"><i class="fab fa-google"></i> Continue with Google</button>
+                    <a href="#" id="forgotPasswordLink" class="forgot-link">Forgot Password?</a>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="signupModal">
+            <div class="modal-content glass">
+                <span class="close-modal">&times;</span>
+                <h2>Student Registration</h2>
+                <form id="signupForm">
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="University Email (@umyu.edu.ng)" required>
+                    <input type="text" placeholder="Matric Number" required>
+                    <select required>
+                        <option value="">Select Level</option>
+                        <option>100 Level</option>
+                        <option>200 Level</option>
+                        <option>300 Level</option>
+                        <option>400 Level</option>
+                        <option>500 Level</option>
+                    </select>
+                    <input type="password" placeholder="Password" required>
+                    <input type="password" placeholder="Confirm Password" required>
+                    <button type="submit" class="btn-primary full-width">Register</button>
+                    <button type="button" id="googleSignupBtn" class="btn-google"><i class="fab fa-google"></i> Sign up with Google</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="forgotModal">
+            <div class="modal-content glass">
+                <h2>Reset Password</h2>
+                <form id="forgotForm">
+                    <input type="email" placeholder="University Email" required>
+                    <button type="submit" class="btn-primary full-width">Send Reset Link</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+</html>

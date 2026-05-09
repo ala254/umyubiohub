@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - UMYU BioHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .dashboard-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .welcome-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .greeting h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.3rem;
+        }
+        
+        .search-section {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            background: var(--glass-bg);
+            padding: 1rem;
+            border-radius: 15px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--glass-border);
+            color: inherit;
+        }
+        
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .recent-list, .saved-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .recent-item, .saved-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .course-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .category-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .category-card:hover {
+            background: var(--secondary);
+        }
+        
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .cgpa-calculator {
+            background: var(--glass-bg);
+            padding: 1rem;
+            border-radius: 12px;
+        }
+        
+        .course-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .result {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="glass-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-dna"></i>
+                <span>UMYU BioHub</span>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html" class="active">Library</a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+            <div class="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="welcome-section">
+                <div class="greeting">
+                    <h1>Welcome back, <span id="userName">Student</span>! <i class="fas fa-graduation-cap"></i></h1>
+                    <p>Department of Biochemistry • Umaru Musa Yar'adua University Katsina</p>
+                </div>
+                <div class="search-section">
+                    <div class="search-bar">
+                        <input type="text" id="searchInput" placeholder="Search by course code, title, or lecturer...">
+                        <button id="searchBtn"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-group">
+            <select id="levelFilter" class="filter-select">
+                <option value="">All Levels</option>
+                <option value="100">100 Level</option>
+                <option value="200">200 Level</option>
+                <option value="300">300 Level</option>
+                <option value="400">400 Level</option>
+                <option value="500">500 Level</option>
+            </select>
+            <select id="typeFilter" class="filter-select">
+                <option value="">All Types</option>
+                <option value="lecture_note">Lecture Notes</option>
+                <option value="past_question">Past Questions</option>
+                <option value="practical">Practical Manuals</option>
+                <option value="assignment">Assignments</option>
+                <option value="research">Research Materials</option>
+                <option value="project">Project Materials</option>
+            </select>
+            <select id="courseFilter" class="filter-select">
+                <option value="">All Courses</option>
+                <option value="BCH">Biochemistry (BCH)</option>
+                <option value="CHM">Chemistry (CHM)</option>
+                <option value="BIO">Biology (BIO)</option>
+                <option value="GST">GST Courses</option>
+            </select>
+        </div>
+        
+        <!-- Two Column Layout -->
+        <div class="two-columns" style="padding: 0 5%;">
+            <!-- Left Column -->
+            <div>
+                <!-- Recently Uploaded -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <span><i class="fas fa-clock"></i> Recently Uploaded</span>
+                        <a href="#" style="color: var(--secondary);">View all →</a>
+                    </div>
+                    <div id="recentUploads" class="recent-list"></div>
+                </div>
+                
+                <!-- Course Categories -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <span><i class="fas fa-folder-open"></i> Course Categories</span>
+                    </div>
+                    <div class="course-categories">
+                        <div class="category-card" data-category="BCH">
+                            <i class="fas fa-dna" style="font-size: 1.5rem;"></i>
+                            <h4>Biochemistry</h4>
+                            <small>BCH Courses</small>
+                        </div>
+                        <div class="category-card" data-category="CHM">
+                            <i class="fas fa-flask" style="font-size: 1.5rem;"></i>
+                            <h4>Chemistry</h4>
+                            <small>CHM Courses</small>
+                        </div>
+                        <div class="category-card" data-category="BIO">
+                            <i class="fas fa-leaf" style="font-size: 1.5rem;"></i>
+                            <h4>Biology</h4>
+                            <small>BIO Courses</small>
+                        </div>
+                        <div class="category-card" data-category="GST">
+                            <i class="fas fa-university" style="font-size: 1.5rem;"></i>
+                            <h4>GST</h4>
+                            <small>General Studies</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CGPA Calculator -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <span><i class="fas fa-calculator"></i> CGPA Calculator</span>
+                    </div>
+                    <div class="cgpa-calculator">
+                        <div id="coursesList">
+                            <div class="course-input">
+                                <input type="text" placeholder="Course Code" style="width: 40%;">
+                                <select style="width: 30%;">
+                                    <option>A (5.0)</option><option>B (4.0)</option><option>C (3.0)</option>
+                                    <option>D (2.0)</option><option>E (1.0)</option><option>F (0.0)</option>
+                                </select>
+                                <input type="number" placeholder="Credits" style="width: 20%;">
+                                <button onclick="removeCourse(this)"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <button class="btn-outline" onclick="addCourse()" style="margin: 0.5rem 0; padding: 0.5rem 1rem;">+ Add Course</button>
+                        <button class="btn-primary" onclick="calculateCGPA()">Calculate CGPA</button>
+                        <div id="cgpaResult" class="result"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div>
+                <!-- Saved Materials -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <span><i class="fas fa-bookmark"></i> Saved Materials</span>
+                    </div>
+                    <div id="savedMaterials" class="saved-list">
+                        <div class="saved-item">
+                            <div><i class="fas fa-file-pdf"></i> Protein Structure Notes</div>
+                            <button onclick="unsaveMaterial(1)"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="saved-item">
+                            <div><i class="fas fa-file-pdf"></i> Past Questions BCH 301</div>
+                            <button onclick="unsaveMaterial(2)"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Download History -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <span><i class="fas fa-download"></i> Download History</span>
+                    </div>
+                    <div id="downloadHistory" class="recent-list">
+                        <div class="recent-item">Introduction to Biochemistry - BCH 201 (Feb 15, 2025)</div>
+                        <div class="recent-item">Enzyme Kinetics Notes - BCH 302 (Feb 14, 2025)</div>
+                        <div class="recent-item">Practical Manual - BCH 205 (Feb 12, 2025)</div>
+                    </div>
+                </div>
+                
+                <!-- Timetable Section -->
+                <div class="section-card">
+                    <div class="section-title">
+                        <span><i class="fas fa-calendar-week"></i> Weekly Timetable</span>
+                        <button class="btn-outline" onclick="viewFullTimetable()" style="padding: 0.3rem 0.8rem;">View Full</button>
+                    </div>
+                    <div id="timetablePreview">
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span><strong>Monday</strong></span>
+                            <span>BCH 301 - 9:00 AM</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span><strong>Wednesday</strong></span>
+                            <span>BCH 302 - 11:00 AM</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                            <span><strong>Friday</strong></span>
+                            <span>Practical - 2:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Materials Grid -->
+        <div class="section-title" style="padding: 0 5%; margin-top: 1rem;">
+            <span><i class="fas fa-book-open"></i> All Academic Materials</span>
+        </div>
+        <div id="materialsGrid" class="materials-grid"></div>
+    </div>
+    
+    <!-- AI Chatbot will be injected here -->
+    
+    <script src="js/auth.js"></script>
+    <script src="js/ai-chat.js"></script>
+    <script>
+        // CGPA Calculator Functions
+        function addCourse() {
+            const container = document.getElementById('coursesList');
+            const newCourse = document.createElement('div');
+            newCourse.className = 'course-input';
+            newCourse.innerHTML = `
+                <input type="text" placeholder="Course Code" style="width: 40%;">
+                <select style="width: 30%;">
+                    <option value="5.0">A (5.0)</option>
+                    <option value="4.0">B (4.0)</option>
+                    <option value="3.0">C (3.0)</option>
+                    <option value="2.0">D (2.0)</option>
+                    <option value="1.0">E (1.0)</option>
+                    <option value="0.0">F (0.0)</option>
+                </select>
+                <input type="number" placeholder="Credits" style="width: 20%;" value="3">
+                <button onclick="removeCourse(this)"><i class="fas fa-trash"></i></button>
+            `;
+            container.appendChild(newCourse);
+        }
+        
+        function removeCourse(btn) {
+            btn.parentElement.remove();
+        }
+        
+        function calculateCGPA() {
+            const courses = document.querySelectorAll('.course-input');
+            let totalPoints = 0;
+            let totalCredits = 0;
+            
+            courses.forEach(course => {
+                const grade = parseFloat(course.querySelector('select').value);
+                const credits = parseFloat(course.querySelector('input[type="number"]').value);
+                if (!isNaN(grade) && !isNaN(credits)) {
+                    totalPoints += grade * credits;
+                    totalCredits += credits;
+                }
+            });
+            
+            const cgpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
+            document.getElementById('cgpaResult').innerHTML = `Your CGPA: ${cgpa} / 5.0`;
+        }
+        
+        function unsaveMaterial(id) {
+            alert(`Material ${id} removed from saved items`);
+        }
+        
+        function viewFullTimetable() {
+            alert('Full timetable would be displayed here with all courses and lecture schedules.');
+        }
+        
+        // Load dashboard data
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('umyu_user') ? 
+                JSON.parse(localStorage.getItem('umyu_user')).user_metadata?.full_name || 'Student' : 
+                'Demo Student';
+            document.getElementById('userName').textContent = userName;
+            
+            // Logout handler
+            document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('umyu_user');
+                window.location.href = 'index.html';
+            });
+            
+            // Category filter
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const category = card.dataset.category;
+                    document.getElementById('courseFilter').value = category;
+                    alert(`Filtering by ${category} courses`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

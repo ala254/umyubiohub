@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMYU BioHub - Correct Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a2e38, #0a1a2e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #2ecc71, #3498db);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            background: rgba(0,0,0,0.3);
+        }
+        .status.connected {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+        .status.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        .tab-btn.active {
+            background: #2ecc71;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        select option {
+            background: #1a2a3a;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0 10px;
+            background: linear-gradient(135deg, #2ecc71, #3498db);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            font-size: 14px;
+        }
+        .message.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid #2ecc71;
+            color: #2ecc71;
+        }
+        .message.error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🧬 UMYU BioHub</h1>
+        
+        <div id="status" class="status">⏳ Testing connection...</div>
+        
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+            <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+        
+        <div id="loginTab" class="tab-content active">
+            <input type="email" id="loginEmail" placeholder="University Email">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button onclick="handleLogin()">Login</button>
+        </div>
+        
+        <div id="signupTab" class="tab-content">
+            <input type="text" id="signupName" placeholder="Full Name" value="Alamin Kabir">
+            <input type="email" id="signupEmail" placeholder="University Email" value="alamininkota22@gmail.com">
+            <input type="text" id="signupMatric" placeholder="Matric Number" value="U1/24/CSC/1091">
+            <select id="signupLevel">
+                <option value="100">100 Level</option>
+                <option value="200" selected>200 Level</option>
+                <option value="300">300 Level</option>
+                <option value="400">400 Level</option>
+                <option value="500">500 Level</option>
+            </select>
+            <input type="password" id="signupPassword" placeholder="Password (min 6 characters)">
+            <input type="password" id="signupConfirm" placeholder="Confirm Password">
+            <button onclick="handleSignup()">Create Account</button>
+        </div>
+        
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        // ✅ CORRECTED Supabase URL - from your screenshot
+        const SUPABASE_URL = 'https://psojlbebapzgclighavti.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD6hkyrXvOIta235rg_jiiHOGdwF';
+        
+        let isLoading = false;
+        
+        function showMessage(text, type) {
+            const msgDiv = document.getElementById('message');
+            msgDiv.textContent = text;
+            msgDiv.className = `message ${type}`;
+            msgDiv.style.display = 'block';
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        function switchTab(tab) {
+            const loginTab = document.getElementById('loginTab');
+            const signupTab = document.getElementById('signupTab');
+            const buttons = document.querySelectorAll('.tab-btn');
+            
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                loginTab.classList.remove('active');
+                signupTab.classList.add('active');
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+            }
+            document.getElementById('message').style.display = 'none';
+        }
+        
+        async function testConnection() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/`, {
+                    method: 'GET',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (response.ok) {
+                    statusDiv.innerHTML = '✅ Connected to Supabase! Ready to sign up.';
+                    statusDiv.className = 'status connected';
+                } else {
+                    statusDiv.innerHTML = '⚠️ Connection status: ' + response.status;
+                    statusDiv.className = 'status error';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Connection error: ' + error.message;
+                statusDiv.className = 'status error';
+                console.error('Connection error:', error);
+            }
+        }
+        
+        async function handleSignup() {
+            if (isLoading) return;
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const matric = document.getElementById('signupMatric').value;
+            const level = document.getElementById('signupLevel').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+            
+            if (!name || !email || !matric || !level || !password) {
+                showMessage('Please fill all fields', 'error');
+                return;
+            }
+            
+            if (password !== confirm) {
+                showMessage('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            isLoading = true;
+            showMessage('Creating account...', 'success');
+            
+            try {
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        data: {
+                            full_name: name,
+                            matric_number: matric,
+                            level: level
+                        }
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.message || result.error_description || 'Signup failed');
+                }
+                
+                showMessage('✅ Account created! Please check your email (alamininkota22@gmail.com) to verify.', 'success');
+                console.log('Signup success:', result);
+                
+                // Clear password fields
+                document.getElementById('signupPassword').value = '';
+                document.getElementById('signupConfirm').value = '';
+                
+                // Switch to login after 3 seconds
+                setTimeout(() => {
+                    switchTab('login');
+                    showMessage('Now login with your email and password', 'success');
+                }, 4000);
+                
+            } catch (error) {
+                showMessage('❌ Error: ' + error.message, 'error');
+                console.error('Signup error:', error);
+            } finally {
+                isLoading = false;
+            }
+        }
+        
+        async function handleLogin() {
+            if (isLoading) return;
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showMessage('Please enter email and password', 'error');
+                return;
+            }
+            
+            isLoading = true;
+            showMessage('Logging in...', 'success');
+            
+            try {
+                const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.message || result.error_description || 'Login failed');
+                }
+                
+                showMessage('✅ Login successful! Welcome ' + email, 'success');
+                console.log('Login success:', result);
+                
+                localStorage.setItem('user_session', JSON.stringify(result));
+                
+            } catch (error) {
+                showMessage('❌ Error: ' + error.message, 'error');
+                console.error('Login error:', error);
+            } finally {
+                isLoading = false;
+            }
+        }
+        
+        // Test connection when page loads
+        testConnection();
+        
+        window.switchTab = switchTab;
+        window.handleLogin = handleLogin;
+        window.handleSignup = handleSignup;
+    </script>
+</body>
+</html>
