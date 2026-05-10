@@ -56,35 +56,9 @@
             </div>
         </section>
 
-        <section class="features">
-            <h2 class="section-title">Smart Features for Modern Learning</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fas fa-robot"></i>
-                    <h3>AI Study Assistant</h3>
-                    <p>Get instant answers and PDF summaries with our intelligent chatbot</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-search"></i>
-                    <h3>Smart Search</h3>
-                    <p>Search by course code, level, lecturer, or title</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-calculator"></i>
-                    <h3>CGPA Calculator</h3>
-                    <p>Track your academic performance</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-calendar-alt"></i>
-                    <h3>Academic Calendar</h3>
-                    <p>Stay updated with university schedule</p>
-                </div>
-            </div>
-        </section>
-
         <div id="loginModal" class="modal">
             <div class="modal-content glass">
-                <span class="close-modal" onclick="closeAllModals()">&times;</span>
+                <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
                 <h2>Login to Your Account</h2>
                 <input type="email" id="loginEmail" placeholder="University Email">
                 <input type="password" id="loginPassword" placeholder="Password">
@@ -98,7 +72,7 @@
 
         <div id="signupModal" class="modal">
             <div class="modal-content glass">
-                <span class="close-modal" onclick="closeAllModals()">&times;</span>
+                <span class="close-modal" onclick="closeModal('signupModal')">&times;</span>
                 <h2>Student Registration</h2>
                 <input type="text" id="signupName" placeholder="Full Name">
                 <input type="email" id="signupEmail" placeholder="University Email">
@@ -122,24 +96,26 @@
     </div>
 
     <script>
-        // Supabase configuration
+        // Supabase config - ONLY ONE DECLARATION
         const SUPABASE_URL = 'https://psojlbebapzgclighavti.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD6hkyrXvOIta235rg_jiiHOGdwF';
         
         let supabase = null;
         
-        // Wait for Supabase to load
-        function waitForSupabase() {
+        function initSupabase() {
             if (typeof supabaseJs !== 'undefined') {
                 supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 console.log('Supabase ready');
             } else {
-                setTimeout(waitForSupabase, 500);
+                setTimeout(initSupabase, 500);
             }
         }
-        waitForSupabase();
+        initSupabase();
         
-        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
         function showLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
             document.getElementById('signupModal').style.display = 'none';
@@ -150,17 +126,8 @@
             document.getElementById('signupModal').style.display = 'flex';
         }
         
-        function closeAllModals() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('signupModal').style.display = 'none';
-        }
-        
-        // Signup function
         async function handleSignup() {
-            if (!supabase) {
-                alert('Please wait, connecting to server...');
-                return;
-            }
+            if (!supabase) { alert('Connecting...'); return; }
             
             const name = document.getElementById('signupName').value;
             const email = document.getElementById('signupEmail').value;
@@ -173,14 +140,12 @@
                 alert('Please fill all fields');
                 return;
             }
-            
             if (password !== confirm) {
                 alert('Passwords do not match');
                 return;
             }
-            
             if (password.length < 6) {
-                alert('Password must be at least 6 characters');
+                alert('Password must be 6+ characters');
                 return;
             }
             
@@ -188,97 +153,51 @@
                 const { data, error } = await supabase.auth.signUp({
                     email: email,
                     password: password,
-                    options: {
-                        data: {
-                            full_name: name,
-                            matric_number: matric,
-                            level: level
-                        }
-                    }
+                    options: { data: { full_name: name, matric_number: matric, level: level } }
                 });
-                
                 if (error) throw error;
-                
-                alert('✅ Registration successful! Please check your email to verify.');
+                alert('✅ Success! Check your email to verify.');
                 showLoginModal();
-                
-                // Clear form
-                document.getElementById('signupName').value = '';
-                document.getElementById('signupEmail').value = '';
-                document.getElementById('signupMatric').value = '';
-                document.getElementById('signupLevel').value = '';
-                document.getElementById('signupPassword').value = '';
-                document.getElementById('signupConfirm').value = '';
-                
             } catch (error) {
                 alert('❌ Error: ' + error.message);
             }
         }
         
-        // Login function
         async function handleLogin() {
-            if (!supabase) {
-                alert('Please wait, connecting to server...');
-                return;
-            }
+            if (!supabase) { alert('Connecting...'); return; }
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
             if (!email || !password) {
-                alert('Please enter email and password');
+                alert('Enter email and password');
                 return;
             }
             
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
                 if (error) throw error;
-                
                 alert('✅ Login successful!');
                 window.location.href = 'dashboard.html';
-                
             } catch (error) {
                 alert('❌ Error: ' + error.message);
             }
         }
         
         function handleGoogleLogin() {
-            if (!supabase) {
-                alert('Please wait, connecting to server...');
-                return;
-            }
-            supabase.auth.signInWithOAuth({
-                provider: 'google'
-            });
+            if (supabase) supabase.auth.signInWithOAuth({ provider: 'google' });
         }
         
-        // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            const getStartedBtn = document.getElementById('getStartedBtn');
-            if (getStartedBtn) {
-                getStartedBtn.onclick = showLoginModal;
-            }
+            document.getElementById('getStartedBtn')?.addEventListener('click', showLoginModal);
+            document.getElementById('authNavBtn')?.addEventListener('click', showLoginModal);
+            document.getElementById('exploreBtn')?.addEventListener('click', function() {
+                window.location.href = 'dashboard.html';
+            });
             
-            const authNavBtn = document.getElementById('authNavBtn');
-            if (authNavBtn) {
-                authNavBtn.onclick = showLoginModal;
-            }
-            
-            const exploreBtn = document.getElementById('exploreBtn');
-            if (exploreBtn) {
-                exploreBtn.onclick = function() {
-                    window.location.href = 'dashboard.html';
-                };
-            }
-            
-            // Close modal when clicking outside
             window.onclick = function(e) {
                 if (e.target.classList.contains('modal')) {
-                    closeAllModals();
+                    e.target.style.display = 'none';
                 }
             };
         });
