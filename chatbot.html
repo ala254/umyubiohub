@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Study Assistant - UMYU BioHub</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a2e38, #0a1a2e);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+        }
+        
+        .nav-links a:hover {
+            color: #2ecc71;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 20px 20px;
+        }
+        
+        .chat-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .chat-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #2ecc71, #3498db);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .chat-header p {
+            color: #aaa;
+            margin-top: 10px;
+        }
+        
+        .chat-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .message {
+            display: flex;
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 20px;
+            line-height: 1.4;
+        }
+        
+        .message.ai .message-content {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-top-left-radius: 5px;
+        }
+        
+        .message.user .message-content {
+            background: #2ecc71;
+            border-top-right-radius: 5px;
+        }
+        
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        
+        .message.ai .message-avatar {
+            background: rgba(46, 204, 113, 0.3);
+        }
+        
+        .message.user .message-avatar {
+            background: #2ecc71;
+            margin-left: 10px;
+            margin-right: 0;
+        }
+        
+        .chat-input-area {
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input-area input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 14px;
+        }
+        
+        .chat-input-area input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .chat-input-area button {
+            padding: 12px 25px;
+            background: #2ecc71;
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .chat-input-area button:hover {
+            opacity: 0.9;
+        }
+        
+        .suggestions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .suggestion-chip {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .suggestion-chip:hover {
+            background: #2ecc71;
+        }
+        
+        .typing {
+            display: none;
+            padding: 10px 20px;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .typing span {
+            width: 8px;
+            height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            display: inline-block;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        
+        .typing span:nth-child(1) { animation-delay: -0.32s; }
+        .typing span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 768px) {
+            .message-content { max-width: 85%; }
+            .container { padding: 70px 15px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-dna"></i> UMYU BioHub
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="chatbot.html" style="color:#2ecc71;">AI Assistant</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="chat-header">
+            <h1>🤖 AI Study Assistant</h1>
+            <p>Ask me anything about Biochemistry, Courses, or Study Tips!</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message ai">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        Hello! I'm your AI Study Assistant for Biochemistry. <br><br>
+                        I can help you with:
+                        <ul style="margin-top: 5px; margin-left: 20px;">
+                            <li>📚 Explaining biochemistry concepts</li>
+                            <li>📖 Answering past questions</li>
+                            <li>🎯 Recommending study materials</li>
+                            <li>💡 Study tips and strategies</li>
+                        </ul>
+                        What would you like to know?
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing" id="typingIndicator">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span style="color: #aaa; font-size: 12px;">AI is thinking...</span>
+            </div>
+            
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Ask a question... e.g., What is glycolysis?" onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+            
+            <div class="suggestions">
+                <div class="suggestion-chip" onclick="askQuestion('What is glycolysis?')">⚡ What is glycolysis?</div>
+                <div class="suggestion-chip" onclick="askQuestion('Explain enzyme kinetics')">🧬 Explain enzyme kinetics</div>
+                <div class="suggestion-chip" onclick="askQuestion('Protein structure levels')">🔬 Protein structure</div>
+                <div class="suggestion-chip" onclick="askQuestion('DNA replication process')">🧬 DNA replication</div>
+                <div class="suggestion-chip" onclick="askQuestion('How to study biochemistry?')">📚 Study tips</div>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        // Supabase config for checking user session
+        const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
+        
+        let supabase = null;
+        
+        function initSupabase() {
+            const lib = window.supabaseJs || window.supabase;
+            if (lib) {
+                supabase = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
+                checkAuth();
+            } else {
+                setTimeout(initSupabase, 500);
+            }
+        }
+        
+        async function checkAuth() {
+            if (supabase) {
+                const { data } = await supabase.auth.getSession();
+                if (!data.session) {
+                    // Not logged in, but still allow chat
+                    console.log('Guest mode');
+                }
+            }
+        }
+        
+        initSupabase();
+        
+        // Biochemistry Knowledge Base
+        const knowledgeBase = {
+            'glycolysis': '🍇 **Glycolysis** is the metabolic pathway that converts glucose into pyruvate, producing ATP and NADH. It occurs in the cytoplasm and has 10 steps. Net gain: 2 ATP, 2 NADH, and 2 pyruvate molecules.',
+            
+            'enzyme': '🧪 **Enzymes** are biological catalysts that speed up chemical reactions by lowering activation energy. They are highly specific and can be regulated. Key terms: substrate, active site, Km, Vmax, competitive/non-competitive inhibition.',
+            
+            'protein structure': '🔬 **Protein Structure has 4 levels:**\n\n1️⃣ **Primary**: Amino acid sequence\n2️⃣ **Secondary**: α-helices and β-sheets\n3️⃣ **Tertiary**: 3D folding\n4️⃣ **Quaternary**: Multiple subunits\n\nExamples: Hemoglobin (quaternary), Keratin (secondary)',
+            
+            'dna replication': '🧬 **DNA Replication** is semi-conservative. Key enzymes:\n• **Helicase** - unwinds DNA\n• **DNA Polymerase** - synthesizes new strand\n• **Ligase** - joins Okazaki fragments\n• **Primase** - adds RNA primers',
+            
+            'biochemistry study': '📚 **Study Tips for Biochemistry:**\n\n✅ Draw pathways and mechanisms\n✅ Use flashcards for enzymes and structures\n✅ Practice past questions\n✅ Watch animation videos\n✅ Form study groups\n✅ Teach others to learn better',
+            
+            'krebs cycle': '🔄 **Krebs Cycle (Citric Acid Cycle)** occurs in mitochondria. Produces: 3 NADH, 1 FADH2, 1 ATP per turn. Key intermediates: Citrate, Isocitrate, α-Ketoglutarate, Succinyl-CoA, Oxaloacetate.',
+            
+            'electron transport chain': '⚡ **Electron Transport Chain** is in inner mitochondrial membrane. Complexes I-IV pump protons, creating gradient for ATP synthesis via ATP synthase. Final electron acceptor is oxygen (forms water).',
+            
+            'photosynthesis': '🌿 **Photosynthesis** converts light energy to chemical energy. Two stages:\n1️⃣ Light reactions (thylakoid) - produces ATP and NADPH\n2️⃣ Calvin cycle (stroma) - fixes CO2 into glucose',
+            
+            'bch 301': '📖 **BCH 301 - Protein Structure and Function** focuses on amino acids, protein folding, enzyme kinetics, and structure-function relationships. Recommended textbook: Lehninger Principles of Biochemistry, Chapters 3-6.',
+            
+            'past question': '📝 **Past Questions** help you understand exam patterns. Focus on:\n• Enzyme mechanisms\n• Metabolic pathways\n• Protein structure\n• DNA replication\n\nCheck the Materials section for downloadable past papers!',
+            
+            'cgpa': '📊 **CGPA Calculation:** Sum of (Grade Point × Credit Hours) ÷ Total Credit Hours.\n\nGrade Scale (5.0):\nA=5.0, B=4.0, C=3.0, D=2.0, E=1.0, F=0.0\n\nUse the CGPA Calculator on your dashboard!',
+            
+            'default': 'I can help you with Biochemistry topics! Ask me about:\n\n• 📚 Metabolic pathways (glycolysis, Krebs cycle, ETC)\n• 🧬 DNA replication and protein synthesis\n• 🧪 Enzyme kinetics and mechanisms\n• 🔬 Protein structure and function\n• 📖 Course-specific help (BCH 301, 302, 303)\n• 📊 CGPA calculation\n• 📝 Past questions\n\nWhat would you like to know?'
+        };
+        
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTyping(true);
+            
+            // Simulate AI thinking
+            setTimeout(() => {
+                const response = getAIResponse(message);
+                addMessage(response, 'ai');
+                showTyping(false);
+            }, 500);
+        }
+        
+        function getAIResponse(query) {
+            const lowerQuery = query.toLowerCase();
+            
+            // Check for keywords
+            for (const [keyword, response] of Object.entries(knowledgeBase)) {
+                if (lowerQuery.includes(keyword)) {
+                    return response;
+                }
+            }
+            
+            // Check for course codes
+            const courseMatch = lowerQuery.match(/bch\s*(\d{3})/i);
+            if (courseMatch) {
+                return `📚 **BCH ${courseMatch[1]} Resources**\n\nYou can find materials for BCH ${courseMatch[1]} in the Materials section. Available resources:\n• Lecture notes\n• Past questions\n• Practical manuals\n• Recommended textbooks\n\nUse the search bar to find specific topics!`;
+            }
+            
+            return knowledgeBase['default'];
+        }
+        
+        function addMessage(text, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            // Convert markdown-style formatting
+            let formattedText = text;
+            formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            formattedText = formattedText.replace(/\n/g, '<br>');
+            formattedText = formattedText.replace(/•/g, '•');
+            formattedText = formattedText.replace(/✅/g, '✅');
+            formattedText = formattedText.replace(/📚/g, '📚');
+            formattedText = formattedText.replace(/🧬/g, '🧬');
+            formattedText = formattedText.replace(/🔬/g, '🔬');
+            formattedText = formattedText.replace(/🧪/g, '🧪');
+            
+            if (sender === 'ai') {
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">${formattedText}</div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-content">${formattedText}</div>
+                    <div class="message-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                `;
+            }
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function showTyping(show) {
+            const typingDiv = document.getElementById('typingIndicator');
+            typingDiv.style.display = show ? 'flex' : 'none';
+            const messagesDiv = document.getElementById('chatMessages');
+            if (show) {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        }
+        
+        function askQuestion(question) {
+            document.getElementById('chatInput').value = question;
+            sendMessage();
+        }
+        
+        // Allow Enter key to send
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
