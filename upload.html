@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Material</title>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0a2e38;
+            color: white;
+            padding: 50px;
+        }
+        .card {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        button {
+            background: #2ecc71;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+        .msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success { background: #2ecc71; display: block; }
+        .error { background: #e74c3c; display: block; }
+        h1 { color: #2ecc71; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>📤 UMYU BioHub - Upload</h1>
+        <input type="text" id="title" placeholder="Title *">
+        <input type="text" id="course" placeholder="Course Code (BCH 301) *">
+        <select id="level">
+            <option value="100">100 Level</option>
+            <option value="200">200 Level</option>
+            <option value="300">300 Level</option>
+            <option value="400">400 Level</option>
+            <option value="500">500 Level</option>
+        </select>
+        <select id="type">
+            <option value="lecture_note">Lecture Note</option>
+            <option value="past_question">Past Question</option>
+            <option value="practical">Practical Manual</option>
+            <option value="assignment">Assignment</option>
+            <option value="research">Research Material</option>
+        </select>
+        <textarea id="desc" placeholder="Description" rows="3"></textarea>
+        <button id="uploadBtn">Upload Material</button>
+        <div id="msg" class="msg"></div>
+    </div>
+
+    <script>
+        (function() {
+            const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
+            const SUPABASE_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
+            
+            let sbClient = null;
+            
+            function init() {
+                const lib = window.supabaseJs || window.supabase;
+                if (lib) {
+                    sbClient = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    console.log('Connected');
+                    showMsg('Ready to upload', 'success');
+                } else {
+                    setTimeout(init, 500);
+                }
+            }
+            init();
+            
+            function showMsg(text, type) {
+                const d = document.getElementById('msg');
+                d.textContent = text;
+                d.className = 'msg ' + type;
+            }
+            
+            document.getElementById('uploadBtn').onclick = async () => {
+                if (!sbClient) {
+                    showMsg('Connecting...', 'error');
+                    return;
+                }
+                
+                const title = document.getElementById('title').value;
+                const course = document.getElementById('course').value;
+                const level = document.getElementById('level').value;
+                const type = document.getElementById('type').value;
+                const desc = document.getElementById('desc').value;
+                
+                if (!title || !course) {
+                    showMsg('Title and Course Code required', 'error');
+                    return;
+                }
+                
+                showMsg('Uploading...', 'success');
+                
+                try {
+                    const { error } = await sbClient.from('materials').insert({
+                        title: title,
+                        course_code: course,
+                        level: level,
+                        type: type,
+                        description: desc,
+                        uploader: 'admin',
+                        downloads: 0,
+                        is_approved: true
+                    });
+                    
+                    if (error) throw error;
+                    
+                    showMsg('✅ Upload successful!', 'success');
+                    document.getElementById('title').value = '';
+                    document.getElementById('course').value = '';
+                    document.getElementById('desc').value = '';
+                    
+                } catch (err) {
+                    showMsg('❌ Error: ' + err.message, 'error');
+                }
+            };
+        })();
+    </script>
+</body>
+</html>
