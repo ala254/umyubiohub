@@ -62,7 +62,7 @@
                 <h2>Login to Your Account</h2>
                 <input type="email" id="loginEmail" placeholder="University Email">
                 <input type="password" id="loginPassword" placeholder="Password">
-                <button class="btn-primary" onclick="handleLogin()">Login</button>
+                <button class="btn-primary" id="loginBtn">Login</button>
                 <button class="btn-google" onclick="handleGoogleLogin()"><i class="fab fa-google"></i> Continue with Google</button>
                 <p style="margin-top: 1rem; text-align: center;">
                     Don't have an account? <a href="#" onclick="showSignupModal(); return false;">Sign Up</a>
@@ -87,7 +87,7 @@
                 </select>
                 <input type="password" id="signupPassword" placeholder="Password">
                 <input type="password" id="signupConfirm" placeholder="Confirm Password">
-                <button class="btn-primary" onclick="handleSignup()">Register</button>
+                <button class="btn-primary" id="registerBtn">Register</button>
                 <p style="margin-top: 1rem; text-align: center;">
                     Already have an account? <a href="#" onclick="showLoginModal(); return false;">Login</a>
                 </p>
