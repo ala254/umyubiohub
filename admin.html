@@ -135,29 +135,31 @@
         </div>
 
         <!-- Upload Tab -->
-        <div id="uploadTab" class="tab">
-            <div class="card">
-                <h2>Upload New Material</h2>
-                <input type="text" id="title" placeholder="Title">
-                <input type="text" id="course" placeholder="Course Code (e.g., BCH 301)">
-                <select id="level">
-                    <option value="100">100 Level</option>
-                    <option value="200">200 Level</option>
-                    <option value="300">300 Level</option>
-                    <option value="400">400 Level</option>
-                    <option value="500">500 Level</option>
-                </select>
-                <select id="type">
-                    <option value="lecture_note">Lecture Note</option>
-                    <option value="past_question">Past Question</option>
-                    <option value="practical">Practical Manual</option>
-                </select>
-                <textarea id="desc" placeholder="Description" rows="3"></textarea>
-                <button class="btn" onclick="uploadMaterial()">Upload Material</button>
-                <div id="uploadMsg" style="margin-top: 10px;"></div>
-            </div>
-        </div>
-
+<div id="uploadTab" class="tab">
+    <div class="card">
+        <h2>Upload New Material</h2>
+        <input type="text" id="title" placeholder="Title *">
+        <input type="text" id="course" placeholder="Course Code (e.g., BCH 301) *">
+        <select id="level">
+            <option value="100">100 Level</option>
+            <option value="200">200 Level</option>
+            <option value="300">300 Level</option>
+            <option value="400">400 Level</option>
+            <option value="500">500 Level</option>
+        </select>
+        <select id="type">
+            <option value="lecture_note">Lecture Note</option>
+            <option value="past_question">Past Question</option>
+            <option value="practical">Practical Manual</option>
+            <option value="assignment">Assignment</option>
+            <option value="research">Research Material</option>
+        </select>
+        <textarea id="desc" placeholder="Description" rows="3"></textarea>
+        <button class="btn" id="uploadBtnAdmin">Upload Material</button>
+        <div id="uploadMsg" style="margin-top: 10px;"></div>
+    </div>
+</div>
+        
         <!-- Users Tab -->
         <div id="usersTab" class="tab">
             <div class="card">
@@ -324,6 +326,55 @@
         document.getElementById('uploadMsg').style.color = '#e74c3c';
     }
 }
+
+       // Upload material from admin panel
+document.getElementById('uploadBtnAdmin').onclick = async () => {
+    const title = document.getElementById('title').value;
+    const course = document.getElementById('course').value;
+    const level = document.getElementById('level').value;
+    const type = document.getElementById('type').value;
+    const desc = document.getElementById('desc').value;
+    
+    if (!title || !course) {
+        document.getElementById('uploadMsg').innerHTML = 'Please fill title and course';
+        document.getElementById('uploadMsg').style.color = '#e74c3c';
+        return;
+    }
+    
+    document.getElementById('uploadMsg').innerHTML = 'Uploading...';
+    document.getElementById('uploadMsg').style.color = '#2ecc71';
+    
+    try {
+        const { error } = await supabase.from('materials').insert({
+            title: title,
+            course_code: course,
+            level: level,
+            type: type,
+            description: desc,
+            uploader: 'admin',
+            downloads: 0,
+            is_approved: true
+        });
+        
+        if (error) throw error;
+        
+        document.getElementById('uploadMsg').innerHTML = '✅ Material uploaded successfully!';
+        document.getElementById('uploadMsg').style.color = '#2ecc71';
+        
+        // Clear form
+        document.getElementById('title').value = '';
+        document.getElementById('course').value = '';
+        document.getElementById('desc').value = '';
+        
+        // Refresh materials list
+        loadMaterials();
+        loadStats();
+        
+    } catch (err) {
+        document.getElementById('uploadMsg').innerHTML = '❌ Error: ' + err.message;
+        document.getElementById('uploadMsg').style.color = '#e74c3c';
+    }
+}; 
         
         // Delete material
         async function deleteMaterial(id) {
