@@ -204,6 +204,10 @@
 </div>
     
     <script>
+        // Debug - check if Supabase loaded
+       console.log('supabaseJs exists?', typeof supabaseJs);
+        console.log('supabase exists?', typeof supabase);
+        
         // Supabase configuration
         const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
@@ -211,14 +215,23 @@
         let supabaseClient = null;
         
         // Initialize Supabase
+
         function initSupabase() {
-            if (typeof supabaseJs !== 'undefined') {
-                supabaseClient = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('Supabase connected');
-            } else {
-                setTimeout(initSupabase, 500);
-            }
-        }
+    // Try both possible variable names
+    const sbLib = window.supabaseJs || window.supabase;
+    if (sbLib) {
+        supabaseClient = sbLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        console.log('✅ Supabase connected successfully!');
+        // Show that it's ready
+        const msgDiv = document.createElement('div');
+        msgDiv.style.display = 'none';
+        document.body.appendChild(msgDiv);
+    } else {
+        console.log('Waiting for Supabase SDK...');
+        setTimeout(initSupabase, 500);
+    }
+}
+        
         initSupabase();
         
         // Modal functions
