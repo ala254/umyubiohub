@@ -166,7 +166,7 @@
                 <p>Course Modules</p>
             </div>
         </div>
-    </div>
+     </div>
 
     <!-- Login Modal -->
     <div id="loginModal" class="modal">
@@ -176,10 +176,33 @@
             <input type="email" id="loginEmail" placeholder="University Email">
             <input type="password" id="loginPassword" placeholder="Password">
             <button id="loginSubmitBtn">Login</button>
-            <p style="margin-top: 1rem;">Don't have an account? <a href="#" style="color:#2ecc71;">Sign Up</a></p>
+            <p style="margin-top: 1rem;">Don't have an account? <a href="#" onclick="showSignupModal(); return false;" style="color:#2ecc71;">Sign Up</a></p>
         </div>
     </div>
-
+    
+    <!-- Sign Up Modal -->
+<div id="signupModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeSignupModal()">&times;</span>
+        <h2>📝 Student Registration</h2>
+        <input type="text" id="signupName" placeholder="Full Name">
+        <input type="email" id="signupEmail" placeholder="University Email">
+        <input type="text" id="signupMatric" placeholder="Matric Number">
+        <select id="signupLevel">
+            <option value="">Select Level</option>
+            <option value="100">100 Level</option>
+            <option value="200">200 Level</option>
+            <option value="300">300 Level</option>
+            <option value="400">400 Level</option>
+            <option value="500">500 Level</option>
+        </select>
+        <input type="password" id="signupPassword" placeholder="Password">
+        <input type="password" id="signupConfirm" placeholder="Confirm Password">
+        <button id="signupSubmitBtn">Register</button>
+        <p style="margin-top: 1rem;">Already have an account? <a href="#" onclick="showLoginModal(); return false;" style="color:#2ecc71;">Login</a></p>
+    </div>
+</div>
+    
     <script>
         // Supabase configuration
         const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
@@ -249,6 +272,78 @@
                 closeLoginModal();
             }
         };
+        // Sign Up Modal functions
+function showSignupModal() {
+    document.getElementById('signupModal').style.display = 'flex';
+}
+
+function closeSignupModal() {
+    document.getElementById('signupModal').style.display = 'none';
+}
+
+// Sign Up function
+async function handleSignup() {
+    if (!supabaseClient) {
+        alert('Connecting to server...');
+        return;
+    }
+    
+    const name = document.getElementById('signupName').value;
+    const email = document.getElementById('signupEmail').value;
+    const matric = document.getElementById('signupMatric').value;
+    const level = document.getElementById('signupLevel').value;
+    const password = document.getElementById('signupPassword').value;
+    const confirm = document.getElementById('signupConfirm').value;
+    
+    if (!name || !email || !matric || !level || !password) {
+        alert('Please fill all fields');
+        return;
+    }
+    
+    if (password !== confirm) {
+        alert('Passwords do not match');
+        return;
+    }
+    
+    if (password.length < 6) {
+        alert('Password must be at least 6 characters');
+        return;
+    }
+    
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    full_name: name,
+                    matric_number: matric,
+                    level: level
+                }
+            }
+        });
+        
+        if (error) throw error;
+        
+        alert('Registration successful! Please check your email to verify.');
+        closeSignupModal();
+        showLoginModal();
+        
+        // Clear form
+        document.getElementById('signupName').value = '';
+        document.getElementById('signupEmail').value = '';
+        document.getElementById('signupMatric').value = '';
+        document.getElementById('signupLevel').value = '';
+        document.getElementById('signupPassword').value = '';
+        document.getElementById('signupConfirm').value = '';
+        
+    } catch (error) {
+        alert('Error: ' + error.message);
+    }
+}
+
+// Update button click handlers
+document.getElementById('signupSubmitBtn').onclick = handleSignup;
     </script>
 </body>
 </html>
