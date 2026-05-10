@@ -238,5 +238,171 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+ <script>
+    // Supabase config
+    const SUPABASE_URL = 'https://psojlbebapzgclighavti.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD6hkyrXvOIta235rg_jiiHOGdwF';
+    
+    let supabase = null;
+    
+    function initSupabase() {
+        if (typeof supabaseJs !== 'undefined') {
+            supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('Supabase ready');
+        } else {
+            setTimeout(initSupabase, 500);
+        }
+    }
+    initSupabase();
+    
+    // Modal functions
+    function showLoginModal() {
+        document.getElementById('loginModal').style.display = 'flex';
+        document.getElementById('signupModal').style.display = 'none';
+    }
+    
+    function showSignupModal() {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('signupModal').style.display = 'flex';
+    }
+    
+    function closeModals() {
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('signupModal').style.display = 'none';
+    }
+    
+    // Signup function
+    async function handleSignup() {
+        if (!supabase) {
+            alert('Connecting to server... Please wait.');
+            return;
+        }
+        
+        const name = document.getElementById('signupName').value;
+        const email = document.getElementById('signupEmail').value;
+        const matric = document.getElementById('signupMatric').value;
+        const level = document.getElementById('signupLevel').value;
+        const password = document.getElementById('signupPassword').value;
+        const confirm = document.getElementById('signupConfirm').value;
+        
+        if (!name || !email || !matric || !level || !password) {
+            alert('Please fill all fields');
+            return;
+        }
+        
+        if (password !== confirm) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        if (password.length < 6) {
+            alert('Password must be at least 6 characters');
+            return;
+        }
+        
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: {
+                        full_name: name,
+                        matric_number: matric,
+                        level: level
+                    }
+                }
+            });
+            
+            if (error) throw error;
+            
+            alert('✅ Registration successful! Please check your email to verify.');
+            showLoginModal();
+            
+            // Clear form
+            document.getElementById('signupName').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupMatric').value = '';
+            document.getElementById('signupLevel').value = '';
+            document.getElementById('signupPassword').value = '';
+            document.getElementById('signupConfirm').value = '';
+            
+        } catch (error) {
+            alert('❌ Error: ' + error.message);
+        }
+    }
+    
+    // Login function
+    async function handleLogin() {
+        if (!supabase) {
+            alert('Connecting to server... Please wait.');
+            return;
+        }
+        
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            alert('Please enter email and password');
+            return;
+        }
+        
+        try {
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+            
+            if (error) throw error;
+            
+            alert('✅ Login successful! Redirecting...');
+            window.location.href = 'dashboard.html';
+            
+        } catch (error) {
+            alert('❌ Error: ' + error.message);
+        }
+    }
+    
+    function handleGoogleLogin() {
+        if (supabase) {
+            supabase.auth.signInWithOAuth({ provider: 'google' });
+        }
+    }
+    
+    // Set up event listeners when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get Started button
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        if (getStartedBtn) {
+            getStartedBtn.addEventListener('click', showLoginModal);
+        }
+        
+        // Login button
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', handleLogin);
+        }
+        
+        // Register button
+        const registerBtn = document.getElementById('registerBtn');
+        if (registerBtn) {
+            registerBtn.addEventListener('click', handleSignup);
+        }
+        
+        // Auth nav button
+        const authNavBtn = document.getElementById('authNavBtn');
+        if (authNavBtn) {
+            authNavBtn.addEventListener('click', showLoginModal);
+        }
+        
+        // Explore button
+        const exploreBtn = document.getElementById('exploreBtn');
+        if (exploreBtn) {
+            exploreBtn.addEventListener('click', function() {
+                window.location.href = 'dashboard.html';
+            });
+        }
+    });
+</script>
 </body>
 </html>
