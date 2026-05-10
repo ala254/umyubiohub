@@ -8,18 +8,20 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Message is required' });
   }
 
-  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-  if (!GEMINI_API_KEY) {
+  const API_KEY = process.env.GEMINI_API_KEY;
+  if (!API_KEY) {
     return res.status(500).json({ error: 'API key not configured' });
   }
 
   try {
-    // Use gemini-1.0-pro instead of 1.5-flash
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${GEMINI_API_KEY}`;
+    // Use the correct model name from the list: gemini-2.5-flash (stable)
+    const model = 'gemini-2.5-flash';
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${API_KEY}`;
+
     const payload = {
       contents: [{
         parts: [{
-          text: `You are a Biochemistry professor at UMYU. Answer concisely and accurately. Student: ${message}`
+          text: `You are a Biochemistry professor at Umaru Musa Yar'adua University Katsina. Answer the student's question clearly, accurately, and helpfully.\nStudent: ${message}`
         }]
       }],
       generationConfig: {
