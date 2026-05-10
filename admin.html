@@ -1,349 +1,376 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>Admin Panel - UMYU BioHub</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - UMYU BioHub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .admin-wrapper {
-            display: flex;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0a2e38, #0a1a2e);
+            color: white;
             min-height: 100vh;
         }
-        
-        .admin-sidebar {
-            width: 280px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            padding: 2rem 1rem;
-            border-right: 1px solid var(--glass-border);
+        .sidebar {
             position: fixed;
-            height: 100vh;
-            overflow-y: auto;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            padding: 2rem 1rem;
         }
-        
-        .admin-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1.3rem;
-            font-weight: 700;
+        .sidebar h2 {
+            color: #2ecc71;
             margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--glass-border);
+            text-align: center;
         }
-        
-        .admin-nav {
-            list-style: none;
-        }
-        
-        .admin-nav li {
-            margin-bottom: 0.5rem;
-        }
-        
-        .admin-nav a {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 12px;
-            color: inherit;
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .admin-nav a:hover, .admin-nav li.active a {
-            background: var(--secondary);
+        .sidebar a {
+            display: block;
             color: white;
+            text-decoration: none;
+            padding: 0.8rem 1rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            cursor: pointer;
         }
-        
-        .admin-main {
-            margin-left: 280px;
-            flex: 1;
+        .sidebar a:hover, .sidebar a.active {
+            background: #2ecc71;
+        }
+        .main {
+            margin-left: 250px;
             padding: 2rem;
         }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
+        .header {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem 2rem;
+            border-radius: 15px;
             margin-bottom: 2rem;
-        }
-        
-        .stat-card-admin {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
-        .stat-info h3 {
-            font-size: 1.8rem;
-            margin-bottom: 0.3rem;
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
-        
-        .stat-icon {
-            font-size: 2.5rem;
-            opacity: 0.7;
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
         }
-        
-        .data-table {
+        .stat-card h3 { font-size: 2rem; color: #2ecc71; }
+        .card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        table {
             width: 100%;
-            background: var(--glass-bg);
-            border-radius: 20px;
-            overflow: hidden;
+            border-collapse: collapse;
         }
-        
-        .data-table th, .data-table td {
-            padding: 1rem;
+        th, td {
+            padding: 0.8rem;
             text-align: left;
-            border-bottom: 1px solid var(--glass-border);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
         }
-        
-        .data-table th {
-            background: rgba(0,0,0,0.2);
-            font-weight: 600;
+        th { background: rgba(0,0,0,0.3); }
+        button {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
         }
-        
-        .upload-form {
-            background: var(--glass-bg);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .form-group input, .form-group select, .form-group textarea {
+        .btn-danger { background: #e74c3c; }
+        .btn-warning { background: #f39c12; }
+        input, select, textarea {
             width: 100%;
             padding: 0.8rem;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--glass-border);
-            color: inherit;
-        }
-        
-        .btn {
-            padding: 0.8rem 1.5rem;
-            border-radius: 10px;
+            margin: 0.5rem 0;
+            border-radius: 8px;
             border: none;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            background: rgba(255,255,255,0.2);
             color: white;
         }
-        
-        .btn-danger {
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .logout-btn {
             background: #e74c3c;
-            color: white;
-        }
-        
-        .btn-warning {
-            background: #f39c12;
-            color: white;
-        }
-        
-        @media (max-width: 768px) {
-            .admin-sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-                z-index: 100;
-            }
-            .admin-sidebar.open {
-                transform: translateX(0);
-            }
-            .admin-main {
-                margin-left: 0;
-            }
-            .menu-toggle {
-                display: block;
-                position: fixed;
-                top: 1rem;
-                left: 1rem;
-                z-index: 101;
-                background: var(--secondary);
-                padding: 0.5rem;
-                border-radius: 10px;
-                cursor: pointer;
-            }
-        }
-        
-        .menu-toggle {
-            display: none;
+            margin-top: 2rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="admin-wrapper">
-        <div class="menu-toggle" id="menuToggle">
-            <i class="fas fa-bars"></i>
+    <div class="sidebar">
+        <h2>🧬 Admin Panel</h2>
+        <a class="active" onclick="showTab('dashboard')">📊 Dashboard</a>
+        <a onclick="showTab('materials')">📚 Materials</a>
+        <a onclick="showTab('upload')">📤 Upload</a>
+        <a onclick="showTab('users')">👥 Users</a>
+        <a onclick="showTab('analytics')">📈 Analytics</a>
+        <a onclick="showTab('notifications')">🔔 Notifications</a>
+        <a class="logout-btn" onclick="logout()">🚪 Logout</a>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <div id="adminInfo">Welcome, Admin</div>
         </div>
-        
-        <div class="admin-sidebar" id="adminSidebar">
-            <div class="admin-logo">
-                <i class="fas fa-dna"></i>
-                <span>UMYU BioHub Admin</span>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboardTab" class="tab-content active">
+            <div class="stats" id="statsContainer">
+                <div class="stat-card"><h3 id="totalMaterials">0</h3><p>Total Materials</p></div>
+                <div class="stat-card"><h3 id="totalUsers">0</h3><p>Total Users</p></div>
+                <div class="stat-card"><h3 id="totalDownloads">0</h3><p>Total Downloads</p></div>
+                <div class="stat-card"><h3 id="pendingApprovals">0</h3><p>Pending Approvals</p></div>
             </div>
-            <ul class="admin-nav">
-                <li class="active" data-tab="dashboard"><a href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                <li data-tab="materials"><a href="#"><i class="fas fa-book"></i> Materials</a></li>
-                <li data-tab="upload"><a href="#"><i class="fas fa-upload"></i> Upload</a></li>
-                <li data-tab="users"><a href="#"><i class="fas fa-users"></i> Users</a></li>
-                <li data-tab="notifications"><a href="#"><i class="fas fa-bell"></i> Notifications</a></li>
-                <li data-tab="analytics"><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
-                <li data-tab="settings"><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
-            </ul>
+            <div class="card">
+                <h3>Recent Activity</h3>
+                <div id="recentActivity">Loading...</div>
+            </div>
         </div>
-        
-        <div class="admin-main">
-            <!-- Dashboard Tab -->
-            <div id="dashboardTab" class="tab-content active">
-                <h1>Admin Dashboard</h1>
-                <div class="stats-grid" id="adminStats">
-                    <div class="stat-card-admin">
-                        <div class="stat-info">
-                            <h3 id="totalMaterials">0</h3>
-                            <p>Total Materials</p>
-                        </div>
-                        <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
-                    </div>
-                    <div class="stat-card-admin">
-                        <div class="stat-info">
-                            <h3 id="totalUsers">0</h3>
-                            <p>Total Users</p>
-                        </div>
-                        <div class="stat-icon"><i class="fas fa-users"></i></div>
-                    </div>
-                    <div class="stat-card-admin">
-                        <div class="stat-info">
-                            <h3 id="totalDownloads">0</h3>
-                            <p>Total Downloads</p>
-                        </div>
-                        <div class="stat-icon"><i class="fas fa-download"></i></div>
-                    </div>
-                    <div class="stat-card-admin">
-                        <div class="stat-info">
-                            <h3 id="pendingApprovals">0</h3>
-                            <p>Pending Approvals</p>
-                        </div>
-                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                    </div>
+
+        <!-- Materials Tab -->
+        <div id="materialsTab" class="tab-content">
+            <div class="card">
+                <h3>All Materials</h3>
+                <input type="text" id="searchMaterials" placeholder="Search materials...">
+                <div style="overflow-x: auto;">
+                    <table id="materialsTable">
+                        <thead><tr><th>Title</th><th>Course</th><th>Level</th><th>Downloads</th><th>Actions</th></tr></thead>
+                        <tbody id="materialsList"></tbody>
+                    </table>
                 </div>
-                
-                <h2>Recent Activity</h2>
-                <table class="data-table">
-                    <thead>
-                        <tr><th>User</th><th>Action</th><th>Material</th><th>Time</th></tr>
-                    </thead>
-                    <tbody id="recentActivity"></tbody>
-                </table>
             </div>
-            
-            <!-- Materials Tab -->
-            <div id="materialsTab" class="tab-content">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h1>Manage Materials</h1>
-                    <input type="text" id="materialSearch" placeholder="Search materials..." style="padding: 0.5rem; border-radius: 8px;">
+        </div>
+
+        <!-- Upload Tab -->
+        <div id="uploadTab" class="tab-content">
+            <div class="card">
+                <h3>Upload New Material</h3>
+                <input type="text" id="materialTitle" placeholder="Title">
+                <input type="text" id="courseCode" placeholder="Course Code (e.g., BCH 301)">
+                <select id="materialLevel">
+                    <option value="100">100 Level</option>
+                    <option value="200">200 Level</option>
+                    <option value="300">300 Level</option>
+                    <option value="400">400 Level</option>
+                    <option value="500">500 Level</option>
+                </select>
+                <select id="materialType">
+                    <option value="lecture_note">Lecture Note</option>
+                    <option value="past_question">Past Question</option>
+                    <option value="practical">Practical Manual</option>
+                    <option value="assignment">Assignment</option>
+                    <option value="research">Research Material</option>
+                    <option value="project">Project Material</option>
+                </select>
+                <input type="file" id="materialFile" accept=".pdf,.docx,.ppt">
+                <textarea id="materialDesc" placeholder="Description" rows="3"></textarea>
+                <button onclick="uploadMaterial()">Upload Material</button>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="usersTab" class="tab-content">
+            <div class="card">
+                <h3>Manage Users</h3>
+                <div style="overflow-x: auto;">
+                    <table id="usersTable">
+                        <thead><tr><th>Email</th><th>Name</th><th>Level</th><th>Role</th><th>Actions</th></tr></thead>
+                        <tbody id="usersList"></tbody>
+                    </table>
                 </div>
-                <table class="data-table">
-                    <thead>
-                        <tr><th>Title</th><th>Course</th><th>Level</th><th>Downloads</th><th>Status</th><th>Actions</th></tr>
-                    </thead>
-                    <tbody id="materialsList"></tbody>
-                </table>
             </div>
-            
-            <!-- Upload Tab -->
-            <div id="uploadTab" class="tab-content">
-                <h1>Upload New Material</h1>
-                <form id="uploadForm" class="upload-form">
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" id="materialTitle" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Course Code</label>
-                        <input type="text" id="courseCode" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Level</label>
-                        <select id="level">
-                            <option>100</option><option>200</option><option>300</option><option>400</option><option>500</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Material Type</label>
-                        <select id="materialType">
-                            <option>lecture_note</option><option>past_question</option><option>practical</option>
-                            <option>assignment</option><option>research</option><option>project</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>File (PDF, DOCX, PPT)</label>
-                        <input type="file" id="materialFile" accept=".pdf,.docx,.ppt,.pptx" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="description" rows="3"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Upload Material</button>
-                </form>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analyticsTab" class="tab-content">
+            <div class="card">
+                <h3>Analytics</h3>
+                <canvas id="analyticsChart" width="400" height="200"></canvas>
+                <div id="analyticsData"></div>
             </div>
-            
-            <!-- Users Tab -->
-            <div id="usersTab" class="tab-content">
-                <h1>Manage Users</h1>
-                <table class="data-table">
-                    <thead><tr><th>Name</th><th>Email</th><th>Matric No</th><th>Level</th><th>Role</th><th>Actions</th></tr></thead>
-                    <tbody id="usersList"></tbody>
-                </table>
-            </div>
-            
-            <!-- Notifications Tab -->
-            <div id="notificationsTab" class="tab-content">
-                <h1>Send Notification</h1>
-                <form id="notificationForm" class="upload-form">
-                    <div class="form-group">
-                        <label>Title</label>
-                        <input type="text" id="notifTitle" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Message</label>
-                        <textarea id="notifMessage" rows="4" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Send to</label>
-                        <select id="notifAudience">
-                            <option value="all">All Students</option>
-                            <option value="100">100 Level</option>
-                            <option value="200">200 Level</option>
-                            <option value="300">300 Level</option>
-                            <option value="400">400 Level</option>
-                            <option value="500">500 Level</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Send Notification</button>
-                </form>
+        </div>
+
+        <!-- Notifications Tab -->
+        <div id="notificationsTab" class="tab-content">
+            <div class="card">
+                <h3>Send Notification</h3>
+                <input type="text" id="notifTitle" placeholder="Notification Title">
+                <textarea id="notifMessage" placeholder="Notification Message" rows="4"></textarea>
+                <select id="notifAudience">
+                    <option value="all">All Students</option>
+                    <option value="100">100 Level</option>
+                    <option value="200">200 Level</option>
+                    <option value="300">300 Level</option>
+                    <option value="400">400 Level</option>
+                    <option value="500">500 Level</option>
+                </select>
+                <button onclick="sendNotification()">Send Notification</button>
             </div>
         </div>
     </div>
-    
-    <script src="js/admin.js"></script>
+
+    <script>
+        // Supabase config
+        const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
+        
+        let supabase = null;
+        let currentUser = null;
+        
+        function initSupabase() {
+            const sbLib = window.supabaseJs || window.supabase;
+            if (sbLib) {
+                supabase = sbLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                checkAuth();
+            } else {
+                setTimeout(initSupabase, 500);
+            }
+        }
+        initSupabase();
+        
+        async function checkAuth() {
+            const { data } = await supabase.auth.getSession();
+            if (!data.session) {
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = data.session.user;
+            document.getElementById('adminInfo').innerHTML = `Welcome, ${currentUser.email}`;
+            loadStats();
+            loadMaterials();
+            loadUsers();
+        }
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${tab}Tab`).classList.add('active');
+            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        async function loadStats() {
+            const { data: materials } = await supabase.from('materials').select('*');
+            const { data: users } = await supabase.from('profiles').select('*');
+            document.getElementById('totalMaterials').textContent = materials?.length || 0;
+            document.getElementById('totalUsers').textContent = users?.length || 0;
+        }
+        
+        async function loadMaterials() {
+            const { data } = await supabase.from('materials').select('*').order('created_at', { ascending: false });
+            const tbody = document.getElementById('materialsList');
+            if (!data) { tbody.innerHTML = '<tr><td colspan="5">No materials</td></tr>'; return; }
+            tbody.innerHTML = data.map(m => `
+                <tr>
+                    <td>${m.title || '-'}</td>
+                    <td>${m.course_code || '-'}</td>
+                    <td>${m.level || '-'}</td>
+                    <td>${m.downloads || 0}</td>
+                    <td>
+                        <button onclick="deleteMaterial('${m.id}')" class="btn-danger">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function loadUsers() {
+            const { data } = await supabase.from('profiles').select('*');
+            const tbody = document.getElementById('usersList');
+            if (!data) { tbody.innerHTML = '<tr><td colspan="5">No users</td></tr>'; return; }
+            tbody.innerHTML = data.map(u => `
+                <tr>
+                    <td>${u.email || '-'}</td>
+                    <td>${u.full_name || '-'}</td>
+                    <td>${u.level || '-'}</td>
+                    <td>${u.role || 'student'}</td>
+                    <td>
+                        <button onclick="toggleRole('${u.id}')" class="btn-warning">Toggle Role</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function uploadMaterial() {
+            const title = document.getElementById('materialTitle').value;
+            const courseCode = document.getElementById('courseCode').value;
+            const level = document.getElementById('materialLevel').value;
+            const type = document.getElementById('materialType').value;
+            const desc = document.getElementById('materialDesc').value;
+            const file = document.getElementById('materialFile').files[0];
+            
+            if (!title || !courseCode || !file) {
+                alert('Please fill required fields');
+                return;
+            }
+            
+            // In production, upload to Cloudinary first
+            const { error } = await supabase.from('materials').insert({
+                title, course_code: courseCode, level, type, description: desc,
+                file_url: 'demo-url.pdf', file_type: file.type, uploader: currentUser.email,
+                is_approved: true
+            });
+            
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Material uploaded!');
+                loadMaterials();
+                document.getElementById('materialTitle').value = '';
+                document.getElementById('courseCode').value = '';
+                document.getElementById('materialFile').value = '';
+            }
+        }
+        
+        async function deleteMaterial(id) {
+            if (confirm('Delete this material?')) {
+                await supabase.from('materials').delete().eq('id', id);
+                loadMaterials();
+                loadStats();
+            }
+        }
+        
+        async function toggleRole(userId) {
+            // Get current role and toggle
+            alert('Role toggled (demo)');
+            loadUsers();
+        }
+        
+        function sendNotification() {
+            const title = document.getElementById('notifTitle').value;
+            const message = document.getElementById('notifMessage').value;
+            if (!title || !message) { alert('Fill all fields'); return; }
+            alert(`Notification sent: ${title}`);
+            document.getElementById('notifTitle').value = '';
+            document.getElementById('notifMessage').value = '';
+        }
+        
+        function logout() {
+            supabase.auth.signOut();
+            window.location.href = 'index.html';
+        }
+        
+        // Search materials
+        document.getElementById('searchMaterials')?.addEventListener('input', (e) => {
+            const search = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#materialsList tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(search) ? '' : 'none';
+            });
+        });
+    </script>
 </body>
 </html>
