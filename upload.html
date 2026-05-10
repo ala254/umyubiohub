@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload Material</title>
+    <title>Upload with File - UMYU BioHub</title>
     <meta charset="UTF-8">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -15,7 +15,7 @@
             background: rgba(255,255,255,0.1);
             padding: 30px;
             border-radius: 15px;
-            max-width: 500px;
+            max-width: 600px;
             margin: 0 auto;
         }
         input, select, textarea {
@@ -26,6 +26,10 @@
             border: none;
             background: rgba(255,255,255,0.2);
             color: white;
+        }
+        input[type="file"] {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
         }
         button {
             background: #2ecc71;
@@ -45,12 +49,18 @@
         }
         .success { background: #2ecc71; display: block; }
         .error { background: #e74c3c; display: block; }
-        h1 { color: #2ecc71; text-align: center; }
+        h1 { color: #2ecc71; }
+        .preview {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>📤 UMYU BioHub - Upload</h1>
+        <h1>📤 Upload Material with File</h1>
+        
         <input type="text" id="title" placeholder="Title *">
         <input type="text" id="course" placeholder="Course Code (BCH 301) *">
         <select id="level">
@@ -67,6 +77,11 @@
             <option value="assignment">Assignment</option>
             <option value="research">Research Material</option>
         </select>
+        
+        <!-- File input -->
+        <input type="file" id="fileInput" accept=".pdf,.docx,.ppt,.pptx">
+        <div class="preview" id="filePreview"></div>
+        
         <textarea id="desc" placeholder="Description" rows="3"></textarea>
         <button id="uploadBtn">Upload Material</button>
         <div id="msg" class="msg"></div>
@@ -77,13 +92,13 @@
             const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
             const SUPABASE_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
             
-            let sbClient = null;
+            let supabase = null;
             
             function init() {
                 const lib = window.supabaseJs || window.supabase;
                 if (lib) {
-                    sbClient = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
-                    console.log('Connected');
+                    supabase = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
+                    console.log('Supabase ready');
                     showMsg('Ready to upload', 'success');
                 } else {
                     setTimeout(init, 500);
@@ -95,11 +110,23 @@
                 const d = document.getElementById('msg');
                 d.textContent = text;
                 d.className = 'msg ' + type;
+                setTimeout(() => { d.style.display = 'none'; }, 4000);
             }
             
+            // File preview
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const preview = document.getElementById('filePreview');
+                if (file) {
+                    preview.innerHTML = `📄 Selected: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+                } else {
+                    preview.innerHTML = '';
+                }
+            });
+            
             document.getElementById('uploadBtn').onclick = async () => {
-                if (!sbClient) {
-                    showMsg('Connecting...', 'error');
+                if (!supabase) {
+                    showMsg('Connecting to server...', 'error');
                     return;
                 }
                 
@@ -108,35 +135,72 @@
                 const level = document.getElementById('level').value;
                 const type = document.getElementById('type').value;
                 const desc = document.getElementById('desc').value;
+                const file = document.getElementById('fileInput').files[0];
                 
                 if (!title || !course) {
                     showMsg('Title and Course Code required', 'error');
                     return;
                 }
                 
-                showMsg('Uploading...', 'success');
+                if (!file) {
+                    showMsg('Please select a file (PDF, DOCX, PPT)', 'error');
+                    return;
+                }
+                
+                // Check file type
+                const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+                if (!allowedTypes.includes(file.type)) {
+                    showMsg('Only PDF, DOCX, and PPT files are allowed', 'error');
+                    return;
+                }
+                
+                showMsg('Uploading file...', 'success');
                 
                 try {
-                    const { error } = await sbClient.from('materials').insert({
+                    // 1. Upload file to Supabase Storage
+                    const fileName = `${Date.now()}_${file.name}`;
+                    const { data: fileData, error: fileError } = await supabase.storage
+                        .from('materials')
+                        .upload(fileName, file);
+                    
+                    if (fileError) throw fileError;
+                    
+                    // 2. Get public URL
+                    const { data: urlData } = supabase.storage
+                        .from('materials')
+                        .getPublicUrl(fileName);
+                    
+                    const fileUrl = urlData.publicUrl;
+                    
+                    // 3. Save metadata to database
+                    const { error: dbError } = await supabase.from('materials').insert({
                         title: title,
                         course_code: course,
                         level: level,
                         type: type,
                         description: desc,
+                        file_url: fileUrl,
+                        file_name: file.name,
+                        file_size: file.size,
                         uploader: 'admin',
                         downloads: 0,
                         is_approved: true
                     });
                     
-                    if (error) throw error;
+                    if (dbError) throw dbError;
                     
-                    showMsg('✅ Upload successful!', 'success');
+                    showMsg('✅ Upload successful! File URL saved.', 'success');
+                    
+                    // Clear form
                     document.getElementById('title').value = '';
                     document.getElementById('course').value = '';
                     document.getElementById('desc').value = '';
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('filePreview').innerHTML = '';
                     
                 } catch (err) {
                     showMsg('❌ Error: ' + err.message, 'error');
+                    console.error(err);
                 }
             };
         })();
