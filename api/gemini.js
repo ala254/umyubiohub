@@ -21,8 +21,10 @@ export default async function handler(req, res) {
     const payload = {
       contents: [{
         parts: [{
-          text: `You are a Biochemistry professor at Umaru Musa Yar'adua University Katsina. Answer the student's question clearly, accurately, and helpfully.\nStudent: ${message}`
-        }]
+  text: `You are a precise, factual Biochemistry professor at UMYU. Provide clear, concise answers based on standard biochemistry knowledge (Lehninger, Voet & Voet). Avoid extra fluff like "Ah, my brilliant student!". Be direct and educational.
+
+Student question: ${message}`
+}]
       }],
       generationConfig: {
         temperature: 0.7,
