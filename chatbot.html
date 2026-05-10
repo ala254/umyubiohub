@@ -166,10 +166,12 @@
                 const data = await response.json();
                 addMessage(data.reply, 'ai');
             } catch (err) {
-                addMessage('❌ Sorry, I could not process your request. Please try again later.', 'ai');
-            } finally {
-                isLoading = false;
-                showTyping(false);
+    console.error('Fetch error:', err);
+    let errorMsg = 'Could not reach AI service.';
+    if (err.message.includes('404')) errorMsg = 'API endpoint not found. Please check deployment.';
+    else if (err.message.includes('500')) errorMsg = 'Server error. Check API logs.';
+    addMessage(`❌ Error: ${errorMsg} Please try again later.`, 'ai');
+}
             }
         }
         
