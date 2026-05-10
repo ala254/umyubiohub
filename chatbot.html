@@ -88,12 +88,12 @@
                 <input type="text" id="chatInput" placeholder="Ask a question...">
                 <button id="sendBtn">Send</button>
             </div>
-            <div class="suggestions">
-                <div class="suggestion-chip" onclick="askQuestion('Explain glycolysis step by step')">⚡ Glycolysis</div>
-                <div class="suggestion-chip" onclick="askQuestion('What is enzyme kinetics?')">🧪 Enzyme kinetics</div>
-                <div class="suggestion-chip" onclick="askQuestion('Describe the 4 levels of protein structure')">🔬 Protein structure</div>
-                <div class="suggestion-chip" onclick="askQuestion('How does DNA replication occur?')">🧬 DNA replication</div>
-                <div class="suggestion-chip" onclick="askQuestion('Tips for studying biochemistry')">📚 Study tips</div>
+            <div class="suggestions" id="suggestionsContainer">
+                <div class="suggestion-chip" data-question="Explain glycolysis step by step">⚡ Glycolysis</div>
+                <div class="suggestion-chip" data-question="What is enzyme kinetics?">🧪 Enzyme kinetics</div>
+                <div class="suggestion-chip" data-question="Describe the 4 levels of protein structure">🔬 Protein structure</div>
+                <div class="suggestion-chip" data-question="How does DNA replication occur?">🧬 DNA replication</div>
+                <div class="suggestion-chip" data-question="Tips for studying biochemistry">📚 Study tips</div>
             </div>
         </div>
         <div class="model-badge">🤖 Powered by Google Gemini 1.5 Flash (secure)</div>
@@ -146,13 +146,13 @@
             document.getElementById('sendBtn').disabled = show;
         }
         
-        async function sendMessage() {
-            if (isLoading) return;
-            const input = document.getElementById('chatInput');
-            const msg = input.value.trim();
-            if (!msg) return;
-            addMessage(msg, 'user');
-            input.value = '';
+        async function sendMessage(text) {
+            const message = text || document.getElementById('chatInput').value.trim();
+            if (!message) return;
+            if (!text) {
+                document.getElementById('chatInput').value = '';
+            }
+            addMessage(message, 'user');
             isLoading = true;
             showTyping(true);
             
@@ -160,33 +160,32 @@
                 const response = await fetch('/api/gemini', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg })
+                    body: JSON.stringify({ message: message })
                 });
                 if (!response.ok) throw new Error('Server error');
                 const data = await response.json();
                 addMessage(data.reply, 'ai');
             } catch (err) {
-    console.error('Fetch error:', err);
-    let errorMsg = 'Could not reach AI service.';
-    if (err.message.includes('404')) errorMsg = 'API endpoint not found. Please check deployment.';
-    else if (err.message.includes('500')) errorMsg = 'Server error. Check API logs.';
-    addMessage(`❌ Error: ${errorMsg} Please try again later.`, 'ai');
-}
+                console.error(err);
+                addMessage('❌ Sorry, I could not process your request. Please try again later.', 'ai');
+            } finally {
+                isLoading = false;
+                showTyping(false);
             }
         }
         
-        function askQuestion(q) {
-            document.getElementById('chatInput').value = q;
-            sendMessage();
-        }
-        
-        // Make functions global so inline onclick works
-        window.askQuestion = askQuestion;
-        window.sendMessage = sendMessage;
-        
         // Attach event listeners
-        document.getElementById('sendBtn').onclick = sendMessage;
+        document.getElementById('sendBtn').onclick = () => sendMessage();
         document.getElementById('chatInput').onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+        
+        // Attach suggestion clicks (no inline onclick, uses data attribute)
+        const suggestions = document.querySelectorAll('.suggestion-chip');
+        suggestions.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const question = chip.getAttribute('data-question');
+                if (question) sendMessage(question);
+            });
+        });
     </script>
 </body>
 </html>
