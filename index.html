@@ -11,14 +11,13 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Navigation -->
         <nav class="glass-nav">
             <div class="nav-container">
                 <div class="logo">
                     <i class="fas fa-dna"></i>
                     <span>UMYU BioHub</span>
                 </div>
-                <div class="nav-links" id="navLinks">
+                <div class="nav-links">
                     <a href="index.html" class="active">Home</a>
                     <a href="dashboard.html">Library</a>
                     <a href="#" id="authNavBtn">Login</a>
@@ -29,7 +28,6 @@
             </div>
         </nav>
 
-        <!-- Hero Section -->
         <section class="hero">
             <div class="hero-content">
                 <h1 class="gradient-text">Biochemistry Digital Library</h1>
@@ -58,7 +56,6 @@
             </div>
         </section>
 
-        <!-- Features Section -->
         <section class="features">
             <h2 class="section-title">Smart Features for Modern Learning</h2>
             <div class="features-grid">
@@ -85,22 +82,9 @@
             </div>
         </section>
 
-        <!-- Course Levels -->
-        <section class="levels">
-            <h2 class="section-title">Browse by Level</h2>
-            <div class="level-buttons">
-                <button class="level-btn" data-level="100">100 Level</button>
-                <button class="level-btn" data-level="200">200 Level</button>
-                <button class="level-btn" data-level="300">300 Level</button>
-                <button class="level-btn" data-level="400">400 Level</button>
-                <button class="level-btn" data-level="500">500 Level</button>
-            </div>
-        </section>
-
-        <!-- Login Modal -->
         <div id="loginModal" class="modal">
             <div class="modal-content glass">
-                <span class="close-modal" onclick="closeModals()">&times;</span>
+                <span class="close-modal" onclick="closeAllModals()">&times;</span>
                 <h2>Login to Your Account</h2>
                 <input type="email" id="loginEmail" placeholder="University Email">
                 <input type="password" id="loginPassword" placeholder="Password">
@@ -109,19 +93,15 @@
                 <p style="margin-top: 1rem; text-align: center;">
                     Don't have an account? <a href="#" onclick="showSignupModal(); return false;">Sign Up</a>
                 </p>
-                <p style="text-align: center;">
-                    <a href="#" onclick="showForgotPassword(); return false;">Forgot Password?</a>
-                </p>
             </div>
         </div>
 
-        <!-- Signup Modal -->
         <div id="signupModal" class="modal">
             <div class="modal-content glass">
-                <span class="close-modal" onclick="closeModals()">&times;</span>
+                <span class="close-modal" onclick="closeAllModals()">&times;</span>
                 <h2>Student Registration</h2>
                 <input type="text" id="signupName" placeholder="Full Name">
-                <input type="email" id="signupEmail" placeholder="University Email (@umyu.edu.ng)">
+                <input type="email" id="signupEmail" placeholder="University Email">
                 <input type="text" id="signupMatric" placeholder="Matric Number">
                 <select id="signupLevel">
                     <option value="">Select Level</option>
@@ -142,23 +122,22 @@
     </div>
 
     <script>
-        // Supabase Configuration
+        // Supabase configuration
         const SUPABASE_URL = 'https://psojlbebapzgclighavti.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD6hkyrXvOIta235rg_jiiHOGdwF';
-
-        let supabaseClient;
         
-        // Initialize Supabase
-        function initSupabase() {
+        let supabase = null;
+        
+        // Wait for Supabase to load
+        function waitForSupabase() {
             if (typeof supabaseJs !== 'undefined') {
                 supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('✅ Supabase connected!');
+                console.log('Supabase ready');
             } else {
-                console.log('Waiting for Supabase...');
-                setTimeout(initSupabase, 500);
+                setTimeout(waitForSupabase, 500);
             }
         }
-        initSupabase();
+        waitForSupabase();
         
         // Modal functions
         function showLoginModal() {
@@ -171,13 +150,18 @@
             document.getElementById('signupModal').style.display = 'flex';
         }
         
-        function closeModals() {
+        function closeAllModals() {
             document.getElementById('loginModal').style.display = 'none';
             document.getElementById('signupModal').style.display = 'none';
         }
         
-        // Handle Signup
+        // Signup function
         async function handleSignup() {
+            if (!supabase) {
+                alert('Please wait, connecting to server...');
+                return;
+            }
+            
             const name = document.getElementById('signupName').value;
             const email = document.getElementById('signupEmail').value;
             const matric = document.getElementById('signupMatric').value;
@@ -201,7 +185,7 @@
             }
             
             try {
-                const { data, error } = await supabaseClient.auth.signUp({
+                const { data, error } = await supabase.auth.signUp({
                     email: email,
                     password: password,
                     options: {
@@ -215,7 +199,7 @@
                 
                 if (error) throw error;
                 
-                alert('✅ Registration successful! Please check your email to verify your account.');
+                alert('✅ Registration successful! Please check your email to verify.');
                 showLoginModal();
                 
                 // Clear form
@@ -231,8 +215,13 @@
             }
         }
         
-        // Handle Login
+        // Login function
         async function handleLogin() {
+            if (!supabase) {
+                alert('Please wait, connecting to server...');
+                return;
+            }
+            
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
@@ -242,14 +231,14 @@
             }
             
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
                 
                 if (error) throw error;
                 
-                alert('✅ Login successful! Redirecting to dashboard...');
+                alert('✅ Login successful!');
                 window.location.href = 'dashboard.html';
                 
             } catch (error) {
@@ -258,58 +247,40 @@
         }
         
         function handleGoogleLogin() {
-            supabaseClient.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: window.location.origin + '/dashboard.html'
-                }
-            });
-        }
-        
-        function showForgotPassword() {
-            const email = prompt('Enter your email address to reset password:');
-            if (email) {
-                supabaseClient.auth.resetPasswordForEmail(email);
-                alert('Password reset link sent to your email!');
+            if (!supabase) {
+                alert('Please wait, connecting to server...');
+                return;
             }
+            supabase.auth.signInWithOAuth({
+                provider: 'google'
+            });
         }
         
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
-            // Get Started button
             const getStartedBtn = document.getElementById('getStartedBtn');
             if (getStartedBtn) {
-                getStartedBtn.addEventListener('click', showLoginModal);
+                getStartedBtn.onclick = showLoginModal;
             }
             
-            // Explore button
-            const exploreBtn = document.getElementById('exploreBtn');
-            if (exploreBtn) {
-                exploreBtn.addEventListener('click', function() {
-                    window.location.href = 'dashboard.html';
-                });
-            }
-            
-            // Auth nav button
             const authNavBtn = document.getElementById('authNavBtn');
             if (authNavBtn) {
-                authNavBtn.addEventListener('click', showLoginModal);
+                authNavBtn.onclick = showLoginModal;
+            }
+            
+            const exploreBtn = document.getElementById('exploreBtn');
+            if (exploreBtn) {
+                exploreBtn.onclick = function() {
+                    window.location.href = 'dashboard.html';
+                };
             }
             
             // Close modal when clicking outside
-            window.addEventListener('click', function(e) {
+            window.onclick = function(e) {
                 if (e.target.classList.contains('modal')) {
-                    closeModals();
+                    closeAllModals();
                 }
-            });
-            
-            // Theme toggle
-            const themeToggle = document.querySelector('.theme-toggle');
-            if (themeToggle) {
-                themeToggle.addEventListener('click', function() {
-                    document.body.classList.toggle('light-mode');
-                });
-            }
+            };
         });
     </script>
 </body>
