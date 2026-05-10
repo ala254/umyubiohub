@@ -21,14 +21,13 @@ export default async function handler(req, res) {
     const payload = {
       contents: [{
         parts: [{
-  text: `You are a precise, factual Biochemistry professor at UMYU. Provide clear, concise answers based on standard biochemistry knowledge (Lehninger, Voet & Voet). Avoid extra fluff like "Ah, my brilliant student!". Be direct and educational.
-
-Student question: ${message}`
+       text: `You are an expert Biochemistry professor. Answer ANY question the student asks, with special focus on molecular structures, protein folding, metabolic pathways, enzyme mechanisms, and biochemical diagrams. Provide detailed, accurate, step-by-step explanations. Use real biochemical terms and be thorough. If the student asks for a "structure", describe it clearly including bonds, functional groups, and 3D arrangement.
+       Student: ${message}`
 }]
       }],
       generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 800,
+        temperature: 0.5,
+        maxOutputTokens: 1000,
       }
     };
 
