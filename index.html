@@ -202,5 +202,41 @@
             };
         });
     </script>
+
+    <script>
+function showLoginModal() {
+    document.getElementById('loginModal').style.display = 'flex';
+    document.getElementById('signupModal').style.display = 'none';
+}
+
+function showSignupModal() {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('signupModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('loginModal').style.display = 'none';
+    document.getElementById('signupModal').style.display = 'none';
+}
+
+// Make sure button works
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('getStartedBtn');
+    if (btn) {
+        btn.onclick = function() {
+            showLoginModal();
+            return false;
+        };
+    }
+    
+    const authBtn = document.getElementById('authNavBtn');
+    if (authBtn) {
+        authBtn.onclick = function() {
+            showLoginModal();
+            return false;
+        };
+    }
+});
+</script>
 </body>
 </html>
