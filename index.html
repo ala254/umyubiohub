@@ -20,7 +20,7 @@
                 <div class="nav-links">
                     <a href="index.html" class="active">Home</a>
                     <a href="dashboard.html">Library</a>
-                    <a href="#" id="authNavBtn" onclick="showLoginModal()">Login</a>
+                    <a href="#" id="authNavBtn">Login</a>
                 </div>
                 <div class="theme-toggle">
                     <i class="fas fa-moon"></i>
@@ -33,7 +33,7 @@
                 <h1 class="gradient-text">Biochemistry Digital Library</h1>
                 <p>Access lecture notes, past questions, research materials, and more for all levels of your Biochemistry journey at Umaru Musa Yar'adua University Katsina</p>
                 <div class="hero-buttons">
-                    <button class="btn-primary" id="getStartedBtn" onclick="showLoginModal()">Get Started</button>
+                    <button class="btn-primary" id="getStartedBtn">Get Started</button>
                     <button class="btn-outline" id="exploreBtn"><i class="fas fa-book"></i> Explore Materials</button>
                 </div>
             </div>
@@ -63,9 +63,9 @@
                 <input type="email" id="loginEmail" placeholder="University Email">
                 <input type="password" id="loginPassword" placeholder="Password">
                 <button class="btn-primary" id="loginBtn">Login</button>
-                <button class="btn-google" onclick="handleGoogleLogin()"><i class="fab fa-google"></i> Continue with Google</button>
+                <button class="btn-google" id="googleLoginBtn"><i class="fab fa-google"></i> Continue with Google</button>
                 <p style="margin-top: 1rem; text-align: center;">
-                    Don't have an account? <a href="#" onclick="showSignupModal(); return false;">Sign Up</a>
+                    Don't have an account? <a href="#" id="showSignupLink">Sign Up</a>
                 </p>
             </div>
         </div>
@@ -89,29 +89,31 @@
                 <input type="password" id="signupConfirm" placeholder="Confirm Password">
                 <button class="btn-primary" id="registerBtn">Register</button>
                 <p style="margin-top: 1rem; text-align: center;">
-                    Already have an account? <a href="#" onclick="showLoginModal(); return false;">Login</a>
+                    Already have an account? <a href="#" id="showLoginLink">Login</a>
                 </p>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase config - ONLY ONE DECLARATION
+        // Supabase configuration
         const SUPABASE_URL = 'https://psojlbebapzgclighavti.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD6hkyrXvOIta235rg_jiiHOGdwF';
         
         let supabase = null;
         
+        // Initialize Supabase
         function initSupabase() {
             if (typeof supabaseJs !== 'undefined') {
                 supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('Supabase ready');
+                console.log('✅ Supabase connected');
             } else {
                 setTimeout(initSupabase, 500);
             }
         }
         initSupabase();
         
+        // Modal functions
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
@@ -126,8 +128,14 @@
             document.getElementById('signupModal').style.display = 'flex';
         }
         
+        // Signup function
         async function handleSignup() {
-            if (!supabase) { alert('Connecting...'); return; }
+            console.log('Signup button clicked');
+            
+            if (!supabase) {
+                alert('Please wait, connecting to server...');
+                return;
+            }
             
             const name = document.getElementById('signupName').value;
             const email = document.getElementById('signupEmail').value;
@@ -140,12 +148,14 @@
                 alert('Please fill all fields');
                 return;
             }
+            
             if (password !== confirm) {
                 alert('Passwords do not match');
                 return;
             }
+            
             if (password.length < 6) {
-                alert('Password must be 6+ characters');
+                alert('Password must be at least 6 characters');
                 return;
             }
             
@@ -153,48 +163,137 @@
                 const { data, error } = await supabase.auth.signUp({
                     email: email,
                     password: password,
-                    options: { data: { full_name: name, matric_number: matric, level: level } }
+                    options: {
+                        data: {
+                            full_name: name,
+                            matric_number: matric,
+                            level: level
+                        }
+                    }
                 });
+                
                 if (error) throw error;
-                alert('✅ Success! Check your email to verify.');
+                
+                alert('✅ Registration successful! Please check your email to verify.');
                 showLoginModal();
+                
+                // Clear form
+                document.getElementById('signupName').value = '';
+                document.getElementById('signupEmail').value = '';
+                document.getElementById('signupMatric').value = '';
+                document.getElementById('signupLevel').value = '';
+                document.getElementById('signupPassword').value = '';
+                document.getElementById('signupConfirm').value = '';
+                
             } catch (error) {
                 alert('❌ Error: ' + error.message);
             }
         }
         
+        // Login function
         async function handleLogin() {
-            if (!supabase) { alert('Connecting...'); return; }
+            console.log('Login button clicked');
+            
+            if (!supabase) {
+                alert('Please wait, connecting to server...');
+                return;
+            }
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
             if (!email || !password) {
-                alert('Enter email and password');
+                alert('Please enter email and password');
                 return;
             }
             
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
                 if (error) throw error;
+                
                 alert('✅ Login successful!');
                 window.location.href = 'dashboard.html';
+                
             } catch (error) {
                 alert('❌ Error: ' + error.message);
             }
         }
         
         function handleGoogleLogin() {
-            if (supabase) supabase.auth.signInWithOAuth({ provider: 'google' });
+            if (supabase) {
+                supabase.auth.signInWithOAuth({ provider: 'google' });
+            }
         }
         
+        // Set up all event listeners when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('getStartedBtn')?.addEventListener('click', showLoginModal);
-            document.getElementById('authNavBtn')?.addEventListener('click', showLoginModal);
-            document.getElementById('exploreBtn')?.addEventListener('click', function() {
-                window.location.href = 'dashboard.html';
-            });
+            console.log('Page loaded, setting up event listeners');
             
+            // Get Started button
+            const getStartedBtn = document.getElementById('getStartedBtn');
+            if (getStartedBtn) {
+                getStartedBtn.onclick = showLoginModal;
+                console.log('Get Started button set');
+            }
+            
+            // Login button
+            const loginBtn = document.getElementById('loginBtn');
+            if (loginBtn) {
+                loginBtn.onclick = handleLogin;
+                console.log('Login button set');
+            }
+            
+            // Register button
+            const registerBtn = document.getElementById('registerBtn');
+            if (registerBtn) {
+                registerBtn.onclick = handleSignup;
+                console.log('Register button set');
+            }
+            
+            // Google login button
+            const googleBtn = document.getElementById('googleLoginBtn');
+            if (googleBtn) {
+                googleBtn.onclick = handleGoogleLogin;
+                console.log('Google button set');
+            }
+            
+            // Show signup link
+            const showSignupLink = document.getElementById('showSignupLink');
+            if (showSignupLink) {
+                showSignupLink.onclick = function(e) {
+                    e.preventDefault();
+                    showSignupModal();
+                };
+            }
+            
+            // Show login link
+            const showLoginLink = document.getElementById('showLoginLink');
+            if (showLoginLink) {
+                showLoginLink.onclick = function(e) {
+                    e.preventDefault();
+                    showLoginModal();
+                };
+            }
+            
+            // Auth nav button
+            const authNavBtn = document.getElementById('authNavBtn');
+            if (authNavBtn) {
+                authNavBtn.onclick = showLoginModal;
+            }
+            
+            // Explore button
+            const exploreBtn = document.getElementById('exploreBtn');
+            if (exploreBtn) {
+                exploreBtn.onclick = function() {
+                    window.location.href = 'dashboard.html';
+                };
+            }
+            
+            // Close modal when clicking outside
             window.onclick = function(e) {
                 if (e.target.classList.contains('modal')) {
                     e.target.style.display = 'none';
@@ -202,207 +301,5 @@
             };
         });
     </script>
-
-    <script>
-function showLoginModal() {
-    document.getElementById('loginModal').style.display = 'flex';
-    document.getElementById('signupModal').style.display = 'none';
-}
-
-function showSignupModal() {
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('signupModal').style.display = 'flex';
-}
-
-function closeModal() {
-    document.getElementById('loginModal').style.display = 'none';
-    document.getElementById('signupModal').style.display = 'none';
-}
-
-// Make sure button works
-document.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('getStartedBtn');
-    if (btn) {
-        btn.onclick = function() {
-            showLoginModal();
-            return false;
-        };
-    }
-    
-    const authBtn = document.getElementById('authNavBtn');
-    if (authBtn) {
-        authBtn.onclick = function() {
-            showLoginModal();
-            return false;
-        };
-    }
-});
-</script>
-
- <script>
-    // Supabase config
-    const SUPABASE_URL = 'https://psojlbebapzgclighavti.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD6hkyrXvOIta235rg_jiiHOGdwF';
-    
-    let supabase = null;
-    
-    function initSupabase() {
-        if (typeof supabaseJs !== 'undefined') {
-            supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            console.log('Supabase ready');
-        } else {
-            setTimeout(initSupabase, 500);
-        }
-    }
-    initSupabase();
-    
-    // Modal functions
-    function showLoginModal() {
-        document.getElementById('loginModal').style.display = 'flex';
-        document.getElementById('signupModal').style.display = 'none';
-    }
-    
-    function showSignupModal() {
-        document.getElementById('loginModal').style.display = 'none';
-        document.getElementById('signupModal').style.display = 'flex';
-    }
-    
-    function closeModals() {
-        document.getElementById('loginModal').style.display = 'none';
-        document.getElementById('signupModal').style.display = 'none';
-    }
-    
-    // Signup function
-    async function handleSignup() {
-        if (!supabase) {
-            alert('Connecting to server... Please wait.');
-            return;
-        }
-        
-        const name = document.getElementById('signupName').value;
-        const email = document.getElementById('signupEmail').value;
-        const matric = document.getElementById('signupMatric').value;
-        const level = document.getElementById('signupLevel').value;
-        const password = document.getElementById('signupPassword').value;
-        const confirm = document.getElementById('signupConfirm').value;
-        
-        if (!name || !email || !matric || !level || !password) {
-            alert('Please fill all fields');
-            return;
-        }
-        
-        if (password !== confirm) {
-            alert('Passwords do not match');
-            return;
-        }
-        
-        if (password.length < 6) {
-            alert('Password must be at least 6 characters');
-            return;
-        }
-        
-        try {
-            const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: password,
-                options: {
-                    data: {
-                        full_name: name,
-                        matric_number: matric,
-                        level: level
-                    }
-                }
-            });
-            
-            if (error) throw error;
-            
-            alert('✅ Registration successful! Please check your email to verify.');
-            showLoginModal();
-            
-            // Clear form
-            document.getElementById('signupName').value = '';
-            document.getElementById('signupEmail').value = '';
-            document.getElementById('signupMatric').value = '';
-            document.getElementById('signupLevel').value = '';
-            document.getElementById('signupPassword').value = '';
-            document.getElementById('signupConfirm').value = '';
-            
-        } catch (error) {
-            alert('❌ Error: ' + error.message);
-        }
-    }
-    
-    // Login function
-    async function handleLogin() {
-        if (!supabase) {
-            alert('Connecting to server... Please wait.');
-            return;
-        }
-        
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        
-        if (!email || !password) {
-            alert('Please enter email and password');
-            return;
-        }
-        
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-            
-            if (error) throw error;
-            
-            alert('✅ Login successful! Redirecting...');
-            window.location.href = 'dashboard.html';
-            
-        } catch (error) {
-            alert('❌ Error: ' + error.message);
-        }
-    }
-    
-    function handleGoogleLogin() {
-        if (supabase) {
-            supabase.auth.signInWithOAuth({ provider: 'google' });
-        }
-    }
-    
-    // Set up event listeners when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        // Get Started button
-        const getStartedBtn = document.getElementById('getStartedBtn');
-        if (getStartedBtn) {
-            getStartedBtn.addEventListener('click', showLoginModal);
-        }
-        
-        // Login button
-        const loginBtn = document.getElementById('loginBtn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', handleLogin);
-        }
-        
-        // Register button
-        const registerBtn = document.getElementById('registerBtn');
-        if (registerBtn) {
-            registerBtn.addEventListener('click', handleSignup);
-        }
-        
-        // Auth nav button
-        const authNavBtn = document.getElementById('authNavBtn');
-        if (authNavBtn) {
-            authNavBtn.addEventListener('click', showLoginModal);
-        }
-        
-        // Explore button
-        const exploreBtn = document.getElementById('exploreBtn');
-        if (exploreBtn) {
-            exploreBtn.addEventListener('click', function() {
-                window.location.href = 'dashboard.html';
-            });
-        }
-    });
-</script>
 </body>
 </html>
