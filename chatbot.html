@@ -1,263 +1,163 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AI Study Assistant - Powered by GPT</title>
+    <title>AI Study Assistant - UMYU BioHub</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* styles same as before... */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a2e38, #0a1a2e);
-            color: white;
-            min-height: 100vh;
-        }
-        .navbar {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #0a2e38, #0a1a2e); color: white; }
+        .navbar { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 1rem 2rem; display: flex; justify-content: space-between; position: fixed; width: 100%; top: 0; }
         .logo { font-size: 1.5rem; font-weight: bold; color: #2ecc71; }
-        .logo i { margin-right: 10px; }
         .nav-links a { color: white; text-decoration: none; margin-left: 1.5rem; }
-        .nav-links a:hover { color: #2ecc71; }
+        .nav-links a.active { color: #2ecc71; }
         .container { max-width: 1200px; margin: 0 auto; padding: 80px 20px 20px; }
         .chat-header { text-align: center; margin-bottom: 30px; }
         .chat-header h1 { font-size: 2.5rem; background: linear-gradient(135deg, #2ecc71, #3498db); -webkit-background-clip: text; background-clip: text; color: transparent; }
-        .chat-container {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 550px;
-        }
+        .chat-container { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; height: 550px; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 20px; }
-        .message { display: flex; margin-bottom: 20px; animation: fadeIn 0.3s ease; }
+        .message { display: flex; margin-bottom: 20px; }
         .message.user { justify-content: flex-end; }
         .message-content { max-width: 75%; padding: 12px 18px; border-radius: 20px; line-height: 1.5; }
-        .message.ai .message-content { background: rgba(46, 204, 113, 0.2); border: 1px solid rgba(46, 204, 113, 0.3); border-top-left-radius: 5px; }
-        .message.user .message-content { background: #2ecc71; border-top-right-radius: 5px; }
-        .message-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 1.2rem; }
+        .message.ai .message-content { background: rgba(46, 204, 113, 0.2); border: 1px solid rgba(46, 204, 113, 0.3); }
+        .message.user .message-content { background: #2ecc71; }
+        .message-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; }
         .message.ai .message-avatar { background: rgba(46, 204, 113, 0.3); }
         .message.user .message-avatar { background: #2ecc71; margin-left: 12px; margin-right: 0; }
         .chat-input-area { padding: 20px; background: rgba(0,0,0,0.3); display: flex; gap: 10px; }
-        .chat-input-area input { flex: 1; padding: 14px; border: none; border-radius: 30px; background: rgba(255,255,255,0.2); color: white; font-size: 15px; outline: none; }
-        .chat-input-area input::placeholder { color: rgba(255,255,255,0.5); }
-        .chat-input-area button { padding: 14px 30px; background: #2ecc71; border: none; border-radius: 30px; color: white; cursor: pointer; font-weight: bold; font-size: 15px; transition: all 0.3s; }
-        .chat-input-area button:hover { opacity: 0.9; transform: scale(1.02); }
-        .chat-input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .suggestions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .suggestion-chip { background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 25px; font-size: 12px; cursor: pointer; transition: all 0.3s; }
-        .suggestion-chip:hover { background: #2ecc71; transform: scale(1.05); }
-        .typing { display: none; padding: 12px 20px; align-items: center; gap: 12px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .typing span { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; display: inline-block; animation: bounce 1.4s infinite ease-in-out; }
-        .typing span:nth-child(1) { animation-delay: -0.32s; }
-        .typing span:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .model-badge {
-            text-align: center;
-            font-size: 11px;
-            color: #aaa;
-            margin-top: 10px;
-        }
-        @media (max-width: 768px) { .message-content { max-width: 85%; } .suggestions { display: none; } }
+        .chat-input-area input { flex: 1; padding: 14px; border-radius: 30px; background: rgba(255,255,255,0.2); color: white; border: none; outline: none; }
+        .chat-input-area button { padding: 14px 30px; background: #2ecc71; border: none; border-radius: 30px; color: white; cursor: pointer; }
+        .suggestions { display: flex; gap: 10px; flex-wrap: wrap; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .suggestion-chip { background: rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 25px; cursor: pointer; }
+        .suggestion-chip:hover { background: #2ecc71; }
+        .typing { display: none; padding: 12px 20px; align-items: center; gap: 12px; }
+        .typing span { width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; display: inline-block; animation: bounce 1.4s infinite; }
+        @keyframes bounce { 0%,80%,100%{transform:scale(0)} 40%{transform:scale(1)} }
+        .model-badge { text-align: center; font-size: 12px; color: #aaa; margin-top: 10px; }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <div class="logo"><i class="fas fa-dna"></i> UMYU BioHub</div>
+        <div class="logo">🧬 UMYU BioHub</div>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="dashboard.html">Dashboard</a>
-            <a href="chatbot.html" style="color:#2ecc71;">AI Assistant</a>
+            <a href="chatbot.html" class="active">AI Assistant</a>
         </div>
     </nav>
-
     <div class="container">
         <div class="chat-header">
             <h1>🤖 AI Study Assistant</h1>
-            <p>Powered by OpenAI GPT - Ask me ANYTHING about Biochemistry!</p>
+            <p>Powered by Google Gemini | Secured with Supabase</p>
         </div>
-
         <div class="chat-container">
             <div class="chat-messages" id="chatMessages">
                 <div class="message ai">
                     <div class="message-avatar"><i class="fas fa-robot"></i></div>
-                    <div class="message-content">👋 Hello! I'm your **AI Study Assistant powered by OpenAI GPT**.<br><br>I can help you with:<br><br>• 📚 Explaining complex biochemistry concepts<br>• 🧬 Answering any question about metabolism, enzymes, proteins<br>• 📝 Solving past questions<br>• 💡 Study strategies and tips<br>• 🔬 Research paper explanations<br><br>**What would you like to learn today?**</div>
+                    <div class="message-content">Hello! I'm your AI Biochemistry tutor. Ask me anything about metabolism, enzymes, proteins, or study tips.</div>
                 </div>
             </div>
-            <div class="typing" id="typingIndicator">
-                <span></span><span></span><span></span>
-                <span style="color:#aaa;font-size:13px;margin-left:8px;">AI is thinking...</span>
-            </div>
+            <div class="typing" id="typingIndicator"><span></span><span></span><span></span><span style="margin-left:8px;">AI is thinking...</span></div>
             <div class="chat-input-area">
-                <input type="text" id="chatInput" placeholder="Ask anything about Biochemistry... e.g., 'Explain the Krebs cycle step by step'">
+                <input type="text" id="chatInput" placeholder="Ask a question...">
                 <button id="sendBtn">Send</button>
             </div>
             <div class="suggestions">
-                <div class="suggestion-chip" onclick="askQuestion('Explain glycolysis step by step')">🧪 Explain glycolysis</div>
-                <div class="suggestion-chip" onclick="askQuestion('What are the 4 levels of protein structure?')">🔬 Protein structure</div>
-                <div class="suggestion-chip" onclick="askQuestion('How does DNA replication work?')">🧬 DNA replication</div>
-                <div class="suggestion-chip" onclick="askQuestion('What is enzyme kinetics?')">⚡ Enzyme kinetics</div>
-                <div class="suggestion-chip" onclick="askQuestion('Give me study tips for biochemistry exam')">📚 Study tips</div>
+                <div class="suggestion-chip" onclick="askQuestion('Explain glycolysis')">⚡ Glycolysis</div>
+                <div class="suggestion-chip" onclick="askQuestion('What is enzyme kinetics?')">🧪 Enzyme kinetics</div>
+                <div class="suggestion-chip" onclick="askQuestion('Protein structure levels')">🔬 Protein structure</div>
+                <div class="suggestion-chip" onclick="askQuestion('DNA replication steps')">🧬 DNA replication</div>
             </div>
         </div>
-        <div class="model-badge">🤖 Powered by OpenAI GPT-3.5 Turbo</div>
+        <div class="model-badge">🤖 Google Gemini 1.5 Flash (secure backend)</div>
     </div>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     <script>
-        (function() {
-            // Supabase config
-            const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
-            
-            const OPENAI_API_KEY = ''; // will use Vercel environment variable
-            
-            let supabase = null;
-            let isLoading = false;
-            
-            function initSupabase() {
-                const lib = window.supabaseJs || window.supabase;
-                if (lib) {
-                    supabase = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
-                    console.log('Supabase ready');
-                }
+        // Supabase config
+        const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
+        let supabase = null;
+        let currentUser = null;
+
+        function initSupabase() {
+            const lib = window.supabaseJs || window.supabase;
+            if (lib) {
+                supabase = lib.createClient(SUPABASE_URL, SUPABASE_KEY);
+                checkAuth();
+            } else {
+                setTimeout(initSupabase, 500);
             }
-            initSupabase();
-            
-            function addMessage(text, sender) {
-                const container = document.getElementById('chatMessages');
-                const div = document.createElement('div');
-                div.className = `message ${sender}`;
-                let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-                if (sender === 'ai') {
-                    div.innerHTML = `<div class="message-avatar"><i class="fas fa-robot"></i></div><div class="message-content">${formatted}</div>`;
-                } else {
-                    div.innerHTML = `<div class="message-content">${formatted}</div><div class="message-avatar"><i class="fas fa-user"></i></div>`;
-                }
-                container.appendChild(div);
-                container.scrollTop = container.scrollHeight;
+        }
+
+        async function checkAuth() {
+            const { data } = await supabase.auth.getSession();
+            if (!data.session) {
+                // User not logged in, show warning but still allow chat (guest mode)
+                addMessage("⚠️ You are not logged in. Please login to save your chat history.", 'ai');
+            } else {
+                currentUser = data.session.user;
+                addMessage(`👋 Welcome back, ${currentUser.email.split('@')[0]}! I'm here to help with Biochemistry.`, 'ai');
             }
-            
-            function showTyping(show) {
-                document.getElementById('typingIndicator').style.display = show ? 'flex' : 'none';
-                document.getElementById('sendBtn').disabled = show;
+        }
+
+        initSupabase();
+
+        let isLoading = false;
+
+        function addMessage(text, sender) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `message ${sender}`;
+            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            if (sender === 'ai') {
+                div.innerHTML = `<div class="message-avatar"><i class="fas fa-robot"></i></div><div class="message-content">${formatted}</div>`;
+            } else {
+                div.innerHTML = `<div class="message-content">${formatted}</div><div class="message-avatar"><i class="fas fa-user"></i></div>`;
             }
-            
-            async function sendMessage() {
-                if (isLoading) return;
-                
-                const input = document.getElementById('chatInput');
-                const userMessage = input.value.trim();
-                if (!userMessage) return;
-                
-                addMessage(userMessage, 'user');
-                input.value = '';
-                isLoading = true;
-                showTyping(true);
-                
-                try {
-                    let response;
-                    
-                    // Check if OpenAI API key is configured
-                    if (OPENAI_API_KEY && OPENAI_API_KEY !== '')// use Vercel environment variable {
-                        // Use OpenAI API
-                        const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${OPENAI_API_KEY}`
-                            },
-                            body: JSON.stringify({
-                                model: 'gpt-3.5-turbo',
-                                messages: [
-                                    {
-                                        role: 'system',
-                                        content: `You are a knowledgeable Biochemistry professor at Umaru Musa Yar'adua University Katsina. 
-                                        You help students understand biochemistry concepts, metabolic pathways, enzyme kinetics, 
-                                        protein structure, molecular biology, and related topics. Give clear, accurate, and educational 
-                                        responses. Use examples and analogies when helpful. Keep responses focused on biochemistry 
-                                        and be encouraging to students.`
-                                    },
-                                    {
-                                        role: 'user',
-                                        content: userMessage
-                                    }
-                                ],
-                                temperature: 0.7,
-                                max_tokens: 800
-                            })
-                        });
-                        
-                        if (!aiResponse.ok) {
-                            const error = await aiResponse.json();
-                            throw new Error(error.error?.message || 'API request failed');
-                        }
-                        
-                        const data = await aiResponse.json();
-                        response = data.choices[0].message.content;
-                    } else {
-                        // Fallback to local responses when API key not set
-                        response = getLocalResponse(userMessage);
-                        if (!OPENAI_API_KEY || OPENAI_API_KEY === '') // Will use Vercel environment variable {
-                            addMessage("⚠️ **Note:** To use full AI, add your OpenAI API key in the code. For now, using basic responses.", 'ai');
-                        }
-                    }
-                    
-                    addMessage(response, 'ai');
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    addMessage(`❌ Sorry, I encountered an error: ${error.message}\n\nPlease try again or check your OpenAI API key.`, 'ai');
-                } finally {
-                    isLoading = false;
-                    showTyping(false);
-                }
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTyping(show) {
+            document.getElementById('typingIndicator').style.display = show ? 'flex' : 'none';
+            document.getElementById('sendBtn').disabled = show;
+        }
+
+        async function sendMessage() {
+            if (isLoading) return;
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+            addMessage(msg, 'user');
+            input.value = '';
+            isLoading = true;
+            showTyping(true);
+
+            try {
+                const response = await fetch('/api/gemini', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, userId: currentUser?.id || null })
+                });
+                if (!response.ok) throw new Error('API error');
+                const data = await response.json();
+                addMessage(data.reply, 'ai');
+            } catch (err) {
+                addMessage('❌ Sorry, I could not process your request. Please try again later.', 'ai');
+            } finally {
+                isLoading = false;
+                showTyping(false);
             }
-            
-            // Local fallback responses when API is not available
-            function getLocalResponse(question) {
-                const q = question.toLowerCase();
-                if (q.includes('glycolysis')) return "🍇 **Glycolysis**: The breakdown of glucose (6C) into pyruvate (3C). Occurs in cytoplasm. Net gain: 2 ATP + 2 NADH. Key enzymes: Hexokinase, Phosphofructokinase-1, Pyruvate kinase.";
-                if (q.includes('enzyme')) return "🧪 **Enzymes** are protein catalysts that speed up reactions. They work by lowering activation energy. Each enzyme has an active site specific to its substrate.";
-                if (q.includes('protein') && q.includes('structure')) return "🔬 **4 Levels of Protein Structure:**\n1. Primary - amino acid sequence\n2. Secondary - alpha helices/beta sheets\n3. Tertiary - 3D folding\n4. Quaternary - multiple subunits";
-                if (q.includes('dna') && q.includes('replic')) return "🧬 **DNA Replication**: Semi-conservative process. Helicase unwinds DNA, DNA polymerase synthesizes new strands, ligase joins Okazaki fragments.";
-                return "I'm your Biochemistry AI assistant! I can explain glycolysis, enzymes, protein structure, DNA replication, metabolism, and more. What specific topic would you like to learn about?";
-            }
-            
-            function askQuestion(question) {
-                document.getElementById('chatInput').value = question;
-                sendMessage();
-            }
-            
-            // Setup event listeners
-            document.getElementById('sendBtn').onclick = sendMessage;
-            document.getElementById('chatInput').onkeypress = function(e) {
-                if (e.key === 'Enter') sendMessage();
-            };
-            
-            console.log('AI Chatbot ready! OpenAI status:', OPENAI_API_KEY && OPENAI_API_KEY !== '' ? // will use Vercel environment variable '✅ Configured' : '⚠️ Not configured (using fallback)');
-            
-            // Show API status
-            if (!OPENAI_API_KEY || OPENAI_API_KEY === '') // will use Vercel environment variable {
-                setTimeout(() => {
-                    addMessage("ℹ️ **Note:** To use the full AI capabilities, please add your OpenAI API key in the code. Get one from [platform.openai.com](https://platform.openai.com). For now, I'll use basic responses.", 'ai');
-                }, 1000);
-            }
-        })();
+        }
+
+        function askQuestion(q) {
+            document.getElementById('chatInput').value = q;
+            sendMessage();
+        }
+
+        document.getElementById('sendBtn').onclick = sendMessage;
+        document.getElementById('chatInput').onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
     </script>
 </body>
 </html>
