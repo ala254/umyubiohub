@@ -276,42 +276,54 @@
         
         // Upload material
         async function uploadMaterial() {
-            const title = document.getElementById('title').value;
-            const course = document.getElementById('course').value;
-            const level = document.getElementById('level').value;
-            const type = document.getElementById('type').value;
-            const desc = document.getElementById('desc').value;
-            
-            if (!title || !course) {
-                document.getElementById('uploadMsg').innerHTML = 'Please fill title and course';
-                document.getElementById('uploadMsg').style.color = '#e74c3c';
-                return;
-            }
-            
-            const { error } = await supabase.from('materials').insert({
-                title: title,
-                course_code: course,
-                level: level,
-                type: type,
-                description: desc,
-                uploader: 'admin',
-                downloads: 0,
-                is_approved: true
-            });
-            
-            if (error) {
-                document.getElementById('uploadMsg').innerHTML = 'Error: ' + error.message;
-                document.getElementById('uploadMsg').style.color = '#e74c3c';
-            } else {
-                document.getElementById('uploadMsg').innerHTML = '✅ Material uploaded successfully!';
-                document.getElementById('uploadMsg').style.color = '#2ecc71';
-                loadMaterials();
-                loadStats();
-                document.getElementById('title').value = '';
-                document.getElementById('course').value = '';
-                document.getElementById('desc').value = '';
-            }
-        }
+    const title = document.getElementById('title').value;
+    const course = document.getElementById('course').value;
+    const level = document.getElementById('level').value;
+    const type = document.getElementById('type').value;
+    const desc = document.getElementById('desc').value;
+    
+    console.log('Uploading:', {title, course, level, type});
+    
+    if (!title || !course) {
+        document.getElementById('uploadMsg').innerHTML = 'Please fill title and course';
+        document.getElementById('uploadMsg').style.color = '#e74c3c';
+        return;
+    }
+    
+    try {
+        const { data, error } = await supabase.from('materials').insert({
+            title: title,
+            course_code: course,
+            level: level,
+            type: type,
+            description: desc,
+            uploader: 'admin',
+            downloads: 0,
+            is_approved: true,
+            created_at: new Date()
+        }).select();
+        
+        if (error) throw error;
+        
+        console.log('Upload success:', data);
+        document.getElementById('uploadMsg').innerHTML = '✅ Material uploaded successfully!';
+        document.getElementById('uploadMsg').style.color = '#2ecc71';
+        
+        // Clear form
+        document.getElementById('title').value = '';
+        document.getElementById('course').value = '';
+        document.getElementById('desc').value = '';
+        
+        // Refresh lists
+        loadMaterials();
+        loadStats();
+        
+    } catch (error) {
+        console.error('Upload error:', error);
+        document.getElementById('uploadMsg').innerHTML = '❌ Error: ' + error.message;
+        document.getElementById('uploadMsg').style.color = '#e74c3c';
+    }
+}
         
         // Delete material
         async function deleteMaterial(id) {
