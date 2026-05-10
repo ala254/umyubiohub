@@ -1,97 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+    <title>UMYU BioHub</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UMYU BioHub | Biochemistry Digital Library</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0a2e38, #0a1a2e);
+            color: white;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .hero {
+            text-align: center;
+            padding: 8rem 1rem 4rem;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #2ecc71, #3498db);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            margin: 0.5rem;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background: #2ecc71;
+            color: white;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #2ecc71;
+            color: #2ecc71;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: rgba(30,40,50,0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            width: 350px;
+            text-align: center;
+        }
+        .modal-content h2 {
+            margin-bottom: 1rem;
+            color: #2ecc71;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        .modal-content button {
+            width: 100%;
+            padding: 0.8rem;
+            margin-top: 1rem;
+            background: #2ecc71;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .close-modal {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 150px;
+        }
+        .stat-card h3 {
+            font-size: 2rem;
+            color: #2ecc71;
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <nav class="glass-nav">
-            <div class="nav-container">
-                <div class="logo">
-                    <i class="fas fa-dna"></i>
-                    <span>UMYU BioHub</span>
-                </div>
-                <div class="nav-links">
-                    <a href="index.html" class="active">Home</a>
-                    <a href="dashboard.html">Library</a>
-                    <a href="#" id="authNavBtn">Login</a>
-                </div>
-                <div class="theme-toggle">
-                    <i class="fas fa-moon"></i>
-                </div>
-            </div>
-        </nav>
 
-        <section class="hero">
-            <div class="hero-content">
-                <h1 class="gradient-text">Biochemistry Digital Library</h1>
-                <p>Access lecture notes, past questions, research materials, and more for all levels of your Biochemistry journey at Umaru Musa Yar'adua University Katsina</p>
-                <div class="hero-buttons">
-                    <button class="btn-primary" id="getStartedBtn" onclick="showLoginModal()">Get Started</button>
-                    <button class="btn-outline" id="exploreBtn"><i class="fas fa-book"></i> Explore Materials</button>
-                </div>
-            </div>
-            <div class="hero-stats">
-                <div class="stat-card">
-                    <i class="fas fa-file-pdf"></i>
-                    <h3>2,500+</h3>
-                    <p>Academic Materials</p>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-users"></i>
-                    <h3>3,200+</h3>
-                    <p>Active Students</p>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-chalkboard-user"></i>
-                    <h3>45+</h3>
-                    <p>Course Modules</p>
-                </div>
-            </div>
-        </section>
+    <div class="navbar">
+        <div class="logo">🧬 UMYU BioHub</div>
+        <div>
+            <a href="#" class="nav-link" id="loginNavBtn">Login</a>
+        </div>
+    </div>
 
-        <div id="loginModal" class="modal">
-            <div class="modal-content glass">
-                <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
-                <h2>Login to Your Account</h2>
-                <input type="email" id="loginEmail" placeholder="University Email">
-                <input type="password" id="loginPassword" placeholder="Password">
-                <button class="btn-primary" id="loginBtn">Login</button>
-                <button class="btn-google" id="googleLoginBtn"><i class="fab fa-google"></i> Continue with Google</button>
-                <p style="margin-top: 1rem; text-align: center;">
-                    Don't have an account? <a href="#" id="showSignupLink">Sign Up</a>
-                </p>
+    <div class="hero">
+        <h1>Biochemistry Digital Library</h1>
+        <p>Access lecture notes, past questions, research materials, and more for all levels</p>
+        <div>
+            <button class="btn btn-primary" id="getStartedBtn">Get Started</button>
+            <button class="btn btn-outline">Explore Materials</button>
+        </div>
+        <div class="stats">
+            <div class="stat-card">
+                <h3>2,500+</h3>
+                <p>Academic Materials</p>
+            </div>
+            <div class="stat-card">
+                <h3>3,200+</h3>
+                <p>Active Students</p>
+            </div>
+            <div class="stat-card">
+                <h3>45+</h3>
+                <p>Course Modules</p>
             </div>
         </div>
+    </div>
 
-        <div id="signupModal" class="modal">
-            <div class="modal-content glass">
-                <span class="close-modal" onclick="closeModal('signupModal')">&times;</span>
-                <h2>Student Registration</h2>
-                <input type="text" id="signupName" placeholder="Full Name">
-                <input type="email" id="signupEmail" placeholder="University Email">
-                <input type="text" id="signupMatric" placeholder="Matric Number">
-                <select id="signupLevel">
-                    <option value="">Select Level</option>
-                    <option value="100">100 Level</option>
-                    <option value="200">200 Level</option>
-                    <option value="300">300 Level</option>
-                    <option value="400">400 Level</option>
-                    <option value="500">500 Level</option>
-                </select>
-                <input type="password" id="signupPassword" placeholder="Password">
-                <input type="password" id="signupConfirm" placeholder="Confirm Password">
-                <button class="btn-primary" id="registerBtn">Register</button>
-                <p style="margin-top: 1rem; text-align: center;">
-                    Already have an account? <a href="#" id="showLoginLink">Login</a>
-                </p>
-            </div>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeLoginModal()">&times;</span>
+            <h2>🔐 Login</h2>
+            <input type="email" id="loginEmail" placeholder="University Email">
+            <input type="password" id="loginPassword" placeholder="Password">
+            <button id="loginSubmitBtn">Login</button>
+            <p style="margin-top: 1rem;">Don't have an account? <a href="#" style="color:#2ecc71;">Sign Up</a></p>
         </div>
     </div>
 
@@ -100,13 +185,13 @@
         const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
         
-        let supabase = null;
+        let supabaseClient = null;
         
         // Initialize Supabase
         function initSupabase() {
             if (typeof supabaseJs !== 'undefined') {
-                supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                console.log('✅ Supabase connected');
+                supabaseClient = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('Supabase connected');
             } else {
                 setTimeout(initSupabase, 500);
             }
@@ -114,88 +199,18 @@
         initSupabase();
         
         // Modal functions
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
         function showLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
-            document.getElementById('signupModal').style.display = 'none';
         }
         
-        function showSignupModal() {
+        function closeLoginModal() {
             document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('signupModal').style.display = 'flex';
-        }
-        
-        // Signup function
-        async function handleSignup() {
-            console.log('Signup button clicked');
-            
-            if (!supabase) {
-                alert('Please wait, connecting to server...');
-                return;
-            }
-            
-            const name = document.getElementById('signupName').value;
-            const email = document.getElementById('signupEmail').value;
-            const matric = document.getElementById('signupMatric').value;
-            const level = document.getElementById('signupLevel').value;
-            const password = document.getElementById('signupPassword').value;
-            const confirm = document.getElementById('signupConfirm').value;
-            
-            if (!name || !email || !matric || !level || !password) {
-                alert('Please fill all fields');
-                return;
-            }
-            
-            if (password !== confirm) {
-                alert('Passwords do not match');
-                return;
-            }
-            
-            if (password.length < 6) {
-                alert('Password must be at least 6 characters');
-                return;
-            }
-            
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: {
-                            full_name: name,
-                            matric_number: matric,
-                            level: level
-                        }
-                    }
-                });
-                
-                if (error) throw error;
-                
-                alert('✅ Registration successful! Please check your email to verify.');
-                showLoginModal();
-                
-                // Clear form
-                document.getElementById('signupName').value = '';
-                document.getElementById('signupEmail').value = '';
-                document.getElementById('signupMatric').value = '';
-                document.getElementById('signupLevel').value = '';
-                document.getElementById('signupPassword').value = '';
-                document.getElementById('signupConfirm').value = '';
-                
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
         }
         
         // Login function
         async function handleLogin() {
-            console.log('Login button clicked');
-            
-            if (!supabase) {
-                alert('Please wait, connecting to server...');
+            if (!supabaseClient) {
+                alert('Connecting to server...');
                 return;
             }
             
@@ -208,98 +223,32 @@
             }
             
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
                 
                 if (error) throw error;
                 
-                alert('✅ Login successful!');
+                alert('Login successful! Redirecting...');
                 window.location.href = 'dashboard.html';
                 
             } catch (error) {
-                alert('❌ Error: ' + error.message);
+                alert('Error: ' + error.message);
             }
         }
         
-        function handleGoogleLogin() {
-            if (supabase) {
-                supabase.auth.signInWithOAuth({ provider: 'google' });
-            }
-        }
+        // Button click handlers
+        document.getElementById('getStartedBtn').onclick = showLoginModal;
+        document.getElementById('loginNavBtn').onclick = showLoginModal;
+        document.getElementById('loginSubmitBtn').onclick = handleLogin;
         
-        // Set up all event listeners when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Page loaded, setting up event listeners');
-            
-            // Get Started button
-            const getStartedBtn = document.getElementById('getStartedBtn');
-            if (getStartedBtn) {
-                getStartedBtn.onclick = showLoginModal;
-                console.log('Get Started button set');
+        // Close modal when clicking outside
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeLoginModal();
             }
-            
-            // Login button
-            const loginBtn = document.getElementById('loginBtn');
-            if (loginBtn) {
-                loginBtn.onclick = handleLogin;
-                console.log('Login button set');
-            }
-            
-            // Register button
-            const registerBtn = document.getElementById('registerBtn');
-            if (registerBtn) {
-                registerBtn.onclick = handleSignup;
-                console.log('Register button set');
-            }
-            
-            // Google login button
-            const googleBtn = document.getElementById('googleLoginBtn');
-            if (googleBtn) {
-                googleBtn.onclick = handleGoogleLogin;
-                console.log('Google button set');
-            }
-            
-            // Show signup link
-            const showSignupLink = document.getElementById('showSignupLink');
-            if (showSignupLink) {
-                showSignupLink.onclick = function(e) {
-                    e.preventDefault();
-                    showSignupModal();
-                };
-            }
-            
-            // Show login link
-            const showLoginLink = document.getElementById('showLoginLink');
-            if (showLoginLink) {
-                showLoginLink.onclick = function(e) {
-                    e.preventDefault();
-                    showLoginModal();
-                };
-            }
-            
-            // Auth nav button
-            const authNavBtn = document.getElementById('authNavBtn');
-            if (authNavBtn) {
-                authNavBtn.onclick = showLoginModal;
-            }
-            
-            // Explore button
-            const exploreBtn = document.getElementById('exploreBtn');
-            if (exploreBtn) {
-                exploreBtn.onclick = function() {
-                    window.location.href = 'dashboard.html';
-                };
-            }
-            
-            // Close modal when clicking outside
-            window.onclick = function(e) {
-                if (e.target.classList.contains('modal')) {
-                    e.target.style.display = 'none';
-                }
-            };
-        });
+        };
     </script>
 </body>
 </html>
