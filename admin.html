@@ -1,246 +1,898 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
-    <title>Admin Panel - UMYU BioHub</title>
-    <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial; background: #0a2e38; color: white; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .header { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .btn { background: #2ecc71; padding: 10px 20px; border: none; border-radius: 8px; color: white; cursor: pointer; }
-        .btn-danger { background: #e74c3c; }
-        .card { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        input, select, textarea { width: 100%; padding: 10px; margin: 5px 0; border-radius: 5px; border: none; background: rgba(255,255,255,0.2); color: white; }
-        .nav { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .nav button { background: rgba(255,255,255,0.2); padding: 10px 20px; border: none; border-radius: 8px; color: white; cursor: pointer; }
-        .nav button.active { background: #2ecc71; }
-        .tab { display: none; }
-        .tab.active { display: block; }
-        .stats { display: flex; gap: 20px; margin-top: 20px; }
-        .stat-box { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; text-align: center; flex: 1; }
-        .stat-box h3 { font-size: 2rem; color: #2ecc71; }
-          .glass-footer {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding: 2rem 5%;
-    margin-top: 3rem;
-}
-.footer-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-.footer-section {
-    flex: 1;
-    min-width: 180px;
-}
-.footer-section h3 {
-    color: #2ecc71;
-    margin-bottom: 0.8rem;
-    font-size: 1.1rem;
-}
-.footer-section p, .footer-section a {
-    color: #ccc;
-    font-size: 0.9rem;
-    margin: 0.3rem 0;
-    text-decoration: none;
-}
-.footer-section a:hover {
-    color: #2ecc71;
-}
-@media (max-width: 768px) {
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — UMYUBIOHUB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #050d1a; --bg2: #091525; --bg3: #0d1e33;
+      --card: rgba(255,255,255,0.04); --card-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08); --border-accent: rgba(46,204,113,0.3);
+      --text: #f0f4f8; --text2: #8a9bb5; --text3: #4a5a70;
+      --accent: #2ecc71; --accent-dim: rgba(46,204,113,0.12); --accent-glow: rgba(46,204,113,0.35);
+      --blue: #3d9be9; --blue-dim: rgba(61,155,233,0.1);
+      --purple: #9b59b6; --orange: #e67e22; --red: #e74c3c;
+      --sidebar-w: 240px; --nav-h: 62px;
+      --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+      --t: 0.22s cubic-bezier(0.4,0,0.2,1);
+      --font-d: 'Syne', sans-serif; --font-b: 'DM Sans', sans-serif;
     }
-}
-    </style>
+    [data-theme="light"] {
+      --bg: #f0f4f9; --bg2: #e8edf5; --bg3: #dde4ef;
+      --card: rgba(255,255,255,0.9); --card-hover: #ffffff;
+      --border: rgba(0,0,0,0.08); --border-accent: rgba(34,168,90,0.4);
+      --text: #0d1b2e; --text2: #4a5a70; --text3: #8a9bb5;
+      --accent: #22a85a; --accent-dim: rgba(34,168,90,0.1);
+      --blue: #2b7fd6; --blue-dim: rgba(43,127,214,0.1);
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{font-size:16px}
+    body{font-family:var(--font-b);background:var(--bg);color:var(--text);display:flex;min-height:100vh;overflow-x:hidden;transition:background var(--t),color var(--t)}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+    /* SIDEBAR */
+    .sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:500;transition:transform var(--t)}
+    .sidebar-logo{display:flex;align-items:center;gap:10px;padding:1.1rem 1.2rem;border-bottom:1px solid var(--border);text-decoration:none;font-family:var(--font-d);font-weight:800;font-size:1.1rem;color:var(--text)}
+    .logo-ico{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--blue));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:white;flex-shrink:0}
+    .admin-badge{margin-left:auto;background:rgba(231,76,60,0.15);color:var(--red);font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:99px;text-transform:uppercase;letter-spacing:0.05em}
+    .sidebar-nav{flex:1;padding:0.8rem 0.6rem;overflow-y:auto}
+    .nav-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text3);padding:0.5rem 0.6rem;margin-bottom:0.3rem}
+    .nav-item{display:flex;align-items:center;gap:0.65rem;padding:0.6rem 0.75rem;border-radius:var(--r-sm);color:var(--text2);text-decoration:none;font-size:0.85rem;font-weight:500;transition:all var(--t);cursor:pointer;margin-bottom:2px}
+    .nav-item:hover{background:var(--card-hover);color:var(--text)}
+    .nav-item.active{background:var(--accent-dim);color:var(--accent);font-weight:600}
+    .nav-item i{width:16px;text-align:center;font-size:0.85rem;flex-shrink:0}
+    .nav-cnt{margin-left:auto;background:var(--bg3);color:var(--text2);font-size:0.65rem;font-weight:700;padding:1px 6px;border-radius:99px}
+    .sidebar-footer{padding:0.9rem 1rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:0.7rem}
+    .admin-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--red),var(--orange));display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:800;font-size:0.9rem;color:white}
+    .admin-info{flex:1;min-width:0}
+    .admin-name{font-weight:600;font-size:0.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .admin-role{font-size:0.68rem;color:var(--red)}
+
+    /* TOPBAR */
+    .topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--nav-h);background:rgba(5,13,26,0.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;padding:0 1.4rem;z-index:400;transition:background var(--t)}
+    [data-theme="light"] .topbar{background:rgba(240,244,249,0.9)}
+    .topbar-title{font-family:var(--font-d);font-size:1.05rem;font-weight:700}
+    .topbar-actions{margin-left:auto;display:flex;align-items:center;gap:0.5rem}
+    .icon-btn{width:34px;height:34px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.82rem;transition:all var(--t)}
+    .icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+    /* MAIN */
+    .main{margin-left:var(--sidebar-w);margin-top:var(--nav-h);flex:1;padding:1.6rem;min-width:0}
+
+    /* PAGES */
+    .page{display:none}
+    .page.active{display:block}
+
+    /* STATS ROW */
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.6rem}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:1.2rem;transition:all var(--t)}
+    .stat-card:hover{border-color:var(--border-accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+    .stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:0.8rem}
+    .stat-ico{width:42px;height:42px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:1rem}
+    .stat-trend{font-size:0.73rem;font-weight:600;display:flex;align-items:center;gap:0.2rem}
+    .stat-trend.up{color:var(--accent)}
+    .stat-trend.down{color:var(--red)}
+    .stat-val{font-family:var(--font-d);font-size:1.8rem;font-weight:800;letter-spacing:-0.02em;line-height:1}
+    .stat-lbl{font-size:0.75rem;color:var(--text2);margin-top:3px}
+
+    /* TABLE */
+    .table-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+    .table-header{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 1.4rem;border-bottom:1px solid var(--border)}
+    .table-header h3{font-family:var(--font-d);font-size:0.95rem;font-weight:700}
+    .table-actions{display:flex;gap:0.5rem;align-items:center}
+    table{width:100%;border-collapse:collapse}
+    thead tr{border-bottom:1px solid var(--border)}
+    th{padding:0.8rem 1rem;text-align:left;font-size:0.72rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
+    td{padding:0.85rem 1rem;font-size:0.83rem;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:var(--card-hover)}
+    .td-title{font-weight:600;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .td-course{font-family:monospace;font-size:0.78rem;background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--text2)}
+    .type-badge{font-size:0.65rem;font-weight:700;letter-spacing:0.05em;padding:2px 7px;border-radius:99px;text-transform:uppercase;white-space:nowrap}
+    .badge-note{background:var(--accent-dim);color:var(--accent)}
+    .badge-pq{background:var(--blue-dim);color:var(--blue)}
+    .badge-prac{background:rgba(230,126,34,0.12);color:var(--orange)}
+    .badge-res{background:rgba(155,89,182,0.12);color:var(--purple)}
+    .action-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--card);color:var(--text3);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:0.75rem;transition:all var(--t)}
+    .action-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .action-btn.del:hover{border-color:var(--red);color:var(--red)}
+    .status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+    .dot-green{background:var(--accent)}
+    .dot-yellow{background:var(--orange)}
+    .dot-red{background:var(--red)}
+
+    /* SEARCH INPUT */
+    .search-input{display:flex;align-items:center;gap:0.5rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-sm);padding:0.45rem 0.8rem;font-size:0.83rem;transition:all var(--t)}
+    .search-input:focus-within{border-color:var(--accent)}
+    .search-input input{background:none;border:none;outline:none;color:var(--text);font-family:var(--font-b);font-size:0.83rem;width:200px}
+    .search-input input::placeholder{color:var(--text3)}
+    .search-input i{color:var(--text3)}
+
+    /* UPLOAD FORM */
+    .upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+    .form-group{margin-bottom:0}
+    .form-label{display:block;font-size:0.8rem;font-weight:600;color:var(--text2);margin-bottom:0.35rem;letter-spacing:0.03em}
+    .form-input,.form-select,.form-textarea{width:100%;padding:0.7rem 0.9rem;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:var(--font-b);font-size:0.88rem;transition:all var(--t);outline:none}
+    .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
+    .form-input::placeholder,.form-textarea::placeholder{color:var(--text3)}
+    .form-select option{background:var(--bg2)}
+    .form-textarea{resize:vertical;min-height:80px}
+    .full-col{grid-column:1/-1}
+
+    /* DROPZONE */
+    .dropzone{grid-column:1/-1;border:2px dashed var(--border);border-radius:var(--r-md);padding:2rem;text-align:center;cursor:pointer;transition:all var(--t);background:var(--bg2)}
+    .dropzone:hover,.dropzone.drag{border-color:var(--accent);background:var(--accent-dim)}
+    .dropzone i{font-size:2rem;color:var(--text3);margin-bottom:0.8rem;display:block;transition:color var(--t)}
+    .dropzone:hover i,.dropzone.drag i{color:var(--accent)}
+    .dropzone p{color:var(--text2);font-size:0.88rem}
+    .dropzone small{color:var(--text3);font-size:0.75rem}
+
+    /* DASHBOARD OVERVIEW GRID */
+    .overview-grid{display:grid;grid-template-columns:1fr 360px;gap:1.5rem;margin-bottom:1.5rem}
+
+    /* ACTIVITY FEED */
+    .activity-feed{display:flex;flex-direction:column;gap:0}
+    .activity-item{display:flex;align-items:center;gap:0.8rem;padding:0.75rem 0;border-bottom:1px solid var(--border)}
+    .activity-item:last-child{border-bottom:none}
+    .activity-ico{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem}
+    .activity-body{flex:1;min-width:0}
+    .activity-text{font-size:0.82rem;line-height:1.4}
+    .activity-text strong{color:var(--text)}
+    .activity-time{font-size:0.72rem;color:var(--text3);margin-top:1px}
+
+    /* MINI CHART */
+    .mini-bar-chart{display:flex;align-items:flex-end;gap:4px;height:60px;padding-top:8px}
+    .bar{flex:1;border-radius:3px 3px 0 0;background:var(--accent-dim);min-height:4px;transition:all var(--t);cursor:pointer;position:relative}
+    .bar:hover{background:var(--accent)}
+    .bar-tooltip{position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:2px 6px;font-size:0.68rem;white-space:nowrap;color:var(--text);display:none;z-index:10}
+    .bar:hover .bar-tooltip{display:block}
+
+    /* TABS */
+    .tabs{display:flex;gap:0.3rem;border-bottom:1px solid var(--border);margin-bottom:1.2rem}
+    .tab{padding:0.6rem 1rem;font-size:0.85rem;font-weight:600;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all var(--t)}
+    .tab:hover{color:var(--text)}
+    .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+    /* PAGINATION */
+    .pagination{display:flex;align-items:center;gap:0.4rem;padding:1rem 1.4rem;border-top:1px solid var(--border);justify-content:flex-end}
+    .pg-btn{width:30px;height:30px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:0.8rem;transition:all var(--t)}
+    .pg-btn:hover,.pg-btn.active{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+    .pg-info{font-size:0.78rem;color:var(--text3);margin-right:auto}
+
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:1rem}
+    .modal-overlay.open{display:flex}
+    .modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);width:100%;max-width:620px;max-height:90vh;overflow-y:auto;animation:mIn 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+    @keyframes mIn{from{transform:scale(0.92);opacity:0}to{transform:scale(1);opacity:1}}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;padding:1.3rem 1.5rem;border-bottom:1px solid var(--border)}
+    .modal-head h2{font-family:var(--font-d);font-size:1.1rem;font-weight:700}
+    .modal-body{padding:1.5rem}
+    .modal-foot{padding:1rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:0.7rem;justify-content:flex-end}
+    .btn{display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.2rem;border-radius:var(--r-sm);font-weight:600;font-size:0.85rem;cursor:pointer;border:none;transition:all var(--t);font-family:var(--font-b)}
+    .btn-primary{background:var(--accent);color:white}
+    .btn-primary:hover{filter:brightness(1.08)}
+    .btn-primary:disabled{opacity:0.6;cursor:not-allowed}
+    .btn-ghost{background:var(--card);color:var(--text2);border:1px solid var(--border)}
+    .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+    .btn-danger{background:rgba(231,76,60,0.15);color:var(--red);border:1px solid rgba(231,76,60,0.2)}
+    .btn-danger:hover{background:var(--red);color:white}
+    .close-btn{width:30px;height:30px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--card);color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.8rem;transition:all var(--t)}
+    .close-btn:hover{color:var(--red);border-color:var(--red)}
+
+    /* TOAST */
+    .toast-wrap{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:0.5rem}
+    .toast{display:flex;align-items:center;gap:0.7rem;padding:0.75rem 1rem;border-radius:var(--r-md);background:var(--bg2);border:1px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,0.3);font-size:0.82rem;font-weight:500;max-width:280px;animation:tIn 0.3s ease}
+    .toast.success{border-left:3px solid var(--accent)}
+    .toast.error{border-left:3px solid var(--red)}
+    .toast.info{border-left:3px solid var(--blue)}
+    @keyframes tIn{from{transform:translateX(110%);opacity:0}to{transform:none;opacity:1}}
+
+    /* USER ROW */
+    .user-row-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--blue));display:inline-flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:800;font-size:0.78rem;color:white;flex-shrink:0}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr)}.overview-grid{grid-template-columns:1fr}.upload-grid{grid-template-columns:1fr}}
+    @media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.topbar{left:0}.main{margin-left:0}}
+
+    /* EMPTY */
+    .empty-row td{text-align:center;padding:2rem;color:var(--text3);font-size:0.85rem}
+
+    /* Progress bar */
+    .progress-bar{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:0.4rem}
+    .progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--blue));transition:width 0.8s ease}
+
+    /* Confirmation modal small */
+    .confirm-modal{max-width:380px}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🧬 UMYU BioHub Admin</h1>
-            <button class="btn" id="logoutBtn">Logout</button>
-        </div>
 
-        <div class="nav">
-            <button onclick="showTab('dashboard')">Dashboard</button>
-            <button onclick="showTab('materials')">Materials</button>
-            <button onclick="showTab('upload')">Upload</button>
-            <button onclick="showTab('users')">Users</button>
-        </div>
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <a href="index.html" class="sidebar-logo">
+    <div class="logo-ico"><i class="fas fa-dna"></i></div>
+    UMYUBIOHUB
+    <span class="admin-badge">Admin</span>
+  </a>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Overview</div>
+    <div class="nav-item active" onclick="showPage('overview', this)"><i class="fas fa-chart-pie"></i> Dashboard</div>
+    <div class="nav-item" onclick="showPage('analytics', this)"><i class="fas fa-chart-line"></i> Analytics</div>
+    <div class="nav-label" style="margin-top:0.8rem">Content</div>
+    <div class="nav-item" onclick="showPage('materials', this)"><i class="fas fa-file-alt"></i> Materials <span class="nav-cnt" id="matCount">—</span></div>
+    <div class="nav-item" onclick="showPage('upload', this)"><i class="fas fa-upload"></i> Upload</div>
+    <div class="nav-label" style="margin-top:0.8rem">Users</div>
+    <div class="nav-item" onclick="showPage('users', this)"><i class="fas fa-users"></i> Students <span class="nav-cnt" id="userCount">—</span></div>
+    <div class="nav-item" onclick="showPage('reports', this)"><i class="fas fa-flag"></i> Reports</div>
+    <div class="nav-label" style="margin-top:0.8rem">System</div>
+    <div class="nav-item" onclick="showPage('settings', this)"><i class="fas fa-cog"></i> Settings</div>
+    <div class="nav-item" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="admin-av">A</div>
+    <div class="admin-info">
+      <div class="admin-name">Administrator</div>
+      <div class="admin-role">System Admin</div>
+    </div>
+  </div>
+</aside>
 
-        <div id="dashboardTab" class="tab active">
-            <div class="card">
-                <h2>Statistics</h2>
-                <div class="stats">
-                    <div class="stat-box"><h3 id="totalMaterials">0</h3><p>Total Materials</p></div>
-                    <div class="stat-box"><h3 id="totalUsers">0</h3><p>Total Users</p></div>
-                </div>
-            </div>
-        </div>
+<!-- TOPBAR -->
+<header class="topbar">
+  <span class="topbar-title" id="pageTitle">Dashboard Overview</span>
+  <div class="topbar-actions">
+    <div class="icon-btn" onclick="toggleTheme()"><i id="themeIcon" class="fas fa-sun"></i></div>
+    <div class="icon-btn" title="Notifications"><i class="fas fa-bell"></i></div>
+    <div class="icon-btn" onclick="showPage('upload')"><i class="fas fa-plus" title="Upload material"></i></div>
+    <a href="dashboard.html" class="icon-btn" title="View student dashboard"><i class="fas fa-external-link-alt"></i></a>
+  </div>
+</header>
 
-        <div id="materialsTab" class="tab">
-            <div class="card">
-                <h2>All Materials</h2>
-                <input type="text" id="searchInput" placeholder="Search materials..." style="margin-bottom: 15px;">
-                <div style="overflow-x: auto;">
-                    <table id="materialsTable">
-                        <thead><tr><th>Title</th><th>Course</th><th>Level</th><th>Action</th></tr></thead>
-                        <tbody id="materialsList"><tr><td colspan="4">Loading...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+<!-- MAIN -->
+<main class="main">
 
-        <div id="uploadTab" class="tab">
-            <div class="card">
-                <h2>Upload New Material</h2>
-                <input type="text" id="title" placeholder="Title *">
-                <input type="text" id="course" placeholder="Course Code (BCH 301) *">
-                <select id="level">
-                    <option value="100">100 Level</option>
-                    <option value="200">200 Level</option>
-                    <option value="300">300 Level</option>
-                    <option value="400">400 Level</option>
-                    <option value="500">500 Level</option>
-                </select>
-                <select id="type">
-                    <option value="lecture_note">Lecture Note</option>
-                    <option value="past_question">Past Question</option>
-                    <option value="practical">Practical Manual</option>
-                </select>
-                <textarea id="desc" placeholder="Description" rows="3"></textarea>
-                <button class="btn" id="uploadBtn">Upload Material</button>
-                <div id="uploadMsg" style="margin-top: 10px;"></div>
-            </div>
+  <!-- ══ PAGE: OVERVIEW ══ -->
+  <div class="page active" id="page-overview">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-ico" style="background:var(--accent-dim);color:var(--accent)"><i class="fas fa-file-alt"></i></div>
+          <span class="stat-trend up"><i class="fas fa-arrow-up"></i>12%</span>
         </div>
-
-        <div id="usersTab" class="tab">
-            <div class="card">
-                <h2>Manage Users</h2>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead><tr><th>Email</th><th>Name</th><th>Level</th><th>Role</th><th>Action</th></tr></thead>
-                        <tbody id="usersList"><tr><td colspan="5">Loading...</td></tr></tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="stat-val" id="ov-materials">—</div>
+        <div class="stat-lbl">Total Materials</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:72%"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-ico" style="background:var(--blue-dim);color:var(--blue)"><i class="fas fa-users"></i></div>
+          <span class="stat-trend up"><i class="fas fa-arrow-up"></i>8%</span>
         </div>
+        <div class="stat-val" id="ov-users">—</div>
+        <div class="stat-lbl">Registered Students</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:60%;background:linear-gradient(90deg,var(--blue),var(--purple))"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-ico" style="background:rgba(155,89,182,0.12);color:var(--purple)"><i class="fas fa-download"></i></div>
+          <span class="stat-trend up"><i class="fas fa-arrow-up"></i>24%</span>
+        </div>
+        <div class="stat-val" id="ov-downloads">—</div>
+        <div class="stat-lbl">Total Downloads</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:85%;background:linear-gradient(90deg,var(--purple),var(--orange))"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-top">
+          <div class="stat-ico" style="background:rgba(230,126,34,0.12);color:var(--orange)"><i class="fas fa-robot"></i></div>
+          <span class="stat-trend up"><i class="fas fa-arrow-up"></i>31%</span>
+        </div>
+        <div class="stat-val" id="ov-chats">—</div>
+        <div class="stat-lbl">AI Chat Sessions</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:45%;background:linear-gradient(90deg,var(--orange),var(--red))"></div></div>
+      </div>
     </div>
 
-    <script>
-        (function() {
-            const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
-            const SUPABASE_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
-            let supabase = null;
-            
-            function init() {
-                const sbLib = window.supabaseJs || window.supabase;
-                if (sbLib) {
-                    supabase = sbLib.createClient(SUPABASE_URL, SUPABASE_KEY);
-                    checkAuth();
-                } else {
-                    setTimeout(init, 500);
-                }
-            }
-            
-            window.showTab = function(tab) {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.getElementById(`${tab}Tab`).classList.add('active');
-                document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-                event.target.classList.add('active');
-            };
-            
-            async function checkAuth() {
-                const { data } = await supabase.auth.getSession();
-                if (!data.session) window.location.href = 'index.html';
-                document.querySelector('.header h1').innerHTML = `🧬 Admin - ${data.session.user.email}`;
-                loadStats(); loadMaterials(); loadUsers();
-            }
-            
-            async function loadStats() {
-                const { data: materials } = await supabase.from('materials').select('*');
-                const { data: users } = await supabase.from('profiles').select('*');
-                document.getElementById('totalMaterials').textContent = materials?.length || 0;
-                document.getElementById('totalUsers').textContent = users?.length || 0;
-            }
-            
-            async function loadMaterials() {
-                const { data } = await supabase.from('materials').select('*').order('created_at', { ascending: false });
-                const tbody = document.getElementById('materialsList');
-                if (!data?.length) { tbody.innerHTML = '<tr><td colspan="4">No materials</td></tr>'; return; }
-                tbody.innerHTML = data.map(m => `<tr><td>${m.title}</td><td>${m.course_code}</td><td>${m.level}</td><td><button class="btn-danger" onclick="deleteMaterial('${m.id}')">Delete</button></td></tr>`).join('');
-            }
-            
-            async function loadUsers() {
-                const { data } = await supabase.from('profiles').select('*');
-                const tbody = document.getElementById('usersList');
-                if (!data?.length) { tbody.innerHTML = '<tr><td colspan="5">No users</td></tr>'; return; }
-                tbody.innerHTML = data.map(u => `<tr><td>${u.email}</td><td>${u.full_name || '-'}</td><td>${u.level || '-'}</td><td>${u.role || 'student'}</td><td><button class="btn" onclick="makeAdmin('${u.id}')">Make Admin</button></td></tr>`).join('');
-            }
-            
-            window.deleteMaterial = async (id) => {
-                if (confirm('Delete?')) { await supabase.from('materials').delete().eq('id', id); loadMaterials(); loadStats(); }
-            };
-            
-            window.makeAdmin = async (id) => {
-                await supabase.from('profiles').update({ role: 'admin' }).eq('id', id);
-                alert('Now admin!'); loadUsers();
-            };
-            
-            document.getElementById('uploadBtn').onclick = async () => {
-                const title = document.getElementById('title').value;
-                const course = document.getElementById('course').value;
-                const level = document.getElementById('level').value;
-                const type = document.getElementById('type').value;
-                const desc = document.getElementById('desc').value;
-                if (!title || !course) { document.getElementById('uploadMsg').innerHTML = 'Fill title & course'; return; }
-                document.getElementById('uploadMsg').innerHTML = 'Uploading...';
-                const { error } = await supabase.from('materials').insert({ title, course_code: course, level, type, description: desc, uploader: 'admin', downloads: 0, is_approved: true });
-                if (error) { document.getElementById('uploadMsg').innerHTML = 'Error: ' + error.message; }
-                else { document.getElementById('uploadMsg').innerHTML = '✅ Uploaded!'; document.getElementById('title').value = ''; document.getElementById('course').value = ''; document.getElementById('desc').value = ''; loadMaterials(); loadStats(); }
-            };
-            
-            document.getElementById('logoutBtn').onclick = () => { supabase.auth.signOut(); window.location.href = 'index.html'; };
-            document.getElementById('searchInput').addEventListener('input', (e) => {
-                const s = e.target.value.toLowerCase();
-                document.querySelectorAll('#materialsList tr').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(s) ? '' : 'none'; });
-            });
-            
-            init();
-        })();
-    </script>
-              <!-- Footer -->
-<footer class="glass-footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <h3>🧬 UMYU BioHub</h3>
-            <p>E-Library for Biochemistry Students</p>
+    <div class="overview-grid">
+      <!-- Downloads this week chart -->
+      <div class="table-card">
+        <div class="table-header">
+          <h3><i class="fas fa-chart-bar" style="color:var(--accent);margin-right:6px"></i>Downloads This Week</h3>
+          <div class="tabs" style="border-bottom:none;margin-bottom:0">
+            <div class="tab active">Week</div>
+            <div class="tab">Month</div>
+          </div>
         </div>
-        <div class="footer-section">
-            <h3>Developer</h3>
-            <p><i class="fas fa-user-graduate"></i> Alamin Kabir</p>
-            <p><i class="fas fa-envelope"></i> alamininkota22@gmail.com</p>
-            <p><i class="fab fa-phonenumber"></i> 09057352833</p>
+        <div style="padding:1.2rem 1.4rem">
+          <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+            <span style="font-size:0.78rem;color:var(--text3)">Download Volume</span>
+            <span style="font-size:0.78rem;color:var(--accent);font-weight:600">↑ 24% vs last week</span>
+          </div>
+          <div class="mini-bar-chart" id="weekChart"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px">
+            <span style="font-size:0.7rem;color:var(--text3)">Mon</span>
+            <span style="font-size:0.7rem;color:var(--text3)">Tue</span>
+            <span style="font-size:0.7rem;color:var(--text3)">Wed</span>
+            <span style="font-size:0.7rem;color:var(--text3)">Thu</span>
+            <span style="font-size:0.7rem;color:var(--text3)">Fri</span>
+            <span style="font-size:0.7rem;color:var(--text3)">Sat</span>
+            <span style="font-size:0.7rem;color:var(--text3)">Sun</span>
+          </div>
         </div>
-        <div class="footer-section">
-            <h3>Links</h3>
-            <p><a href="index.html">Home</a> | <a href="dashboard.html">Library</a> | <a href="chatbot.html">AI Assistant</a></p>
-        </div>
-        <div class="footer-section">
-            <h3>© 2025 UMYU Biochemistry</h3>
-            <p>All academic materials are for educational use.</p>
-        </div>
+      </div>
+
+      <!-- Activity feed -->
+      <div class="table-card">
+        <div class="table-header"><h3><i class="fas fa-bolt" style="color:var(--orange);margin-right:6px"></i>Recent Activity</h3></div>
+        <div style="padding:0 1.2rem" class="activity-feed" id="activityFeed"></div>
+      </div>
     </div>
-</footer>
+
+    <!-- Recent Materials -->
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Recent Materials</h3>
+        <div class="table-actions">
+          <span style="font-size:0.78rem;color:var(--accent);cursor:pointer" onclick="showPage('materials')">View all →</span>
+          <button class="btn btn-primary" onclick="showPage('upload')" style="padding:0.45rem 1rem;font-size:0.8rem"><i class="fas fa-plus"></i> Upload</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr>
+          <th>Title</th><th>Course</th><th>Type</th><th>Level</th><th>Downloads</th><th>Uploaded</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="recentTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: MATERIALS ══ -->
+  <div class="page" id="page-materials">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.3rem;flex-wrap:wrap;gap:0.8rem">
+      <div>
+        <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:800">Academic Materials</h2>
+        <p style="color:var(--text2);font-size:0.82rem;margin-top:0.2rem">Manage all uploaded academic resources</p>
+      </div>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;align-items:center">
+        <div class="search-input"><i class="fas fa-search"></i><input type="text" placeholder="Search materials…" oninput="searchMaterials(this.value)"></div>
+        <select class="form-select" style="width:auto;padding:0.45rem 0.8rem;font-size:0.82rem" onchange="filterMaterialsAdmin(this.value)">
+          <option value="">All Types</option>
+          <option value="lecture_note">Lecture Notes</option>
+          <option value="past_question">Past Questions</option>
+          <option value="practical">Practicals</option>
+          <option value="research">Research</option>
+        </select>
+        <button class="btn btn-primary" onclick="showPage('upload')" style="font-size:0.82rem"><i class="fas fa-plus"></i> Upload</button>
+      </div>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead><tr>
+          <th><input type="checkbox" onchange="toggleAll(this)"></th>
+          <th>Title</th><th>Course</th><th>Type</th><th>Level</th><th>Downloads</th><th>Size</th><th>Date</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="materialsTable"></tbody>
+      </table>
+      <div class="pagination">
+        <span class="pg-info" id="matPgInfo">Showing 1–16 of 16</span>
+        <button class="pg-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: UPLOAD ══ -->
+  <div class="page" id="page-upload">
+    <div style="max-width:720px">
+      <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:800;margin-bottom:0.4rem">Upload Material</h2>
+      <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1.5rem">Add new academic resources for students</p>
+      <div class="table-card" style="padding:1.8rem">
+        <div class="upload-grid">
+          <div class="form-group">
+            <label class="form-label">Material Title *</label>
+            <input class="form-input" type="text" id="upTitle" placeholder="e.g. BCH 301 Enzyme Kinetics Notes">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Course Code *</label>
+            <input class="form-input" type="text" id="upCourse" placeholder="e.g. BCH 301">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Material Type *</label>
+            <select class="form-select" id="upType">
+              <option value="">Select type</option>
+              <option value="lecture_note">Lecture Note</option>
+              <option value="past_question">Past Question</option>
+              <option value="practical">Practical Manual</option>
+              <option value="assignment">Assignment</option>
+              <option value="research">Research Paper</option>
+              <option value="project">Project Material</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Academic Level *</label>
+            <select class="form-select" id="upLevel">
+              <option value="">Select level</option>
+              <option value="100">100 Level</option>
+              <option value="200">200 Level</option>
+              <option value="300">300 Level</option>
+              <option value="400">400 Level</option>
+              <option value="500">500 Level</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lecturer / Author</label>
+            <input class="form-input" type="text" id="upLecturer" placeholder="e.g. Dr. Musa Abdullahi">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Academic Year</label>
+            <input class="form-input" type="text" id="upYear" placeholder="e.g. 2024/2025">
+          </div>
+          <div class="form-group full-col">
+            <label class="form-label">File URL (Google Drive / Supabase Storage)</label>
+            <input class="form-input" type="url" id="upUrl" placeholder="https://...">
+          </div>
+          <div class="form-group full-col">
+            <label class="form-label">Description (optional)</label>
+            <textarea class="form-textarea" id="upDesc" placeholder="Brief description of the material…"></textarea>
+          </div>
+          <div class="dropzone full-col" id="dropzone" onclick="document.getElementById('fileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <p><strong>Click to upload</strong> or drag & drop file here</p>
+            <small>PDF, DOCX, PPTX · Max 50MB</small>
+            <div id="fileInfo" style="margin-top:0.8rem;font-size:0.8rem;color:var(--accent);display:none"></div>
+            <input type="file" id="fileInput" accept=".pdf,.docx,.pptx,.doc" style="display:none" onchange="handleFileSelect(event)">
+          </div>
+          <div class="full-col" style="display:flex;gap:0.8rem">
+            <button class="btn btn-primary" onclick="handleUpload()" id="uploadBtn" style="flex:1"><i class="fas fa-upload"></i> Upload Material</button>
+            <button class="btn btn-ghost" onclick="resetUploadForm()"><i class="fas fa-redo"></i> Reset</button>
+          </div>
+        </div>
+        <!-- Upload progress -->
+        <div id="uploadProgress" style="display:none;margin-top:1rem">
+          <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:0.4rem">
+            <span>Uploading…</span><span id="progPct">0%</span>
+          </div>
+          <div class="progress-bar" style="height:6px"><div class="progress-fill" id="progBar" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: USERS ══ -->
+  <div class="page" id="page-users">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.3rem;flex-wrap:wrap;gap:0.8rem">
+      <div>
+        <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:800">Student Management</h2>
+        <p style="color:var(--text2);font-size:0.82rem;margin-top:0.2rem">View and manage registered students</p>
+      </div>
+      <div class="search-input"><i class="fas fa-search"></i><input type="text" placeholder="Search students…"></div>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>Student</th><th>Email</th><th>Matric No.</th><th>Level</th><th>Joined</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="usersTable"></tbody>
+      </table>
+      <div class="pagination">
+        <span class="pg-info">Showing 1–10 of 3,200</span>
+        <button class="pg-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <button class="pg-btn"><i class="fas fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: SETTINGS ══ -->
+  <div class="page" id="page-settings">
+    <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:800;margin-bottom:1.3rem">System Settings</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;max-width:800px">
+      <div class="table-card" style="padding:1.5rem">
+        <h3 style="font-family:var(--font-d);font-weight:700;margin-bottom:1rem"><i class="fas fa-university" style="color:var(--accent);margin-right:8px"></i>Site Settings</h3>
+        <div class="form-group" style="margin-bottom:0.9rem"><label class="form-label">Site Name</label><input class="form-input" type="text" value="UMYUBIOHUB"></div>
+        <div class="form-group" style="margin-bottom:0.9rem"><label class="form-label">Institution</label><input class="form-input" type="text" value="Umaru Musa Yar'adua University Katsina"></div>
+        <div class="form-group" style="margin-bottom:0.9rem"><label class="form-label">Department</label><input class="form-input" type="text" value="Biochemistry"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="showToast('Settings saved successfully', 'success')">Save Settings</button>
+      </div>
+      <div class="table-card" style="padding:1.5rem">
+        <h3 style="font-family:var(--font-d);font-weight:700;margin-bottom:1rem"><i class="fas fa-shield-alt" style="color:var(--blue);margin-right:8px"></i>Security</h3>
+        <div class="form-group" style="margin-bottom:0.9rem"><label class="form-label">Email Verification</label><select class="form-select"><option>Required for new accounts</option><option>Optional</option><option>Disabled</option></select></div>
+        <div class="form-group" style="margin-bottom:0.9rem"><label class="form-label">Max Upload Size (MB)</label><input class="form-input" type="number" value="50"></div>
+        <div class="form-group" style="margin-bottom:0.9rem"><label class="form-label">Allowed Domains</label><input class="form-input" type="text" value="umyu.edu.ng,gmail.com"></div>
+        <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="showToast('Security settings updated', 'success')">Save Security</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: ANALYTICS ══ -->
+  <div class="page" id="page-analytics">
+    <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:800;margin-bottom:1.3rem">Analytics Overview</h2>
+    <div class="stats-row" style="margin-bottom:1.3rem">
+      <div class="stat-card"><div class="stat-top"><div class="stat-ico" style="background:var(--accent-dim);color:var(--accent)"><i class="fas fa-eye"></i></div></div><div class="stat-val">18,432</div><div class="stat-lbl">Page Views (Month)</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-ico" style="background:var(--blue-dim);color:var(--blue)"><i class="fas fa-user-check"></i></div></div><div class="stat-val">2,841</div><div class="stat-lbl">Unique Visitors</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-ico" style="background:rgba(155,89,182,0.12);color:var(--purple)"><i class="fas fa-clock"></i></div></div><div class="stat-val">4m 32s</div><div class="stat-lbl">Avg. Session Duration</div></div>
+      <div class="stat-card"><div class="stat-top"><div class="stat-ico" style="background:rgba(231,76,60,0.12);color:var(--red)"><i class="fas fa-sign-out-alt"></i></div></div><div class="stat-val">34%</div><div class="stat-lbl">Bounce Rate</div></div>
+    </div>
+    <div class="table-card" style="padding:1.5rem">
+      <h3 style="font-family:var(--font-d);font-weight:700;margin-bottom:1rem">Top Downloaded Materials</h3>
+      <table>
+        <thead><tr><th>#</th><th>Title</th><th>Course</th><th>Downloads</th><th>Trend</th></tr></thead>
+        <tbody id="topMatsTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: REPORTS ══ -->
+  <div class="page" id="page-reports">
+    <h2 style="font-family:var(--font-d);font-size:1.2rem;font-weight:800;margin-bottom:1.3rem">Reports</h2>
+    <div class="table-card" style="padding:3rem;text-align:center">
+      <i class="fas fa-flag" style="font-size:3rem;color:var(--text3);display:block;margin-bottom:1rem"></i>
+      <p style="color:var(--text2)">No reports submitted. Students can flag issues with materials.</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal confirm-modal">
+    <div class="modal-head">
+      <h2 style="color:var(--red)"><i class="fas fa-trash"></i> Delete Material</h2>
+      <button class="close-btn" onclick="closeDeleteModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete <strong id="deleteTitle">"Material Name"</strong>? This action cannot be undone.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDelete()"><i class="fas fa-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ═══════════ CONFIG ═══════════
+const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
+let sb = null;
+let adminMaterials = [];
+let deleteTarget = null;
+
+// ═══════════ INIT ═══════════
+window.addEventListener('load', () => {
+  applyStoredTheme();
+  const lib = window.supabaseJs || window.supabase;
+  if (lib) { sb = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); checkAdmin(); }
+  else setTimeout(() => { const l = window.supabaseJs||window.supabase; if(l){sb=l.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);checkAdmin();} }, 1000);
+  loadDashboardData();
+  renderWeekChart();
+  renderActivityFeed();
+});
+
+async function checkAdmin() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { /* allow demo view */ }
+  } catch(e) {}
+}
+
+// ═══════════ DEMO DATA ═══════════
+function loadDashboardData() {
+  const mats = [
+    { id:1, title:'Introduction to Biochemistry', course:'BCH 101', type:'lecture_note', level:'100', lecturer:'Dr. Musa A.', uploaded:'2025-01-15', size:'2.4 MB', downloads:245 },
+    { id:2, title:'BCH 201 Past Questions 2023–2024', course:'BCH 201', type:'past_question', level:'200', lecturer:'Dept. of BCH', uploaded:'2025-02-01', size:'1.1 MB', downloads:412 },
+    { id:3, title:'Enzyme Kinetics & Mechanisms', course:'BCH 302', type:'lecture_note', level:'300', lecturer:'Prof. Ibrahim K.', uploaded:'2025-01-28', size:'5.8 MB', downloads:189 },
+    { id:4, title:'BCH 205 Practical Manual', course:'BCH 205', type:'practical', level:'200', lecturer:'Lab Coordinator', uploaded:'2025-01-20', size:'3.2 MB', downloads:321 },
+    { id:5, title:'Protein Structure & Function Notes', course:'BCH 301', type:'lecture_note', level:'300', lecturer:'Dr. Amina Y.', uploaded:'2025-02-05', size:'4.1 MB', downloads:267 },
+    { id:6, title:'GST 111 Communication Skills', course:'GST 111', type:'lecture_note', level:'100', lecturer:'Dr. Sani M.', uploaded:'2025-01-10', size:'1.8 MB', downloads:502 },
+    { id:7, title:'Carbohydrate Metabolism PQs', course:'BCH 302', type:'past_question', level:'300', lecturer:'Dept. of BCH', uploaded:'2025-02-10', size:'0.9 MB', downloads:356 },
+    { id:8, title:'Molecular Biology Research Papers', course:'BCH 401', type:'research', level:'400', lecturer:'Various Authors', uploaded:'2025-01-30', size:'12.3 MB', downloads:143 },
+    { id:9, title:'CHM 111 General Chemistry Notes', course:'CHM 111', type:'lecture_note', level:'100', lecturer:'Dr. Usman F.', uploaded:'2025-01-08', size:'6.7 MB', downloads:389 },
+    { id:10, title:'Lipid Metabolism & Disorders', course:'BCH 401', type:'lecture_note', level:'400', lecturer:'Prof. Yakubu S.', uploaded:'2025-02-12', size:'4.9 MB', downloads:198 },
+    { id:11, title:'BIO 201 Cell Biology Notes', course:'BIO 201', type:'lecture_note', level:'200', lecturer:'Dr. Halima N.', uploaded:'2025-01-25', size:'3.5 MB', downloads:276 },
+    { id:12, title:'BCH 501 Thesis Guidelines', course:'BCH 501', type:'research', level:'500', lecturer:'Dept. of BCH', uploaded:'2025-02-08', size:'0.7 MB', downloads:95 },
+  ];
+  adminMaterials = mats;
+
+  const totalDL = mats.reduce((a,m) => a+m.downloads, 0);
+  const ov = { materials: mats.length, users: 3246, downloads: totalDL, chats: 847 };
+
+  document.getElementById('ov-materials').textContent = ov.materials;
+  document.getElementById('ov-users').textContent = ov.users.toLocaleString();
+  document.getElementById('ov-downloads').textContent = totalDL.toLocaleString();
+  document.getElementById('ov-chats').textContent = ov.chats;
+  document.getElementById('matCount').textContent = mats.length;
+  document.getElementById('userCount').textContent = '3.2k';
+
+  renderRecentTable(mats.slice(0,6));
+  renderMaterialsTable(mats);
+  renderUsersTable();
+  renderTopMats(mats);
+}
+
+async function loadFromSupabase() {
+  try {
+    if (!sb) return;
+    const { data, error } = await sb.from('materials').select('*').order('created_at', { ascending: false });
+    if (!error && data?.length) {
+      adminMaterials = data.map(d => ({ id:d.id, title:d.title, course:d.course_code, type:d.type, level:d.level, lecturer:d.lecturer, uploaded:d.created_at?.split('T')[0], size:d.file_size||'—', downloads:d.downloads||0 }));
+      document.getElementById('ov-materials').textContent = adminMaterials.length;
+      document.getElementById('matCount').textContent = adminMaterials.length;
+      renderRecentTable(adminMaterials.slice(0,6));
+      renderMaterialsTable(adminMaterials);
+    }
+    const { count } = await sb.from('profiles').select('*', { count:'exact', head:true });
+    if (count) { document.getElementById('ov-users').textContent = count.toLocaleString(); document.getElementById('userCount').textContent = count > 999 ? (count/1000).toFixed(1)+'k' : count; }
+  } catch(e) {}
+}
+
+// ═══════════ TYPE HELPERS ═══════════
+const TYPE_MAP = { lecture_note:'Lecture Note', past_question:'Past Question', practical:'Practical', assignment:'Assignment', research:'Research', project:'Project' };
+const TYPE_CLS = { lecture_note:'badge-note', past_question:'badge-pq', practical:'badge-prac', research:'badge-res', assignment:'badge-note', project:'badge-note' };
+
+// ═══════════ RENDER TABLES ═══════════
+function renderRecentTable(mats) {
+  document.getElementById('recentTable').innerHTML = mats.map(m => `
+    <tr>
+      <td><span class="td-title" title="${m.title}">${m.title}</span></td>
+      <td><span class="td-course">${m.course}</span></td>
+      <td><span class="type-badge ${TYPE_CLS[m.type]||'badge-note'}">${TYPE_MAP[m.type]||m.type}</span></td>
+      <td>${m.level}L</td>
+      <td><span style="color:var(--accent);font-weight:600">${m.downloads}</span></td>
+      <td style="color:var(--text3);font-size:0.78rem">${m.uploaded}</td>
+      <td>
+        <button class="action-btn" title="Edit" onclick="editMaterial(${m.id})"><i class="fas fa-pen"></i></button>
+        <button class="action-btn del" title="Delete" onclick="openDeleteModal(${m.id}, '${m.title.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderMaterialsTable(mats) {
+  document.getElementById('materialsTable').innerHTML = mats.map(m => `
+    <tr>
+      <td><input type="checkbox" class="mat-check" data-id="${m.id}"></td>
+      <td><span class="td-title" title="${m.title}">${m.title}</span></td>
+      <td><span class="td-course">${m.course}</span></td>
+      <td><span class="type-badge ${TYPE_CLS[m.type]||'badge-note'}">${TYPE_MAP[m.type]||m.type}</span></td>
+      <td>${m.level}L</td>
+      <td><span style="color:var(--accent);font-weight:600">${m.downloads}</span></td>
+      <td style="color:var(--text3);font-size:0.78rem">${m.size}</td>
+      <td style="color:var(--text3);font-size:0.78rem">${m.uploaded}</td>
+      <td>
+        <button class="action-btn" title="Edit" onclick="editMaterial(${m.id})"><i class="fas fa-pen"></i></button>
+        <button class="action-btn" title="View" onclick="window.open('#')"><i class="fas fa-eye"></i></button>
+        <button class="action-btn del" title="Delete" onclick="openDeleteModal(${m.id}, '${m.title.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+  document.getElementById('matPgInfo').textContent = `Showing 1–${mats.length} of ${mats.length}`;
+}
+
+function renderUsersTable() {
+  const users = [
+    { name:'Aisha Mohammed', email:'aisha.m@umyu.edu.ng', matric:'UMYU/BCH/21/001', level:'300', joined:'2024-09-10', status:'active' },
+    { name:'Yusuf Ibrahim', email:'yusuf.i@umyu.edu.ng', matric:'UMYU/BCH/20/034', level:'400', joined:'2023-09-14', status:'active' },
+    { name:'Fatima Usman', email:'fatima.u@umyu.edu.ng', matric:'UMYU/BCH/22/012', level:'200', joined:'2024-09-12', status:'active' },
+    { name:'Musa Abdullahi', email:'musa.a@gmail.com', matric:'UMYU/BCH/23/007', level:'100', joined:'2024-09-15', status:'active' },
+    { name:'Halima Sani', email:'halima.s@umyu.edu.ng', matric:'UMYU/BCH/19/045', level:'500', joined:'2022-09-08', status:'inactive' },
+  ];
+  document.getElementById('usersTable').innerHTML = users.map(u => `
+    <tr>
+      <td><div style="display:flex;align-items:center;gap:0.6rem"><div class="user-row-av">${u.name[0]}</div><span style="font-weight:600;font-size:0.85rem">${u.name}</span></div></td>
+      <td style="color:var(--text2);font-size:0.82rem">${u.email}</td>
+      <td style="font-family:monospace;font-size:0.75rem;color:var(--text2)">${u.matric}</td>
+      <td>${u.level}L</td>
+      <td style="color:var(--text3);font-size:0.78rem">${u.joined}</td>
+      <td><span class="status-dot ${u.status==='active'?'dot-green':'dot-yellow'}"></span>${u.status}</td>
+      <td>
+        <button class="action-btn" title="View"><i class="fas fa-eye"></i></button>
+        <button class="action-btn del" title="Suspend"><i class="fas fa-ban"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderTopMats(mats) {
+  const sorted = [...mats].sort((a,b)=>b.downloads-a.downloads);
+  document.getElementById('topMatsTable').innerHTML = sorted.slice(0,8).map((m,i) => `
+    <tr>
+      <td style="color:var(--text3);font-weight:700">#${i+1}</td>
+      <td style="font-weight:600">${m.title}</td>
+      <td><span class="td-course">${m.course}</span></td>
+      <td><span style="color:var(--accent);font-weight:700">${m.downloads}</span></td>
+      <td><span class="stat-trend up" style="font-size:0.75rem"><i class="fas fa-arrow-up"></i>${Math.floor(Math.random()*30+5)}%</span></td>
+    </tr>`).join('');
+}
+
+// ═══════════ CHART ═══════════
+function renderWeekChart() {
+  const data = [45,78,62,91,134,55,88];
+  const max = Math.max(...data);
+  document.getElementById('weekChart').innerHTML = data.map((v,i) => `
+    <div class="bar" style="height:${Math.max((v/max)*100,5)}%">
+      <div class="bar-tooltip">${v} downloads</div>
+    </div>`).join('');
+}
+
+// ═══════════ ACTIVITY FEED ═══════════
+function renderActivityFeed() {
+  const acts = [
+    { ico:'fa-upload', col:'var(--accent)', bg:'var(--accent-dim)', text:'<strong>Alamin</strong> uploaded BCH 302 Notes', time:'2 minutes ago' },
+    { ico:'fa-user-plus', col:'var(--blue)', bg:'var(--blue-dim)', text:'<strong>New student</strong> Halima B. registered', time:'15 minutes ago' },
+    { ico:'fa-download', col:'var(--purple)', bg:'rgba(155,89,182,0.12)', text:'<strong>GST 111 Notes</strong> downloaded 12 times', time:'1 hour ago' },
+    { ico:'fa-robot', col:'var(--orange)', bg:'rgba(230,126,34,0.12)', text:'<strong>AI Assistant</strong> had 34 sessions today', time:'2 hours ago' },
+    { ico:'fa-flag', col:'var(--red)', bg:'rgba(231,76,60,0.1)', text:'Material <strong>BCH 201 PQ</strong> was flagged', time:'3 hours ago' },
+  ];
+  document.getElementById('activityFeed').innerHTML = acts.map(a => `
+    <div class="activity-item">
+      <div class="activity-ico" style="background:${a.bg};color:${a.col}"><i class="fas ${a.ico}"></i></div>
+      <div class="activity-body">
+        <div class="activity-text">${a.text}</div>
+        <div class="activity-time">${a.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════ PAGE ROUTING ═══════════
+const pageTitles = {
+  overview: 'Dashboard Overview', materials: 'Academic Materials', upload: 'Upload Material',
+  users: 'Student Management', settings: 'System Settings', analytics: 'Analytics', reports: 'Reports'
+};
+function showPage(name, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${name}`)?.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[name] || name;
+}
+
+// ═══════════ SEARCH / FILTER ═══════════
+function searchMaterials(q) {
+  const lower = q.toLowerCase();
+  const filtered = lower ? adminMaterials.filter(m => m.title.toLowerCase().includes(lower) || m.course.toLowerCase().includes(lower)) : adminMaterials;
+  renderMaterialsTable(filtered);
+}
+function filterMaterialsAdmin(type) {
+  const filtered = type ? adminMaterials.filter(m => m.type === type) : adminMaterials;
+  renderMaterialsTable(filtered);
+}
+function toggleAll(cb) {
+  document.querySelectorAll('.mat-check').forEach(c => c.checked = cb.checked);
+}
+
+// ═══════════ UPLOAD ═══════════
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const info = document.getElementById('fileInfo');
+  info.style.display = 'block';
+  info.textContent = `✓ ${file.name} (${(file.size/1024/1024).toFixed(2)} MB)`;
+}
+function handleDragOver(e) { e.preventDefault(); document.getElementById('dropzone').classList.add('drag'); }
+function handleDragLeave() { document.getElementById('dropzone').classList.remove('drag'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file) { document.getElementById('fileInput').files = e.dataTransfer.files; handleFileSelect({ target: { files: e.dataTransfer.files } }); }
+}
+
+async function handleUpload() {
+  const title = document.getElementById('upTitle').value.trim();
+  const course = document.getElementById('upCourse').value.trim();
+  const type = document.getElementById('upType').value;
+  const level = document.getElementById('upLevel').value;
+  if (!title || !course || !type || !level) { showToast('Please fill all required fields (*)', 'error'); return; }
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading…';
+  const prog = document.getElementById('uploadProgress');
+  prog.style.display = 'block';
+  let p = 0; const timer = setInterval(() => {
+    p = Math.min(p + Math.random()*15, 95);
+    document.getElementById('progBar').style.width = p+'%';
+    document.getElementById('progPct').textContent = Math.floor(p)+'%';
+  }, 200);
+
+  try {
+    if (sb) {
+      const { error } = await sb.from('materials').insert([{
+        title, course_code: course, type, level,
+        lecturer: document.getElementById('upLecturer').value,
+        file_url: document.getElementById('upUrl').value,
+        description: document.getElementById('upDesc').value
+      }]);
+      if (error) throw error;
+    }
+    clearInterval(timer);
+    document.getElementById('progBar').style.width = '100%';
+    document.getElementById('progPct').textContent = '100%';
+    setTimeout(() => {
+      showToast('Material uploaded successfully!', 'success');
+      resetUploadForm();
+      loadFromSupabase();
+    }, 500);
+  } catch(e) {
+    clearInterval(timer);
+    showToast(e.message || 'Upload failed. Try again.', 'error');
+  } finally {
+    btn.disabled = false; btn.innerHTML = '<i class="fas fa-upload"></i> Upload Material';
+  }
+}
+
+function resetUploadForm() {
+  ['upTitle','upCourse','upLecturer','upYear','upUrl','upDesc'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('upType').value = '';
+  document.getElementById('upLevel').value = '';
+  document.getElementById('fileInfo').style.display = 'none';
+  document.getElementById('uploadProgress').style.display = 'none';
+  document.getElementById('progBar').style.width = '0%';
+}
+
+// ═══════════ DELETE ═══════════
+function openDeleteModal(id, title) {
+  deleteTarget = id;
+  document.getElementById('deleteTitle').textContent = title;
+  document.getElementById('deleteModal').classList.add('open');
+}
+function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('open'); deleteTarget = null; }
+async function confirmDelete() {
+  if (!deleteTarget) return;
+  try {
+    if (sb) { const { error } = await sb.from('materials').delete().eq('id', deleteTarget); if (error) throw error; }
+    adminMaterials = adminMaterials.filter(m => m.id !== deleteTarget);
+    renderRecentTable(adminMaterials.slice(0,6));
+    renderMaterialsTable(adminMaterials);
+    showToast('Material deleted successfully', 'success');
+  } catch(e) {
+    showToast('Delete failed: ' + e.message, 'error');
+  }
+  closeDeleteModal();
+}
+
+function editMaterial(id) { showToast('Edit feature coming soon', 'info'); }
+
+// ═══════════ AUTH ═══════════
+async function handleLogout() {
+  if (sb) await sb.auth.signOut().catch(()=>{});
+  localStorage.removeItem('umyu_user');
+  window.location.href = 'index.html';
+}
+
+// ═══════════ THEME ═══════════
+function applyStoredTheme() {
+  const t = localStorage.getItem('umyu_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  const icon = document.getElementById('themeIcon');
+  if (icon) icon.className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme');
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('umyu_theme', next);
+  document.getElementById('themeIcon').className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+
+// ═══════════ TOAST ═══════════
+function showToast(msg, type = 'info') {
+  const wrap = document.getElementById('toastWrap');
+  const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle' };
+  const colors = { success:'var(--accent)', error:'var(--red)', info:'var(--blue)' };
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fas ${icons[type]}" style="color:${colors[type]}"></i>${msg}`;
+  wrap.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(110%)'; setTimeout(()=>t.remove(),300); }, 3500);
+}
+</script>
 </body>
 </html>
