@@ -1,424 +1,1186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark">
 <head>
-    <title>UMYU BioHub</title>
-    <meta charset="UTF-8">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #0a2e38, #0a1a2e);
-            color: white;
-            min-height: 100vh;
-        }
-        .navbar {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
-        }
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2ecc71;
-        }
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .hero {
-            text-align: center;
-            padding: 8rem 1rem 4rem;
-        }
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #2ecc71, #3498db);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .btn {
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            border: none;
-            margin: 0.5rem;
-            font-size: 1rem;
-        }
-        .btn-primary {
-            background: #2ecc71;
-            color: white;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #2ecc71;
-            color: #2ecc71;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.6);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: rgba(30,40,50,0.95);
-            padding: 2rem;
-            border-radius: 20px;
-            width: 350px;
-            text-align: center;
-        }
-        .modal-content h2 {
-            margin-bottom: 1rem;
-            color: #2ecc71;
-        }
-        .modal-content input {
-            width: 100%;
-            padding: 0.8rem;
-            margin: 0.5rem 0;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255,255,255,0.2);
-            color: white;
-        }
-        .modal-content button {
-            width: 100%;
-            padding: 0.8rem;
-            margin-top: 1rem;
-            background: #2ecc71;
-            border: none;
-            border-radius: 10px;
-            color: white;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .close-modal {
-            float: right;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #aaa;
-        }
-        .stats {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 3rem;
-            flex-wrap: wrap;
-        }
-        .stat-card {
-            background: rgba(255,255,255,0.1);
-            padding: 1.5rem;
-            border-radius: 15px;
-            text-align: center;
-            min-width: 150px;
-        }
-        .stat-card h3 {
-            font-size: 2rem;
-            color: #2ecc71;
-        }
-        .glass-footer {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding: 2rem 5%;
-    margin-top: 3rem;
-}
-.footer-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-.footer-section {
-    flex: 1;
-    min-width: 180px;
-}
-.footer-section h3 {
-    color: #2ecc71;
-    margin-bottom: 0.8rem;
-    font-size: 1.1rem;
-}
-.footer-section p, .footer-section a {
-    color: #ccc;
-    font-size: 0.9rem;
-    margin: 0.3rem 0;
-    text-decoration: none;
-}
-.footer-section a:hover {
-    color: #2ecc71;
-}
-@media (max-width: 768px) {
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="UMYUBIOHUB — The official digital library for Biochemistry students of Umaru Musa Yar'adua University, Katsina. Access lecture notes, past questions, research materials and more.">
+  <meta name="keywords" content="UMYU, Biochemistry, digital library, lecture notes, past questions, UMYUBIOHUB, Katsina">
+  <meta name="author" content="Alamin Kabir">
+  <meta property="og:title" content="UMYUBIOHUB — Biochemistry Digital Library">
+  <meta property="og:description" content="Your academic resource hub for Biochemistry at UMYU Katsina">
+  <meta property="og:type" content="website">
+  <title>UMYUBIOHUB — Biochemistry Digital Library | UMYU Katsina</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg-primary: #050d1a;
+      --bg-secondary: #091525;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --border-accent: rgba(46,204,113,0.3);
+      --text-primary: #f0f4f8;
+      --text-secondary: #8a9bb5;
+      --text-muted: #4a5a70;
+      --accent: #2ecc71;
+      --accent-dim: rgba(46,204,113,0.15);
+      --accent-glow: rgba(46,204,113,0.4);
+      --accent2: #3d9be9;
+      --accent2-dim: rgba(61,155,233,0.12);
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --nav-h: 72px;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-card: 0 8px 32px rgba(0,0,0,0.35);
+      --shadow-glow: 0 0 40px rgba(46,204,113,0.12);
+      --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
     }
-}
-    </style>
+    [data-theme="light"] {
+      --bg-primary: #f5f7fa;
+      --bg-secondary: #eef1f6;
+      --bg-card: rgba(255,255,255,0.85);
+      --bg-card-hover: #ffffff;
+      --border: rgba(0,0,0,0.08);
+      --border-accent: rgba(46,204,113,0.4);
+      --text-primary: #0d1b2e;
+      --text-secondary: #4a5a70;
+      --text-muted: #8a9bb5;
+      --accent: #22a85a;
+      --accent-dim: rgba(34,168,90,0.1);
+      --accent-glow: rgba(34,168,90,0.3);
+      --accent2: #2b7fd6;
+      --accent2-dim: rgba(43,127,214,0.1);
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    /* ——— NOISE TEXTURE OVERLAY ——— */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.5;
+    }
+
+    /* ——— ANIMATED BACKGROUND MESH ——— */
+    .bg-mesh {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .bg-mesh::before {
+      content: '';
+      position: absolute; width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(46,204,113,0.08) 0%, transparent 70%);
+      top: -200px; left: -200px;
+      animation: meshFloat1 18s ease-in-out infinite;
+    }
+    .bg-mesh::after {
+      content: '';
+      position: absolute; width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(61,155,233,0.07) 0%, transparent 70%);
+      bottom: -150px; right: -150px;
+      animation: meshFloat2 22s ease-in-out infinite;
+    }
+    @keyframes meshFloat1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(80px,60px)} }
+    @keyframes meshFloat2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,-80px)} }
+
+    /* ——— SCROLLBAR ——— */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ——— NAVBAR ——— */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      height: var(--nav-h);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1rem, 5vw, 3rem);
+      background: rgba(5,13,26,0.72);
+      backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+    [data-theme="light"] .navbar {
+      background: rgba(245,247,250,0.85);
+    }
+    .navbar.scrolled {
+      background: rgba(5,13,26,0.92);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; font-family: var(--font-display);
+      font-weight: 800; font-size: 1.3rem; color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+    .nav-logo .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; color: white;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex; align-items: center; gap: 0.25rem;
+    }
+    .nav-links a {
+      color: var(--text-secondary); text-decoration: none;
+      padding: 0.45rem 0.9rem; border-radius: var(--radius-sm);
+      font-size: 0.9rem; font-weight: 500;
+      transition: all var(--transition);
+    }
+    .nav-links a:hover { color: var(--text-primary); background: var(--bg-card); }
+
+    .nav-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+    .btn-theme {
+      width: 38px; height: 38px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--bg-card);
+      color: var(--text-secondary); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; transition: all var(--transition);
+    }
+    .btn-theme:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.4rem;
+      border-radius: var(--radius-sm); font-weight: 600; font-size: 0.9rem;
+      cursor: pointer; border: none; transition: all var(--transition); text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 4px 16px var(--accent-glow);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 24px var(--accent-glow); filter: brightness(1.07); }
+    .btn-ghost { background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .btn-lg { padding: 0.85rem 2rem; font-size: 1rem; border-radius: var(--radius-md); }
+
+    /* ——— HAMBURGER ——— */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      padding: 6px; border: none; background: none; z-index: 1010;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px; background: var(--text-primary);
+      border-radius: 2px; transition: all var(--transition);
+    }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+    .hamburger.active span:nth-child(2) { opacity: 0; }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    /* mobile drawer */
+    .mobile-menu {
+      position: fixed; top: var(--nav-h); left: 0; right: 0;
+      background: var(--bg-secondary); border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem 1.5rem;
+      transform: translateY(-110%); transition: transform var(--transition);
+      z-index: 999;
+    }
+    .mobile-menu.open { transform: translateY(0); }
+    .mobile-menu a {
+      display: block; padding: 0.8rem 0; color: var(--text-primary);
+      text-decoration: none; font-weight: 500;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu .mobile-actions { display: flex; gap: 0.7rem; margin-top: 1rem; }
+
+    /* ——— HERO ——— */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: calc(var(--nav-h) + 4rem) 1.5rem 5rem;
+      position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--accent-dim); color: var(--accent);
+      border: 1px solid var(--border-accent); border-radius: 99px;
+      padding: 0.4rem 1rem; font-size: 0.8rem; font-weight: 600;
+      margin-bottom: 2rem; letter-spacing: 0.05em; text-transform: uppercase;
+      animation: fadeInDown 0.6s ease both;
+    }
+    .hero-badge .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.4)} }
+
+    .hero h1 {
+      font-family: var(--font-display); font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 800; line-height: 1.05; letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      animation: fadeInUp 0.7s 0.1s ease both;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .hero p {
+      max-width: 580px; font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--text-secondary); margin: 0 auto 2.5rem; font-weight: 400;
+      animation: fadeInUp 0.7s 0.2s ease both;
+    }
+    .hero-actions {
+      display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+      animation: fadeInUp 0.7s 0.3s ease both;
+    }
+
+    /* ——— STATS STRIP ——— */
+    .stats-strip {
+      position: relative; z-index: 1;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
+      padding: 0 1.5rem 6rem;
+      animation: fadeInUp 0.7s 0.4s ease both;
+    }
+    .stat-pill {
+      display: flex; align-items: center; gap: 0.8rem;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 1.1rem 1.6rem;
+      transition: all var(--transition); cursor: default;
+    }
+    .stat-pill:hover { border-color: var(--border-accent); box-shadow: var(--shadow-glow); transform: translateY(-2px); }
+    .stat-icon {
+      width: 44px; height: 44px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .stat-icon.green { background: var(--accent-dim); color: var(--accent); }
+    .stat-icon.blue { background: var(--accent2-dim); color: var(--accent2); }
+    .stat-icon.purple { background: rgba(155,89,182,0.12); color: #9b59b6; }
+    .stat-icon.orange { background: rgba(230,126,34,0.12); color: #e67e22; }
+    .stat-num { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; line-height: 1; }
+    .stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 2px; }
+
+    /* ——— SECTION COMMONS ——— */
+    section { position: relative; z-index: 1; }
+    .section-inner { max-width: 1200px; margin: 0 auto; padding: 0 clamp(1rem, 5vw, 3rem); }
+    .section-label {
+      display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 1rem;
+    }
+    .section-desc { color: var(--text-secondary); max-width: 520px; font-size: 1rem; }
+
+    /* ——— FEATURES ——— */
+    .features { padding: 6rem 0; }
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem; margin-top: 3rem;
+    }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1.8rem;
+      transition: all var(--transition); cursor: default;
+    }
+    .feature-card:hover {
+      border-color: var(--border-accent); background: var(--bg-card-hover);
+      transform: translateY(-3px); box-shadow: var(--shadow-card);
+    }
+    .feature-ico {
+      width: 52px; height: 52px; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; margin-bottom: 1.2rem;
+    }
+    .feature-card h3 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ——— HOW IT WORKS ——— */
+    .how { padding: 6rem 0; background: var(--bg-secondary); }
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem; margin-top: 3rem;
+    }
+    .step-card { text-align: center; }
+    .step-num {
+      font-family: var(--font-display); font-size: 3.5rem; font-weight: 800;
+      color: var(--accent); opacity: 0.15; line-height: 1; margin-bottom: 1rem;
+    }
+    .step-icon {
+      width: 60px; height: 60px; margin: 0 auto 1rem;
+      background: var(--accent-dim); border: 1px solid var(--border-accent);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; color: var(--accent);
+    }
+    .step-card h3 { font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem; }
+    .step-card p { color: var(--text-secondary); font-size: 0.9rem; }
+
+    /* ——— TESTIMONIALS ——— */
+    .testimonials { padding: 6rem 0; }
+    .testimonials-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem; margin-top: 3rem;
+    }
+    .tcard {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 1.8rem;
+      transition: all var(--transition);
+    }
+    .tcard:hover { border-color: var(--border-accent); box-shadow: var(--shadow-card); }
+    .tcard-stars { color: #f39c12; font-size: 0.8rem; margin-bottom: 1rem; }
+    .tcard p { color: var(--text-secondary); font-size: 0.95rem; font-style: italic; margin-bottom: 1.2rem; line-height: 1.7; }
+    .tcard-author { display: flex; align-items: center; gap: 0.8rem; }
+    .tcard-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-weight: 800; font-size: 1rem; color: white;
+    }
+    .tcard-name { font-weight: 600; font-size: 0.9rem; }
+    .tcard-meta { color: var(--text-muted); font-size: 0.78rem; }
+
+    /* ——— CTA BANNER ——— */
+    .cta-banner {
+      padding: 6rem 0;
+      background: linear-gradient(135deg, rgba(46,204,113,0.08) 0%, rgba(61,155,233,0.06) 100%);
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .cta-inner { text-align: center; max-width: 600px; margin: 0 auto; }
+    .cta-inner h2 {
+      font-family: var(--font-display); font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800; letter-spacing: -0.025em; margin-bottom: 1rem;
+    }
+    .cta-inner p { color: var(--text-secondary); margin-bottom: 2rem; font-size: 1rem; }
+    .cta-actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+
+    /* ——— FOOTER ——— */
+    .footer {
+      background: var(--bg-secondary); border-top: 1px solid var(--border);
+      padding: 4rem 0 2rem;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 3rem;
+    }
+    .footer-brand .logo-text {
+      font-family: var(--font-display); font-weight: 800; font-size: 1.4rem;
+      color: var(--accent); margin-bottom: 0.8rem; display: block;
+    }
+    .footer-brand p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; max-width: 280px; }
+    .footer-col h4 {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.85rem;
+      text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted);
+      margin-bottom: 1.2rem;
+    }
+    .footer-col a {
+      display: block; color: var(--text-secondary); text-decoration: none;
+      font-size: 0.9rem; margin-bottom: 0.6rem; transition: color var(--transition);
+    }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      border-top: 1px solid var(--border); padding-top: 1.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+      color: var(--text-muted); font-size: 0.83rem;
+    }
+    .footer-bottom a { color: var(--text-muted); text-decoration: none; }
+    .footer-bottom a:hover { color: var(--accent); }
+
+    /* ——— MODALS ——— */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 2.5rem; width: 100%; max-width: 440px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+      animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes modalIn { from{transform:scale(0.9) translateY(20px);opacity:0} to{transform:scale(1) translateY(0);opacity:1} }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 1.8rem;
+    }
+    .modal-header h2 { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
+    .modal-header p { color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.3rem; }
+    .modal-close {
+      width: 32px; height: 32px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--bg-card);
+      color: var(--text-secondary); cursor: pointer; font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all var(--transition); flex-shrink: 0;
+    }
+    .modal-close:hover { color: var(--danger); border-color: var(--danger); }
+
+    .form-group { margin-bottom: 1.1rem; }
+    .form-label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.4rem; letter-spacing: 0.03em; }
+    .form-input, .form-select {
+      width: 100%; padding: 0.75rem 1rem; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: var(--bg-card);
+      color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;
+      transition: all var(--transition); outline: none;
+    }
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+    .form-input::placeholder { color: var(--text-muted); }
+    .form-select option { background: var(--bg-secondary); }
+    .form-input.error { border-color: var(--danger); }
+    .form-error { font-size: 0.78rem; color: var(--danger); margin-top: 0.3rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .modal-btn {
+      width: 100%; padding: 0.85rem; border-radius: var(--radius-sm); border: none;
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: all var(--transition); display: flex;
+      align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.5rem;
+    }
+    .modal-btn-primary { background: var(--accent); color: white; }
+    .modal-btn-primary:hover { filter: brightness(1.08); box-shadow: 0 4px 16px var(--accent-glow); }
+    .modal-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; filter: none; }
+
+    .modal-divider {
+      text-align: center; position: relative; margin: 1.2rem 0;
+      color: var(--text-muted); font-size: 0.8rem;
+    }
+    .modal-divider::before, .modal-divider::after {
+      content: ''; position: absolute; top: 50%; width: calc(50% - 30px);
+      height: 1px; background: var(--border);
+    }
+    .modal-divider::before { left: 0; }
+    .modal-divider::after { right: 0; }
+
+    .modal-switch { text-align: center; margin-top: 1.2rem; font-size: 0.88rem; color: var(--text-secondary); }
+    .modal-switch a { color: var(--accent); font-weight: 600; cursor: pointer; text-decoration: none; }
+
+    /* ——— TOAST ——— */
+    .toast-container { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.6rem; }
+    .toast {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.9rem 1.2rem; border-radius: var(--radius-md);
+      background: var(--bg-secondary); border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3); font-size: 0.88rem; font-weight: 500;
+      max-width: 320px; animation: toastIn 0.3s ease;
+      transition: all var(--transition);
+    }
+    .toast.success { border-left: 3px solid var(--accent); }
+    .toast.error { border-left: 3px solid var(--danger); }
+    .toast.info { border-left: 3px solid var(--accent2); }
+    @keyframes toastIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+    /* ——— LOADING ——— */
+    .loading-overlay {
+      position: fixed; inset: 0; z-index: 9998;
+      background: var(--bg-primary);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1rem;
+      transition: opacity 0.4s;
+    }
+    .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+    .loader-logo { font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .loader-bar { width: 160px; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .loader-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; animation: loaderFill 1.2s ease forwards; }
+    @keyframes loaderFill { from{width:0} to{width:100%} }
+
+    /* ——— ANIMATIONS ——— */
+    @keyframes fadeInDown { from{opacity:0;transform:translateY(-15px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ——— SCROLL REVEAL ——— */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ——— PASSWORD TOGGLE ——— */
+    .input-wrapper { position: relative; }
+    .input-wrapper .form-input { padding-right: 2.5rem; }
+    .pw-toggle {
+      position: absolute; right: 0.8rem; top: 50%; transform: translateY(-50%);
+      color: var(--text-muted); cursor: pointer; font-size: 0.9rem;
+      transition: color var(--transition);
+    }
+    .pw-toggle:hover { color: var(--accent); }
+
+    /* ——— RESPONSIVE ——— */
+    @media (max-width: 768px) {
+      .nav-links, .nav-actions .btn { display: none; }
+      .hamburger { display: flex; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ——— SEARCH BAR (hero) ——— */
+    .hero-search {
+      display: flex; gap: 0; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-md); overflow: hidden; max-width: 520px; width: 100%;
+      margin: 0 auto 2.5rem; transition: border-color var(--transition);
+    }
+    .hero-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+    .hero-search input {
+      flex: 1; padding: 0.85rem 1.1rem; background: none; border: none;
+      color: var(--text-primary); font-family: var(--font-body); font-size: 0.95rem; outline: none;
+    }
+    .hero-search input::placeholder { color: var(--text-muted); }
+    .hero-search button {
+      padding: 0.85rem 1.4rem; background: var(--accent); border: none;
+      color: white; cursor: pointer; font-size: 0.95rem; transition: filter var(--transition);
+    }
+    .hero-search button:hover { filter: brightness(1.1); }
+
+    /* ——— PARTNER STRIP ——— */
+    .partner-strip {
+      text-align: center; padding: 2rem 0; border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border); margin-bottom: 1rem;
+    }
+    .partner-strip p { color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1.2rem; }
+    .partner-logos { display: flex; justify-content: center; align-items: center; gap: 2.5rem; flex-wrap: wrap; }
+    .partner-logos span { color: var(--text-muted); font-family: var(--font-display); font-weight: 800; font-size: 1rem; letter-spacing: -0.02em; }
+
+    /* spinner inside btn */
+    .btn-spinner { display: none; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+  </style>
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="logo">🧬 UMYU BioHub</div>
-        <div>
-            <a href="#" class="nav-link" id="loginNavBtn">Login</a>
-        </div>
-    </div>
-
-    <div class="hero">
-        <h1>Biochemistry Digital Library</h1>
-        <p>Access lecture notes, past questions, research materials, and more for all levels</p>
-        <div>
-            <button class="btn btn-primary" id="getStartedBtn">Get Started</button>
-            <button class="btn btn-outline">Explore Materials</button>
-        </div>
-        <div class="stats">
-            <div class="stat-card">
-                <h3>2,500+</h3>
-                <p>Academic Materials</p>
-            </div>
-            <div class="stat-card">
-                <h3>3,200+</h3>
-                <p>Active Students</p>
-            </div>
-            <div class="stat-card">
-                <h3>45+</h3>
-                <p>Course Modules</p>
-            </div>
-        </div>
-     </div>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeLoginModal()">&times;</span>
-            <h2>🔐 Login</h2>
-            <input type="email" id="loginEmail" placeholder="University Email">
-            <input type="password" id="loginPassword" placeholder="Password">
-            <button id="loginSubmitBtn">Login</button>
-            <p style="margin-top: 1rem;">Don't have an account? <a href="#" onclick="showSignupModal(); return false;" style="color:#2ecc71;">Sign Up</a></p>
-        </div>
-    </div>
-    
-    <!-- Sign Up Modal -->
-<div id="signupModal" class="modal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeSignupModal()">&times;</span>
-        <h2>📝 Student Registration</h2>
-        <input type="text" id="signupName" placeholder="Full Name">
-        <input type="email" id="signupEmail" placeholder="University Email">
-        <input type="text" id="signupMatric" placeholder="Matric Number">
-        <select id="signupLevel">
-            <option value="">Select Level</option>
-            <option value="100">100 Level</option>
-            <option value="200">200 Level</option>
-            <option value="300">300 Level</option>
-            <option value="400">400 Level</option>
-            <option value="500">500 Level</option>
-        </select>
-        <input type="password" id="signupPassword" placeholder="Password">
-        <input type="password" id="signupConfirm" placeholder="Confirm Password">
-        <button id="signupSubmitBtn">Register</button>
-        <p style="margin-top: 1rem;">Already have an account? <a href="#" onclick="showLoginModal(); return false;" style="color:#2ecc71;">Login</a></p>
-    </div>
+<!-- Page loading screen -->
+<div class="loading-overlay" id="pageLoader">
+  <div class="loader-logo">🧬 UMYUBIOHUB</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
 </div>
-    
-    <script>
-        // Debug - check if Supabase loaded
-       console.log('supabaseJs exists?', typeof supabaseJs);
-        console.log('supabase exists?', typeof supabase);
-        
-        // Supabase configuration
-        const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
-        
-        let supabaseClient = null;
-        
-        // Initialize Supabase
 
-        function initSupabase() {
-    // Try both possible variable names
-    const sbLib = window.supabaseJs || window.supabase;
-    if (sbLib) {
-        supabaseClient = sbLib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        console.log('✅ Supabase connected successfully!');
-        // Show that it's ready
-        const msgDiv = document.createElement('div');
-        msgDiv.style.display = 'none';
-        document.body.appendChild(msgDiv);
-    } else {
-        console.log('Waiting for Supabase SDK...');
-        setTimeout(initSupabase, 500);
-    }
-}
-        
-        initSupabase();
-        
-        // Modal functions
-        function showLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
-        
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-        }
-        
-        // Login function
-        async function handleLogin() {
-            if (!supabaseClient) {
-                alert('Connecting to server...');
-                return;
-            }
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            if (!email || !password) {
-                alert('Please enter email and password');
-                return;
-            }
-            
-            try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
-                if (error) throw error;
-                
-                alert('Login successful! Redirecting...');
-                window.location.href = 'dashboard.html';
-                
-            } catch (error) {
-                alert('Error: ' + error.message);
-            }
-        }
-        
-        // Button click handlers
-        document.getElementById('getStartedBtn').onclick = showLoginModal;
-        document.getElementById('loginNavBtn').onclick = showLoginModal;
-        document.getElementById('loginSubmitBtn').onclick = handleLogin;
-        
-        // Close modal when clicking outside
-        window.onclick = function(e) {
-            if (e.target.classList.contains('modal')) {
-                closeLoginModal();
-            }
-        };
-        // Sign Up Modal functions
-function showSignupModal() {
-    document.getElementById('signupModal').style.display = 'flex';
-}
+<div class="bg-mesh"></div>
 
-function closeSignupModal() {
-    document.getElementById('signupModal').style.display = 'none';
-}
+<!-- ═══════════════ NAVBAR ═══════════════ -->
+<nav class="navbar" id="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon"><i class="fas fa-dna"></i></div>
+    <span>UMYU<span>BIOHUB</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Library</a>
+    <a href="chatbot.html">AI Assistant</a>
+    <a href="#features">About</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn-theme" id="themeToggle" title="Toggle theme">
+      <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+    <button class="btn btn-ghost" id="loginNavBtn">Log in</button>
+    <button class="btn btn-primary" id="signupNavBtn"><i class="fas fa-user-plus"></i> Sign up</button>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
-// Sign Up function
-async function handleSignup() {
-    if (!supabaseClient) {
-        alert('Connecting to server...');
-        return;
-    }
-    
-    const name = document.getElementById('signupName').value;
-    const email = document.getElementById('signupEmail').value;
-    const matric = document.getElementById('signupMatric').value;
-    const level = document.getElementById('signupLevel').value;
-    const password = document.getElementById('signupPassword').value;
-    const confirm = document.getElementById('signupConfirm').value;
-    
-    if (!name || !email || !matric || !level || !password) {
-        alert('Please fill all fields');
-        return;
-    }
-    
-    if (password !== confirm) {
-        alert('Passwords do not match');
-        return;
-    }
-    
-    if (password.length < 6) {
-        alert('Password must be at least 6 characters');
-        return;
-    }
-    
-    try {
-        const { data, error } = await supabaseClient.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: {
-                    full_name: name,
-                    matric_number: matric,
-                    level: level
-                }
-            }
-        });
-        
-        if (error) throw error;
-        
-        alert('Registration successful! Please check your email to verify.');
-        closeSignupModal();
-        showLoginModal();
-        
-        // Clear form
-        document.getElementById('signupName').value = '';
-        document.getElementById('signupEmail').value = '';
-        document.getElementById('signupMatric').value = '';
-        document.getElementById('signupLevel').value = '';
-        document.getElementById('signupPassword').value = '';
-        document.getElementById('signupConfirm').value = '';
-        
-    } catch (error) {
-        alert('Error: ' + error.message);
-    }
-}
+<!-- Mobile drawer -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="dashboard.html"><i class="fas fa-book" style="width:20px;color:var(--accent)"></i> Library</a>
+  <a href="chatbot.html"><i class="fas fa-robot" style="width:20px;color:var(--accent)"></i> AI Assistant</a>
+  <a href="#features"><i class="fas fa-info-circle" style="width:20px;color:var(--accent)"></i> About</a>
+  <div class="mobile-actions">
+    <button class="btn btn-ghost" style="flex:1" id="mobileLoginBtn">Log in</button>
+    <button class="btn btn-primary" style="flex:1" id="mobileSignupBtn">Sign up</button>
+  </div>
+</div>
 
-// Update button click handlers
-document.getElementById('signupSubmitBtn').onclick = handleSignup;
-    </script>
-      <!-- Footer -->
-<footer class="glass-footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <h3>🧬 UMYU BioHub</h3>
-            <p>E-Library for Biochemistry Students</p>
-        </div>
-        <div class="footer-section">
-            <h3>Developer</h3>
-            <p><i class="fas fa-user-graduate"></i> Alamin Kabir</p>
-            <p><i class="fas fa-envelope"></i> alamininkota22@gmail.com</p>
-            <p><i class="fab fa-phonenumber"></i> 09057352833</p>
-        </div>
-        <div class="footer-section">
-            <h3>Links</h3>
-            <p><a href="index.html">Home</a> | <a href="dashboard.html">Library</a> | <a href="chatbot.html">AI Assistant</a></p>
-        </div>
-        <div class="footer-section">
-            <h3>© 2025 UMYU Biochemistry</h3>
-            <p>All academic materials are for educational use.</p>
-        </div>
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="dot"></span>
+    Live — Updated Regularly
+  </div>
+  <h1>Your Academic Hub<br>for <span class="highlight">Biochemistry</span></h1>
+  <p>The official e-library for Biochemistry students at Umaru Musa Yar'adua University, Katsina. Access lecture notes, past questions, research papers and more — anytime, anywhere.</p>
+
+  <div class="hero-search" role="search">
+    <input type="text" id="heroSearch" placeholder="Search materials, courses, past questions..." aria-label="Search materials">
+    <button onclick="handleHeroSearch()"><i class="fas fa-search"></i></button>
+  </div>
+
+  <div class="hero-actions">
+    <button class="btn btn-primary btn-lg" id="heroGetStarted"><i class="fas fa-bolt"></i> Get Started Free</button>
+    <a href="dashboard.html" class="btn btn-ghost btn-lg"><i class="fas fa-eye"></i> Browse Library</a>
+  </div>
+</section>
+
+<!-- Stats strip -->
+<div class="stats-strip">
+  <div class="stat-pill">
+    <div class="stat-icon green"><i class="fas fa-file-alt"></i></div>
+    <div>
+      <div class="stat-num" data-target="2500">0</div>
+      <div class="stat-label">Academic Materials</div>
     </div>
+  </div>
+  <div class="stat-pill">
+    <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+    <div>
+      <div class="stat-num" data-target="3200">0</div>
+      <div class="stat-label">Active Students</div>
+    </div>
+  </div>
+  <div class="stat-pill">
+    <div class="stat-icon purple"><i class="fas fa-book-open"></i></div>
+    <div>
+      <div class="stat-num" data-target="45">0</div>
+      <div class="stat-label">Course Modules</div>
+    </div>
+  </div>
+  <div class="stat-pill">
+    <div class="stat-icon orange"><i class="fas fa-download"></i></div>
+    <div>
+      <div class="stat-num" data-target="12000">0</div>
+      <div class="stat-label">Total Downloads</div>
+    </div>
+  </div>
+</div>
+
+<!-- Partner strip -->
+<div class="partner-strip">
+  <div class="section-inner">
+    <p>Serving all departments at</p>
+    <div class="partner-logos">
+      <span>UMYU Katsina</span>
+      <span>·</span>
+      <span>Dept. of Biochemistry</span>
+      <span>·</span>
+      <span>Faculty of Science</span>
+      <span>·</span>
+      <span>100 – 500 Level</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ FEATURES ═══════════════ -->
+<section class="features" id="features">
+  <div class="section-inner">
+    <span class="section-label reveal">What We Offer</span>
+    <h2 class="section-title reveal">Everything you need<br>to excel academically</h2>
+    <p class="section-desc reveal">Built specifically for Biochemistry students, UMYUBIOHUB brings all your academic resources into one clean, fast, and accessible platform.</p>
+
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-ico" style="background:var(--accent-dim);color:var(--accent)"><i class="fas fa-file-pdf"></i></div>
+        <h3>Lecture Notes & PDFs</h3>
+        <p>Access comprehensive lecture notes for all Biochemistry courses across all levels, organized by course code and semester.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.05s">
+        <div class="feature-ico" style="background:var(--accent2-dim);color:var(--accent2)"><i class="fas fa-question-circle"></i></div>
+        <h3>Past Questions</h3>
+        <p>Practice with past examination questions from previous years, complete with solutions where available.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.1s">
+        <div class="feature-ico" style="background:rgba(155,89,182,0.12);color:#9b59b6"><i class="fas fa-robot"></i></div>
+        <h3>AI Study Assistant</h3>
+        <p>Ask biochemistry questions to our AI assistant, powered by advanced language models trained on academic content.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.15s">
+        <div class="feature-ico" style="background:rgba(230,126,34,0.12);color:#e67e22"><i class="fas fa-flask"></i></div>
+        <h3>Practical Manuals</h3>
+        <p>Laboratory practical manuals for all BCH practical courses with step-by-step experimental procedures.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.2s">
+        <div class="feature-ico" style="background:rgba(231,76,60,0.12);color:#e74c3c"><i class="fas fa-calculator"></i></div>
+        <h3>CGPA Calculator</h3>
+        <p>Calculate your Grade Point Average instantly with our built-in academic calculator supporting UMYU's grading system.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.25s">
+        <div class="feature-ico" style="background:rgba(26,188,156,0.12);color:#1abc9c"><i class="fas fa-moon"></i></div>
+        <h3>Dark Mode Support</h3>
+        <p>Study comfortably day or night with our beautiful dark and light theme support across all pages.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+<section class="how">
+  <div class="section-inner">
+    <span class="section-label reveal">Simple Process</span>
+    <h2 class="section-title reveal">Start in minutes</h2>
+    <div class="steps-grid">
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon"><i class="fas fa-user-plus"></i></div>
+        <h3>Create Account</h3>
+        <p>Register with your university email, matric number, and academic level.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:0.1s">
+        <div class="step-num">02</div>
+        <div class="step-icon"><i class="fas fa-search"></i></div>
+        <h3>Search Materials</h3>
+        <p>Browse or search for specific course materials, past questions, or research papers.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:0.2s">
+        <div class="step-num">03</div>
+        <div class="step-icon"><i class="fas fa-eye"></i></div>
+        <h3>View & Download</h3>
+        <p>Read materials directly in-browser or download PDFs for offline studying.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:0.3s">
+        <div class="step-num">04</div>
+        <div class="step-icon"><i class="fas fa-graduation-cap"></i></div>
+        <h3>Excel Academically</h3>
+        <p>Prepare thoroughly for exams and improve your CGPA with quality materials.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ TESTIMONIALS ═══════════════ -->
+<section class="testimonials">
+  <div class="section-inner">
+    <span class="section-label reveal">Student Reviews</span>
+    <h2 class="section-title reveal">Trusted by students</h2>
+    <div class="testimonials-grid">
+      <div class="tcard reveal">
+        <div class="tcard-stars">★★★★★</div>
+        <p>"UMYUBIOHUB completely changed how I prepare for exams. Having all BCH past questions in one place is incredible. I improved my GPA significantly this semester!"</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">A</div>
+          <div><div class="tcard-name">Aisha Mohammed</div><div class="tcard-meta">BCH 300 Level · Katsina</div></div>
+        </div>
+      </div>
+      <div class="tcard reveal" style="transition-delay:0.1s">
+        <div class="tcard-stars">★★★★★</div>
+        <p>"The AI assistant is so helpful for understanding complex biochemistry concepts. It's like having a tutor available 24/7. Highly recommended to all bio students."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">Y</div>
+          <div><div class="tcard-name">Yusuf Ibrahim</div><div class="tcard-meta">BCH 400 Level · UMYU</div></div>
+        </div>
+      </div>
+      <div class="tcard reveal" style="transition-delay:0.2s">
+        <div class="tcard-stars">★★★★☆</div>
+        <p>"The practical manuals saved me so much time during lab sessions. Everything is well-organized and easy to find. The mobile experience is also very smooth."</p>
+        <div class="tcard-author">
+          <div class="tcard-avatar">F</div>
+          <div><div class="tcard-name">Fatima Usman</div><div class="tcard-meta">BCH 200 Level · UMYU</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CTA ═══════════════ -->
+<section class="cta-banner">
+  <div class="section-inner">
+    <div class="cta-inner reveal">
+      <h2>Ready to transform your studies?</h2>
+      <p>Join thousands of Biochemistry students already using UMYUBIOHUB to access academic materials and boost their performance.</p>
+      <div class="cta-actions">
+        <button class="btn btn-primary btn-lg" id="ctaSignupBtn"><i class="fas fa-rocket"></i> Create Free Account</button>
+        <a href="dashboard.html" class="btn btn-ghost btn-lg">Browse as Guest</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="section-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="logo-text">🧬 UMYUBIOHUB</span>
+        <p>The official digital library for Biochemistry students at Umaru Musa Yar'adua University, Katsina. Built to make academic excellence accessible.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Library</h4>
+        <a href="dashboard.html">Browse Materials</a>
+        <a href="dashboard.html">Lecture Notes</a>
+        <a href="dashboard.html">Past Questions</a>
+        <a href="dashboard.html">Research Papers</a>
+      </div>
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="chatbot.html">AI Assistant</a>
+        <a href="dashboard.html">CGPA Calculator</a>
+        <a href="dashboard.html">Timetable</a>
+      </div>
+      <div class="footer-col">
+        <h4>Developer</h4>
+        <a href="mailto:alamininkota22@gmail.com"><i class="fas fa-envelope" style="width:16px"></i> alamininkota22@gmail.com</a>
+        <a href="tel:09057352833"><i class="fas fa-phone" style="width:16px"></i> 09057352833</a>
+        <a href="#"><i class="fas fa-code" style="width:16px"></i> Alamin Kabir</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 UMYUBIOHUB · Dept. of Biochemistry, UMYU Katsina</span>
+      <span>All academic materials are for educational use only.</span>
+    </div>
+  </div>
 </footer>
+
+<!-- ═══════════════ LOGIN MODAL ═══════════════ -->
+<div class="modal-overlay" id="loginOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="modal-header">
+      <div>
+        <h2 id="loginTitle">Welcome back</h2>
+        <p>Log in to access your materials</p>
+      </div>
+      <button class="modal-close" id="closeLogin" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="loginEmail">University Email</label>
+      <input class="form-input" type="email" id="loginEmail" placeholder="yourname@umyu.edu.ng" autocomplete="email">
+      <div class="form-error" id="loginEmailErr"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="loginPassword">Password</label>
+      <div class="input-wrapper">
+        <input class="form-input" type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password">
+        <span class="pw-toggle" onclick="togglePw('loginPassword', this)"><i class="fas fa-eye"></i></span>
+      </div>
+      <div class="form-error" id="loginPasswordErr"></div>
+    </div>
+    <button class="modal-btn modal-btn-primary" id="loginSubmitBtn" onclick="handleLogin()">
+      <span class="btn-spinner" id="loginSpinner"></span>
+      <span id="loginBtnText">Log In</span>
+    </button>
+    <div class="modal-switch">
+      Don't have an account? <a onclick="switchToSignup()">Sign up here</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SIGNUP MODAL ═══════════════ -->
+<div class="modal-overlay" id="signupOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="signupTitle">
+    <div class="modal-header">
+      <div>
+        <h2 id="signupTitle">Create account</h2>
+        <p>Join the UMYUBIOHUB community</p>
+      </div>
+      <button class="modal-close" id="closeSignup" aria-label="Close"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="signupName">Full Name</label>
+      <input class="form-input" type="text" id="signupName" placeholder="e.g. Aisha Mohammed" autocomplete="name">
+      <div class="form-error" id="signupNameErr"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="signupEmail">University Email</label>
+      <input class="form-input" type="email" id="signupEmail" placeholder="yourname@umyu.edu.ng" autocomplete="email">
+      <div class="form-error" id="signupEmailErr"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label" for="signupMatric">Matric Number</label>
+        <input class="form-input" type="text" id="signupMatric" placeholder="e.g. UMYU/BCH/21/001">
+        <div class="form-error" id="signupMatricErr"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="signupLevel">Academic Level</label>
+        <select class="form-select" id="signupLevel">
+          <option value="">Select Level</option>
+          <option value="100">100 Level</option>
+          <option value="200">200 Level</option>
+          <option value="300">300 Level</option>
+          <option value="400">400 Level</option>
+          <option value="500">500 Level</option>
+        </select>
+        <div class="form-error" id="signupLevelErr"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="signupPassword">Password</label>
+      <div class="input-wrapper">
+        <input class="form-input" type="password" id="signupPassword" placeholder="At least 6 characters" autocomplete="new-password">
+        <span class="pw-toggle" onclick="togglePw('signupPassword', this)"><i class="fas fa-eye"></i></span>
+      </div>
+      <div class="form-error" id="signupPasswordErr"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="signupConfirm">Confirm Password</label>
+      <div class="input-wrapper">
+        <input class="form-input" type="password" id="signupConfirm" placeholder="Repeat your password" autocomplete="new-password">
+        <span class="pw-toggle" onclick="togglePw('signupConfirm', this)"><i class="fas fa-eye"></i></span>
+      </div>
+      <div class="form-error" id="signupConfirmErr"></div>
+    </div>
+    <button class="modal-btn modal-btn-primary" id="signupSubmitBtn" onclick="handleSignup()">
+      <span class="btn-spinner" id="signupSpinner"></span>
+      <span id="signupBtnText">Create Account</span>
+    </button>
+    <div class="modal-switch">Already have an account? <a onclick="switchToLogin()">Log in</a></div>
+  </div>
+</div>
+
+<!-- ═══════════════ TOASTS ═══════════════ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ═══════════════ CONFIG ═══════════════
+const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
+let sb = null;
+
+// ═══════════════ INIT ═══════════════
+window.addEventListener('load', () => {
+  // Hide loader
+  setTimeout(() => {
+    document.getElementById('pageLoader').classList.add('hidden');
+  }, 1200);
+
+  // Init Supabase
+  const lib = window.supabaseJs || window.supabase;
+  if (lib) sb = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  else setTimeout(() => {
+    const lib2 = window.supabaseJs || window.supabase;
+    if (lib2) sb = lib2.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }, 1000);
+
+  // Check existing session
+  checkSession();
+
+  // Animate stats counters
+  animateCounters();
+
+  // Setup scroll reveal
+  setupReveal();
+
+  // Navbar scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 30);
+  });
+});
+
+// ═══════════════ SESSION CHECK ═══════════════
+async function checkSession() {
+  try {
+    if (!sb) return;
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      // Already logged in — swap nav buttons
+      document.querySelector('.nav-actions').innerHTML = `
+        <button class="btn-theme" id="themeToggle" title="Toggle theme"><i class="fas fa-moon" id="themeIcon"></i></button>
+        <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-th-large"></i> Dashboard</a>
+        <button class="btn btn-ghost" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+      `;
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+      applyStoredTheme();
+    }
+  } catch(e) {}
+}
+
+async function handleLogout() {
+  if (sb) await sb.auth.signOut();
+  localStorage.removeItem('umyu_user');
+  showToast('Logged out successfully', 'info');
+  setTimeout(() => window.location.reload(), 700);
+}
+
+// ═══════════════ THEME ═══════════════
+function applyStoredTheme() {
+  const t = localStorage.getItem('umyu_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  const icon = document.getElementById('themeIcon');
+  if (icon) icon.className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme');
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('umyu_theme', next);
+  const icon = document.getElementById('themeIcon');
+  if (icon) icon.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+applyStoredTheme();
+
+// ═══════════════ HAMBURGER ═══════════════
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  mobileMenu.classList.toggle('open');
+});
+document.addEventListener('click', (e) => {
+  if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('open');
+  }
+});
+
+// ═══════════════ MODALS ═══════════════
+const loginOverlay = document.getElementById('loginOverlay');
+const signupOverlay = document.getElementById('signupOverlay');
+
+function openLogin() { loginOverlay.classList.add('open'); document.body.style.overflow='hidden'; }
+function closeLogin() { loginOverlay.classList.remove('open'); document.body.style.overflow=''; }
+function openSignup() { signupOverlay.classList.add('open'); document.body.style.overflow='hidden'; }
+function closeSignup() { signupOverlay.classList.remove('open'); document.body.style.overflow=''; }
+function switchToSignup() { closeLogin(); openSignup(); }
+function switchToLogin() { closeSignup(); openLogin(); }
+
+document.getElementById('loginNavBtn').addEventListener('click', openLogin);
+document.getElementById('signupNavBtn').addEventListener('click', openSignup);
+document.getElementById('heroGetStarted').addEventListener('click', openSignup);
+document.getElementById('ctaSignupBtn').addEventListener('click', openSignup);
+document.getElementById('mobileLoginBtn').addEventListener('click', openLogin);
+document.getElementById('mobileSignupBtn').addEventListener('click', openSignup);
+document.getElementById('closeLogin').addEventListener('click', closeLogin);
+document.getElementById('closeSignup').addEventListener('click', closeSignup);
+loginOverlay.addEventListener('click', (e) => { if (e.target === loginOverlay) closeLogin(); });
+signupOverlay.addEventListener('click', (e) => { if (e.target === signupOverlay) closeSignup(); });
+
+// ═══════════════ PASSWORD TOGGLE ═══════════════
+function togglePw(id, el) {
+  const input = document.getElementById(id);
+  const icon = el.querySelector('i');
+  if (input.type === 'password') { input.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+  else { input.type = 'password'; icon.className = 'fas fa-eye'; }
+}
+
+// ═══════════════ VALIDATION ═══════════════
+function setErr(id, msg) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = msg;
+  if (msg) document.getElementById(id.replace('Err',''))?.classList.add('error');
+  else document.getElementById(id.replace('Err',''))?.classList.remove('error');
+}
+function clearErr(id) { setErr(id, ''); }
+function validateEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+// ═══════════════ LOGIN ═══════════════
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  let valid = true;
+  clearErr('loginEmailErr'); clearErr('loginPasswordErr');
+  if (!validateEmail(email)) { setErr('loginEmailErr', 'Please enter a valid email'); valid = false; }
+  if (!password) { setErr('loginPasswordErr', 'Password is required'); valid = false; }
+  if (!valid) return;
+  if (!sb) { showToast('Connecting to server, please try again…', 'error'); return; }
+  setLoading('login', true);
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    localStorage.setItem('umyu_user', JSON.stringify(data.user));
+    showToast('Login successful! Redirecting…', 'success');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 900);
+  } catch(e) {
+    setErr('loginPasswordErr', e.message || 'Invalid credentials. Please try again.');
+    setLoading('login', false);
+  }
+}
+
+// ═══════════════ SIGNUP ═══════════════
+async function handleSignup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const matric = document.getElementById('signupMatric').value.trim();
+  const level = document.getElementById('signupLevel').value;
+  const password = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('signupConfirm').value;
+  let valid = true;
+  ['signupNameErr','signupEmailErr','signupMatricErr','signupLevelErr','signupPasswordErr','signupConfirmErr'].forEach(clearErr);
+  if (name.length < 3) { setErr('signupNameErr', 'Please enter your full name'); valid = false; }
+  if (!validateEmail(email)) { setErr('signupEmailErr', 'Please enter a valid email'); valid = false; }
+  if (matric.length < 4) { setErr('signupMatricErr', 'Enter a valid matric number'); valid = false; }
+  if (!level) { setErr('signupLevelErr', 'Please select your level'); valid = false; }
+  if (password.length < 6) { setErr('signupPasswordErr', 'Password must be at least 6 characters'); valid = false; }
+  if (password !== confirm) { setErr('signupConfirmErr', 'Passwords do not match'); valid = false; }
+  if (!valid) return;
+  if (!sb) { showToast('Connecting to server, please try again…', 'error'); return; }
+  setLoading('signup', true);
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email, password,
+      options: { data: { full_name: name, matric_number: matric, level } }
+    });
+    if (error) throw error;
+    showToast('Account created! Check your email to verify.', 'success');
+    closeSignup();
+    // Clear form
+    ['signupName','signupEmail','signupMatric','signupPassword','signupConfirm'].forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('signupLevel').value = '';
+  } catch(e) {
+    setErr('signupEmailErr', e.message || 'Registration failed. Try again.');
+    setLoading('signup', false);
+  }
+}
+
+function setLoading(which, on) {
+  const btn = document.getElementById(which + 'SubmitBtn');
+  const spinner = document.getElementById(which + 'Spinner');
+  const text = document.getElementById(which + 'BtnText');
+  btn.disabled = on;
+  spinner.style.display = on ? 'block' : 'none';
+  text.textContent = on ? (which === 'login' ? 'Logging in…' : 'Creating account…') : (which === 'login' ? 'Log In' : 'Create Account');
+}
+
+// ═══════════════ HERO SEARCH ═══════════════
+function handleHeroSearch() {
+  const q = document.getElementById('heroSearch').value.trim();
+  if (q) window.location.href = `dashboard.html?search=${encodeURIComponent(q)}`;
+  else window.location.href = 'dashboard.html';
+}
+document.getElementById('heroSearch').addEventListener('keydown', (e) => { if (e.key === 'Enter') handleHeroSearch(); });
+
+// ═══════════════ TOAST ═══════════════
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
+  const colors = { success: 'var(--accent)', error: 'var(--danger)', info: 'var(--accent2)' };
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<i class="fas ${icons[type]}" style="color:${colors[type]}"></i>${message}`;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 3500);
+}
+
+// ═══════════════ COUNTER ANIMATION ═══════════════
+function animateCounters() {
+  document.querySelectorAll('[data-target]').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    const duration = 1800;
+    const step = target / (duration / 16);
+    let current = 0;
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = Math.floor(current).toLocaleString() + '+';
+      if (current >= target) clearInterval(timer);
+    }, 16);
+  });
+}
+
+// ═══════════════ SCROLL REVEAL ═══════════════
+function setupReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+// Keyboard accessibility — close modals on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeLogin(); closeSignup(); }
+});
+</script>
 </body>
 </html>
