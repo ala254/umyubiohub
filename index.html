@@ -134,6 +134,45 @@
             font-size: 2rem;
             color: #2ecc71;
         }
+        .glass-footer {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 2rem 5%;
+    margin-top: 3rem;
+}
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.footer-section {
+    flex: 1;
+    min-width: 180px;
+}
+.footer-section h3 {
+    color: #2ecc71;
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+.footer-section p, .footer-section a {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+    text-decoration: none;
+}
+.footer-section a:hover {
+    color: #2ecc71;
+}
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+        text-align: center;
+    }
+}
     </style>
 </head>
 <body>
@@ -358,5 +397,28 @@ async function handleSignup() {
 // Update button click handlers
 document.getElementById('signupSubmitBtn').onclick = handleSignup;
     </script>
+      <!-- Footer -->
+<footer class="glass-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>🧬 UMYU BioHub</h3>
+            <p>E-Library for Biochemistry Students</p>
+        </div>
+        <div class="footer-section">
+            <h3>Developer</h3>
+            <p><i class="fas fa-user-graduate"></i> Alamin Kabir</p>
+            <p><i class="fas fa-envelope"></i> alamininkota22@gmail.com</p>
+            <p><i class="fab fa-phonenumber"></i> 09057352833</p>
+        </div>
+        <div class="footer-section">
+            <h3>Links</h3>
+            <p><a href="index.html">Home</a> | <a href="dashboard.html">Library</a> | <a href="chatbot.html">AI Assistant</a></p>
+        </div>
+        <div class="footer-section">
+            <h3>© 2025 UMYU Biochemistry</h3>
+            <p>All academic materials are for educational use.</p>
+        </div>
+    </div>
+</footer>
 </body>
 </html>
