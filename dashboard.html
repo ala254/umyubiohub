@@ -1,490 +1,1274 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Dashboard - UMYU BioHub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .dashboard-header {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-        
-        .welcome-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-        
-        .greeting h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.3rem;
-        }
-        
-        .search-section {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .filter-group {
-            background: var(--glass-bg);
-            padding: 1rem;
-            border-radius: 15px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        
-        .filter-select {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid var(--glass-border);
-            color: inherit;
-        }
-        
-        .section-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .section-title {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-        
-        .recent-list, .saved-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        
-        .recent-item, .saved-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        
-        .course-categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .category-card {
-            background: rgba(255,255,255,0.05);
-            padding: 1rem;
-            border-radius: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .category-card:hover {
-            background: var(--secondary);
-        }
-        
-        .two-columns {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-        
-        @media (max-width: 768px) {
-            .two-columns {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .cgpa-calculator {
-            background: var(--glass-bg);
-            padding: 1rem;
-            border-radius: 12px;
-        }
-        
-        .course-input {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .result {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--secondary);
-            margin-top: 1rem;
-        }
-        .glass-footer {
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding: 2rem 5%;
-    margin-top: 3rem;
-}
-.footer-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-.footer-section {
-    flex: 1;
-    min-width: 180px;
-}
-.footer-section h3 {
-    color: #2ecc71;
-    margin-bottom: 0.8rem;
-    font-size: 1.1rem;
-}
-.footer-section p, .footer-section a {
-    color: #ccc;
-    font-size: 0.9rem;
-    margin: 0.3rem 0;
-    text-decoration: none;
-}
-.footer-section a:hover {
-    color: #2ecc71;
-}
-@media (max-width: 768px) {
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="UMYUBIOHUB Student Dashboard — Browse biochemistry materials, past questions, and more.">
+  <title>Student Dashboard — UMYUBIOHUB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #050d1a;
+      --bg2: #091525;
+      --bg3: #0d1e33;
+      --card: rgba(255,255,255,0.04);
+      --card-hover: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.08);
+      --border-accent: rgba(46,204,113,0.3);
+      --text: #f0f4f8;
+      --text2: #8a9bb5;
+      --text3: #4a5a70;
+      --accent: #2ecc71;
+      --accent-dim: rgba(46,204,113,0.12);
+      --accent-glow: rgba(46,204,113,0.35);
+      --blue: #3d9be9;
+      --blue-dim: rgba(61,155,233,0.1);
+      --purple: #9b59b6;
+      --orange: #e67e22;
+      --red: #e74c3c;
+      --sidebar-w: 260px;
+      --nav-h: 64px;
+      --r-lg: 18px;
+      --r-md: 12px;
+      --r-sm: 8px;
+      --shadow: 0 4px 20px rgba(0,0,0,0.3);
+      --t: 0.22s cubic-bezier(0.4,0,0.2,1);
+      --font-d: 'Syne', sans-serif;
+      --font-b: 'DM Sans', sans-serif;
     }
-}
-             .ad-simple img, .ad-sidebar img {
-    transition: transform 0.2s ease;
-}
-.ad-simple img:hover, .ad-sidebar img:hover {
-    transform: scale(1.02);
-}
-    </style>
+    [data-theme="light"] {
+      --bg: #f0f4f9;
+      --bg2: #e8edf5;
+      --bg3: #dde4ef;
+      --card: rgba(255,255,255,0.9);
+      --card-hover: #ffffff;
+      --border: rgba(0,0,0,0.08);
+      --border-accent: rgba(34,168,90,0.4);
+      --text: #0d1b2e;
+      --text2: #4a5a70;
+      --text3: #8a9bb5;
+      --accent: #22a85a;
+      --accent-dim: rgba(34,168,90,0.1);
+      --accent-glow: rgba(34,168,90,0.25);
+      --blue: #2b7fd6;
+      --blue-dim: rgba(43,127,214,0.1);
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { font-size:16px; }
+    body {
+      font-family: var(--font-b);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background var(--t), color var(--t);
+    }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ──────── SIDEBAR ──────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      position: fixed; top: 0; left: 0;
+      display: flex; flex-direction: column;
+      transition: transform var(--t), background var(--t);
+      z-index: 500;
+    }
+    .sidebar-logo {
+      display: flex; align-items: center; gap: 10px;
+      padding: 1.3rem 1.4rem; border-bottom: 1px solid var(--border);
+      text-decoration: none; font-family: var(--font-d);
+      font-weight: 800; font-size: 1.15rem; color: var(--text);
+    }
+    .sidebar-logo-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; color: white; flex-shrink: 0;
+    }
+    .sidebar-logo span { color: var(--accent); }
+
+    .sidebar-nav { flex: 1; padding: 1rem 0.75rem; overflow-y: auto; }
+    .nav-section-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text3);
+      padding: 0.5rem 0.7rem; margin-bottom: 0.3rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.65rem 0.85rem; border-radius: var(--r-sm);
+      color: var(--text2); text-decoration: none; font-size: 0.9rem; font-weight: 500;
+      transition: all var(--t); cursor: pointer; margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--card-hover); color: var(--text); }
+    .nav-item.active { background: var(--accent-dim); color: var(--accent); font-weight: 600; }
+    .nav-item i { width: 18px; text-align: center; font-size: 0.9rem; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto; background: var(--accent); color: white;
+      font-size: 0.65rem; font-weight: 700; padding: 1px 6px; border-radius: 99px;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.2rem; border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0.8rem;
+    }
+    .user-avatar {
+      width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-d); font-weight: 800; font-size: 1rem; color: white;
+    }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-weight: 600; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-role { font-size: 0.72rem; color: var(--text3); }
+    .user-logout { color: var(--text3); cursor: pointer; font-size: 0.85rem; transition: color var(--t); }
+    .user-logout:hover { color: var(--red); }
+
+    /* ──────── TOPBAR ──────── */
+    .topbar {
+      position: fixed; top: 0;
+      left: var(--sidebar-w); right: 0;
+      height: var(--nav-h);
+      background: rgba(5,13,26,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0 1.5rem; z-index: 400;
+      transition: left var(--t), background var(--t);
+    }
+    [data-theme="light"] .topbar { background: rgba(240,244,249,0.9); }
+    .menu-toggle {
+      display: none; width: 36px; height: 36px;
+      border: 1px solid var(--border); border-radius: var(--r-sm);
+      background: var(--card); color: var(--text2);
+      align-items: center; justify-content: center;
+      cursor: pointer; font-size: 0.9rem; transition: all var(--t);
+    }
+    .menu-toggle:hover { color: var(--accent); border-color: var(--accent); }
+
+    .search-box {
+      flex: 1; max-width: 480px;
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-sm); padding: 0.5rem 1rem;
+      transition: border-color var(--t), box-shadow var(--t);
+    }
+    .search-box:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
+    .search-box i { color: var(--text3); font-size: 0.85rem; }
+    .search-box input {
+      flex: 1; background: none; border: none; outline: none;
+      color: var(--text); font-family: var(--font-b); font-size: 0.88rem;
+    }
+    .search-box input::placeholder { color: var(--text3); }
+    .search-kbd {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1px 5px; font-size: 0.7rem; color: var(--text3);
+    }
+
+    .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 0.6rem; }
+    .icon-btn {
+      width: 36px; height: 36px; border-radius: var(--r-sm);
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--text2); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; transition: all var(--t); position: relative;
+    }
+    .icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .icon-btn .badge {
+      position: absolute; top: -4px; right: -4px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--red); color: white;
+      font-size: 0.6rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--bg);
+    }
+
+    /* ──────── MAIN ──────── */
+    .main {
+      margin-left: var(--sidebar-w);
+      margin-top: var(--nav-h);
+      flex: 1; padding: 1.8rem;
+      transition: margin-left var(--t);
+    }
+
+    /* ──────── GREETING BAR ──────── */
+    .greeting-bar {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 1.8rem;
+    }
+    .greeting h1 {
+      font-family: var(--font-d); font-size: 1.6rem; font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 0.25rem;
+    }
+    .greeting p { color: var(--text2); font-size: 0.88rem; }
+    .greeting-actions { display: flex; gap: 0.7rem; flex-wrap: wrap; align-items: center; }
+
+    /* ──────── QUICK STATS ──────── */
+    .quick-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin-bottom: 1.8rem;
+    }
+    .qstat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 1.2rem;
+      display: flex; align-items: center; gap: 1rem;
+      transition: all var(--t);
+    }
+    .qstat:hover { border-color: var(--border-accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .qstat-icon {
+      width: 46px; height: 46px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .qstat-body { min-width: 0; }
+    .qstat-val { font-family: var(--font-d); font-size: 1.5rem; font-weight: 800; line-height: 1; }
+    .qstat-label { font-size: 0.75rem; color: var(--text2); margin-top: 3px; }
+
+    /* ──────── FILTERS ROW ──────── */
+    .filters-row {
+      display: flex; align-items: center; gap: 0.7rem; flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .filter-select {
+      padding: 0.55rem 0.9rem; border-radius: var(--r-sm);
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--text); font-family: var(--font-b); font-size: 0.85rem;
+      cursor: pointer; transition: all var(--t); outline: none;
+    }
+    .filter-select:focus { border-color: var(--accent); }
+    .filter-select option { background: var(--bg2); }
+    .filter-chip {
+      padding: 0.45rem 0.9rem; border-radius: 99px; font-size: 0.8rem; font-weight: 600;
+      border: 1px solid var(--border); background: var(--card); color: var(--text2);
+      cursor: pointer; transition: all var(--t);
+    }
+    .filter-chip:hover, .filter-chip.active { background: var(--accent-dim); border-color: var(--border-accent); color: var(--accent); }
+    .filter-clear { margin-left: auto; font-size: 0.8rem; color: var(--text3); cursor: pointer; transition: color var(--t); }
+    .filter-clear:hover { color: var(--red); }
+
+    /* ──────── CONTENT GRID ──────── */
+    .content-grid { display: grid; grid-template-columns: 1fr 320px; gap: 1.5rem; }
+
+    /* ──────── MATERIALS GRID ──────── */
+    .materials-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .material-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 1.2rem;
+      transition: all var(--t); cursor: pointer;
+      display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .material-card:hover { border-color: var(--border-accent); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .material-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .material-type-badge {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+      padding: 2px 7px; border-radius: 99px; text-transform: uppercase;
+    }
+    .badge-pdf { background: rgba(231,76,60,0.12); color: #e74c3c; }
+    .badge-notes { background: var(--accent-dim); color: var(--accent); }
+    .badge-pq { background: var(--blue-dim); color: var(--blue); }
+    .badge-research { background: rgba(155,89,182,0.12); color: var(--purple); }
+    .badge-practical { background: rgba(230,126,34,0.12); color: var(--orange); }
+    .badge-project { background: rgba(26,188,156,0.12); color: #1abc9c; }
+
+    .material-save-btn {
+      background: none; border: none; color: var(--text3);
+      cursor: pointer; font-size: 0.9rem; transition: color var(--t);
+    }
+    .material-save-btn:hover, .material-save-btn.saved { color: var(--accent); }
+
+    .material-ico {
+      width: 48px; height: 48px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; background: var(--bg2);
+    }
+    .material-title {
+      font-weight: 600; font-size: 0.9rem; line-height: 1.4;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .material-meta { font-size: 0.75rem; color: var(--text2); }
+    .material-meta span { display: block; }
+    .material-actions { display: flex; gap: 0.5rem; margin-top: auto; }
+    .m-btn {
+      flex: 1; padding: 0.5rem; border-radius: var(--r-sm); border: 1px solid var(--border);
+      background: var(--card); color: var(--text2); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; transition: all var(--t); display: flex; align-items: center;
+      justify-content: center; gap: 0.4rem;
+    }
+    .m-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+    .m-btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .m-btn.primary:hover { filter: brightness(1.1); }
+
+    /* empty state */
+    .empty-state {
+      grid-column: 1/-1; text-align: center; padding: 4rem 2rem;
+      color: var(--text3);
+    }
+    .empty-state i { font-size: 3rem; margin-bottom: 1rem; display: block; }
+    .empty-state p { font-size: 0.95rem; }
+
+    /* loading skeleton */
+    .skeleton { background: linear-gradient(90deg, var(--card) 25%, var(--card-hover) 50%, var(--card) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--r-sm); }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ──────── SIDEBAR PANEL ──────── */
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 1rem; overflow: hidden; }
+    .panel-header {
+      padding: 1rem 1.2rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .panel-header h3 { font-family: var(--font-d); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
+    .panel-header a { font-size: 0.75rem; color: var(--accent); text-decoration: none; }
+    .panel-body { padding: 1rem 1.2rem; }
+
+    /* saved items */
+    .saved-item {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.6rem 0; border-bottom: 1px solid var(--border);
+      font-size: 0.83rem;
+    }
+    .saved-item:last-child { border-bottom: none; }
+    .saved-item i { color: var(--red); flex-shrink: 0; }
+    .saved-item-title { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .saved-item-del { color: var(--text3); cursor: pointer; font-size: 0.8rem; transition: color var(--t); flex-shrink: 0; }
+    .saved-item-del:hover { color: var(--red); }
+
+    /* CGPA calc */
+    .cgpa-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
+    .cgpa-row input, .cgpa-row select {
+      padding: 0.45rem 0.6rem; border-radius: var(--r-sm);
+      border: 1px solid var(--border); background: var(--bg2);
+      color: var(--text); font-family: var(--font-b); font-size: 0.8rem;
+      outline: none; transition: border-color var(--t);
+    }
+    .cgpa-row input:focus, .cgpa-row select:focus { border-color: var(--accent); }
+    .cgpa-row input[placeholder="Code"] { width: 70px; }
+    .cgpa-row select { width: 90px; }
+    .cgpa-row input[type="number"] { width: 55px; }
+    .cgpa-del { color: var(--text3); cursor: pointer; font-size: 0.8rem; transition: color var(--t); }
+    .cgpa-del:hover { color: var(--red); }
+    .cgpa-result {
+      margin-top: 0.8rem; padding: 0.8rem; border-radius: var(--r-sm);
+      background: var(--accent-dim); border: 1px solid var(--border-accent);
+      font-family: var(--font-d); font-size: 1.2rem; font-weight: 800;
+      color: var(--accent); text-align: center;
+    }
+    .cgpa-actions { display: flex; gap: 0.5rem; margin-top: 0.7rem; }
+    .cgpa-btn {
+      flex: 1; padding: 0.5rem; border-radius: var(--r-sm); font-size: 0.78rem; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--border); background: var(--card);
+      color: var(--text2); transition: all var(--t); font-family: var(--font-b);
+    }
+    .cgpa-btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .cgpa-btn.primary:hover { filter: brightness(1.1); }
+    .cgpa-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* categories */
+    .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .cat-card {
+      padding: 0.8rem; border-radius: var(--r-sm); border: 1px solid var(--border);
+      background: var(--card); cursor: pointer; text-align: center;
+      transition: all var(--t);
+    }
+    .cat-card:hover, .cat-card.active { border-color: var(--border-accent); background: var(--accent-dim); }
+    .cat-card i { font-size: 1.1rem; display: block; margin-bottom: 0.3rem; }
+    .cat-card span { font-size: 0.75rem; font-weight: 600; display: block; }
+    .cat-card small { font-size: 0.65rem; color: var(--text3); }
+
+    /* timetable */
+    .tt-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+    .tt-row:last-child { border-bottom: none; }
+    .tt-day { font-weight: 600; color: var(--accent); width: 80px; flex-shrink: 0; }
+    .tt-course { color: var(--text2); }
+
+    /* ──────── PDF VIEWER MODAL ──────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-overlay.open { display: flex; }
+    .pdf-modal {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r-lg);
+      width: 95vw; max-width: 900px; max-height: 92vh;
+      display: flex; flex-direction: column;
+      animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes modalIn { from{transform:scale(0.93);opacity:0} to{transform:scale(1);opacity:1} }
+    .pdf-header {
+      padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .pdf-header h3 { font-family: var(--font-d); font-size: 1rem; font-weight: 700; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pdf-header-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .pdf-close {
+      width: 32px; height: 32px; border-radius: var(--r-sm);
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--text2); cursor: pointer; display: flex;
+      align-items: center; justify-content: center; font-size: 0.85rem;
+      transition: all var(--t);
+    }
+    .pdf-close:hover { color: var(--red); border-color: var(--red); }
+    .pdf-viewer { flex: 1; overflow: hidden; border-radius: 0 0 var(--r-lg) var(--r-lg); }
+    .pdf-viewer iframe { width: 100%; height: 100%; border: none; display: block; min-height: 500px; }
+    .pdf-placeholder {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; gap: 1rem; color: var(--text3); padding: 3rem;
+    }
+    .pdf-placeholder i { font-size: 4rem; color: var(--red); }
+    .pdf-placeholder h3 { font-family: var(--font-d); font-size: 1.3rem; color: var(--text); }
+    .pdf-placeholder p { text-align: center; font-size: 0.9rem; max-width: 400px; }
+    .pdf-placeholder .dl-btn {
+      margin-top: 1rem; padding: 0.75rem 2rem; background: var(--accent);
+      color: white; border: none; border-radius: var(--r-sm);
+      font-family: var(--font-b); font-weight: 600; cursor: pointer;
+      font-size: 0.95rem; transition: filter var(--t); display: flex; align-items: center; gap: 0.5rem;
+    }
+    .pdf-placeholder .dl-btn:hover { filter: brightness(1.1); }
+
+    /* ──────── TABS ──────── */
+    .tabs { display: flex; gap: 0.3rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+    .tab {
+      padding: 0.65rem 1.1rem; font-size: 0.88rem; font-weight: 600;
+      color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent;
+      margin-bottom: -1px; transition: all var(--t); border-radius: var(--r-sm) var(--r-sm) 0 0;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ──────── TOAST ──────── */
+    .toast-wrap { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.8rem 1.1rem; border-radius: var(--r-md);
+      background: var(--bg2); border: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3); font-size: 0.85rem; font-weight: 500;
+      max-width: 300px; animation: toastIn 0.3s ease;
+    }
+    .toast.success { border-left: 3px solid var(--accent); }
+    .toast.error { border-left: 3px solid var(--red); }
+    .toast.info { border-left: 3px solid var(--blue); }
+    @keyframes toastIn { from{transform:translateX(110%);opacity:0} to{transform:none;opacity:1} }
+
+    /* ──────── RESPONSIVE ──────── */
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 499; display: none; }
+    .sidebar-overlay.open { display: block; }
+
+    @media (max-width: 1100px) {
+      .content-grid { grid-template-columns: 1fr; }
+      .right-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    }
+    @media (max-width: 900px) {
+      .quick-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .topbar { left: 0; }
+      .main { margin-left: 0; }
+      .menu-toggle { display: flex; }
+      .right-panel { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .quick-stats { grid-template-columns: 1fr 1fr; }
+      .main { padding: 1rem; }
+    }
+
+    /* ──────── SECTION TITLE ──────── */
+    .section-title-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.2rem;
+    }
+    .section-title-row h2 {
+      font-family: var(--font-d); font-size: 1.1rem; font-weight: 700;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .see-all { font-size: 0.8rem; color: var(--accent); cursor: pointer; text-decoration: none; }
+    .see-all:hover { text-decoration: underline; }
+
+    /* result count */
+    .result-info { font-size: 0.8rem; color: var(--text3); margin-bottom: 0.8rem; }
+
+    /* view mode */
+    .view-toggle { display: flex; gap: 0.3rem; }
+    .view-btn { width: 30px; height: 30px; border-radius: var(--r-sm); border: 1px solid var(--border); background: var(--card); color: var(--text3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: all var(--t); }
+    .view-btn.active, .view-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .materials-grid.list-view { grid-template-columns: 1fr; }
+    .materials-grid.list-view .material-card { flex-direction: row; align-items: center; gap: 1rem; }
+    .materials-grid.list-view .material-card .material-actions { flex-direction: row; min-width: 160px; }
+
+    /* Highlight */
+    mark { background: var(--accent-dim); color: var(--accent); border-radius: 3px; padding: 0 2px; }
+  </style>
 </head>
 <body>
-    <nav class="glass-nav">
-        <div class="nav-container">
-            <div class="logo">
-                <i class="fas fa-dna"></i>
-                <span>UMYU BioHub</span>
-            </div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="dashboard.html" class="active">Library</a>
-                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
-            </div>
-            <div class="theme-toggle">
-                <i class="fas fa-moon"></i>
-            </div>
-        </div>
-    </nav>
-    
-    <div class="dashboard-container">
-        <div class="dashboard-header">
-            <div class="welcome-section">
-                <div class="greeting">
-                    <h1>Welcome back, <span id="userName">Student</span>! <i class="fas fa-graduation-cap"></i></h1>
-                    <p>Department of Biochemistry • Umaru Musa Yar'adua University Katsina</p>
-                </div>
-                <div class="search-section">
-                    <div class="search-bar">
-                        <input type="text" id="searchInput" placeholder="Search by course code, title, or lecturer...">
-                        <button id="searchBtn"><i class="fas fa-search"></i></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Filter Section -->
-        <div class="filter-group">
-            <select id="levelFilter" class="filter-select">
-                <option value="">All Levels</option>
-                <option value="100">100 Level</option>
-                <option value="200">200 Level</option>
-                <option value="300">300 Level</option>
-                <option value="400">400 Level</option>
-                <option value="500">500 Level</option>
-            </select>
-            <select id="typeFilter" class="filter-select">
-                <option value="">All Types</option>
-                <option value="lecture_note">Lecture Notes</option>
-                <option value="past_question">Past Questions</option>
-                <option value="practical">Practical Manuals</option>
-                <option value="assignment">Assignments</option>
-                <option value="research">Research Materials</option>
-                <option value="project">Project Materials</option>
-            </select>
-            <select id="courseFilter" class="filter-select">
-                <option value="">All Courses</option>
-                <option value="BCH">Biochemistry (BCH)</option>
-                <option value="CHM">Chemistry (CHM)</option>
-                <option value="BIO">Biology (BIO)</option>
-                <option value="GST">GST Courses</option>
-            </select>
-        </div>
-        
-        <!-- Two Column Layout -->
-        <div class="two-columns" style="padding: 0 5%;">
-            <!-- Left Column -->
-            <div>
-                <!-- Recently Uploaded -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <span><i class="fas fa-clock"></i> Recently Uploaded</span>
-                        <a href="#" style="color: var(--secondary);">View all →</a>
-                    </div>
-                    <div id="recentUploads" class="recent-list"></div>
-                </div>
-                
-                <!-- Course Categories -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <span><i class="fas fa-folder-open"></i> Course Categories</span>
-                    </div>
-                    <div class="course-categories">
-                        <div class="category-card" data-category="BCH">
-                            <i class="fas fa-dna" style="font-size: 1.5rem;"></i>
-                            <h4>Biochemistry</h4>
-                            <small>BCH Courses</small>
-                        </div>
-                        <div class="category-card" data-category="CHM">
-                            <i class="fas fa-flask" style="font-size: 1.5rem;"></i>
-                            <h4>Chemistry</h4>
-                            <small>CHM Courses</small>
-                        </div>
-                        <div class="category-card" data-category="BIO">
-                            <i class="fas fa-leaf" style="font-size: 1.5rem;"></i>
-                            <h4>Biology</h4>
-                            <small>BIO Courses</small>
-                        </div>
-                        <div class="category-card" data-category="GST">
-                            <i class="fas fa-university" style="font-size: 1.5rem;"></i>
-                            <h4>GST</h4>
-                            <small>General Studies</small>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- CGPA Calculator -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <span><i class="fas fa-calculator"></i> CGPA Calculator</span>
-                    </div>
-                    <div class="cgpa-calculator">
-                        <div id="coursesList">
-                            <div class="course-input">
-                                <input type="text" placeholder="Course Code" style="width: 40%;">
-                                <select style="width: 30%;">
-                                    <option>A (5.0)</option><option>B (4.0)</option><option>C (3.0)</option>
-                                    <option>D (2.0)</option><option>E (1.0)</option><option>F (0.0)</option>
-                                </select>
-                                <input type="number" placeholder="Credits" style="width: 20%;">
-                                <button onclick="removeCourse(this)"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                        <button class="btn-outline" onclick="addCourse()" style="margin: 0.5rem 0; padding: 0.5rem 1rem;">+ Add Course</button>
-                        <button class="btn-primary" onclick="calculateCGPA()">Calculate CGPA</button>
-                        <div id="cgpaResult" class="result"></div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Right Column -->
-            <div>
-                <!-- Saved Materials -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <span><i class="fas fa-bookmark"></i> Saved Materials</span>
-                    </div>
-                    <div id="savedMaterials" class="saved-list">
-                        <div class="saved-item">
-                            <div><i class="fas fa-file-pdf"></i> Protein Structure Notes</div>
-                            <button onclick="unsaveMaterial(1)"><i class="fas fa-trash"></i></button>
-                        </div>
-                        <div class="saved-item">
-                            <div><i class="fas fa-file-pdf"></i> Past Questions BCH 301</div>
-                            <button onclick="unsaveMaterial(2)"><i class="fas fa-trash"></i></button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Download History -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <span><i class="fas fa-download"></i> Download History</span>
-                    </div>
-                    <div id="downloadHistory" class="recent-list">
-                        <div class="recent-item">Introduction to Biochemistry - BCH 201 (Feb 15, 2025)</div>
-                        <div class="recent-item">Enzyme Kinetics Notes - BCH 302 (Feb 14, 2025)</div>
-                        <div class="recent-item">Practical Manual - BCH 205 (Feb 12, 2025)</div>
-                    </div>
-                </div>
-                
-                <!-- Timetable Section -->
-                <div class="section-card">
-                    <div class="section-title">
-                        <span><i class="fas fa-calendar-week"></i> Weekly Timetable</span>
-                        <button class="btn-outline" onclick="viewFullTimetable()" style="padding: 0.3rem 0.8rem;">View Full</button>
-                    </div>
-                    <div id="timetablePreview">
-                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                            <span><strong>Monday</strong></span>
-                            <span>BCH 301 - 9:00 AM</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                            <span><strong>Wednesday</strong></span>
-                            <span>BCH 302 - 11:00 AM</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                            <span><strong>Friday</strong></span>
-                            <span>Practical - 2:00 PM</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-                      <!-- Simple Image Ad -->
-<div class="ad-simple" style="text-align: center; margin: 20px auto; max-width: 600px;">
-    <a href="https://your-link.com" target="_blank" rel="noopener noreferrer">
-        <img src="assets/ads/WhatsApp Image 2026-05-11 at 3.19.38 PM.jpeg" alt="Special Offer: Instant Delivery No Delay! Download Now & Start Saving!" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+<div class="bg-mesh"></div>
+
+<!-- Sidebar overlay for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar" id="sidebar">
+  <a href="index.html" class="sidebar-logo">
+    <div class="sidebar-logo-icon"><i class="fas fa-dna"></i></div>
+    UMYU<span>BIOHUB</span>
+  </a>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a class="nav-item active" onclick="setTab('all')">
+      <i class="fas fa-th-large"></i> Library <span class="nav-badge" id="totalBadge">0</span>
     </a>
-</div>
-        
-        <!-- Materials Grid -->
-        <div class="section-title" style="padding: 0 5%; margin-top: 1rem;">
-            <span><i class="fas fa-book-open"></i> All Academic Materials</span>
-        </div>
-        <div id="materialsGrid" class="materials-grid"></div>
-    </div>
-    
-    <!-- AI Chatbot will be injected here -->
-    
-    <script src="js/auth.js"></script>
-    <script src="js/ai-chat.js"></script>
-    <script>
-        // CGPA Calculator Functions
-        function addCourse() {
-            const container = document.getElementById('coursesList');
-            const newCourse = document.createElement('div');
-            newCourse.className = 'course-input';
-            newCourse.innerHTML = `
-                <input type="text" placeholder="Course Code" style="width: 40%;">
-                <select style="width: 30%;">
-                    <option value="5.0">A (5.0)</option>
-                    <option value="4.0">B (4.0)</option>
-                    <option value="3.0">C (3.0)</option>
-                    <option value="2.0">D (2.0)</option>
-                    <option value="1.0">E (1.0)</option>
-                    <option value="0.0">F (0.0)</option>
-                </select>
-                <input type="number" placeholder="Credits" style="width: 20%;" value="3">
-                <button onclick="removeCourse(this)"><i class="fas fa-trash"></i></button>
-            `;
-            container.appendChild(newCourse);
-        }
-        
-        function removeCourse(btn) {
-            btn.parentElement.remove();
-        }
-        
-        function calculateCGPA() {
-            const courses = document.querySelectorAll('.course-input');
-            let totalPoints = 0;
-            let totalCredits = 0;
-            
-            courses.forEach(course => {
-                const grade = parseFloat(course.querySelector('select').value);
-                const credits = parseFloat(course.querySelector('input[type="number"]').value);
-                if (!isNaN(grade) && !isNaN(credits)) {
-                    totalPoints += grade * credits;
-                    totalCredits += credits;
-                }
-            });
-            
-            const cgpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
-            document.getElementById('cgpaResult').innerHTML = `Your CGPA: ${cgpa} / 5.0`;
-        }
-        
-        function unsaveMaterial(id) {
-            alert(`Material ${id} removed from saved items`);
-        }
-        
-        function viewFullTimetable() {
-            alert('Full timetable would be displayed here with all courses and lecture schedules.');
-        }
-        
-        // Load dashboard data
-        document.addEventListener('DOMContentLoaded', () => {
-            const userName = localStorage.getItem('umyu_user') ? 
-                JSON.parse(localStorage.getItem('umyu_user')).user_metadata?.full_name || 'Student' : 
-                'Demo Student';
-            document.getElementById('userName').textContent = userName;
-            
-            // Logout handler
-            document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
-                e.preventDefault();
-                localStorage.removeItem('umyu_user');
-                window.location.href = 'index.html';
-            });
-            
-            // Category filter
-            document.querySelectorAll('.category-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const category = card.dataset.category;
-                    document.getElementById('courseFilter').value = category;
-                    alert(`Filtering by ${category} courses`);
-                });
-            });
-        });
-    </script>
-     <!-- Footer -->
-<footer class="glass-footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <h3>🧬 UMYU BioHub</h3>
-            <p>E-Library for Biochemistry Students</p>
-        </div>
-        <div class="footer-section">
-            <h3>Developer</h3>
-            <p><i class="fas fa-user-graduate"></i> Alamin Kabir inkota </p>
-            <p><i class="fas fa-envelope"></i> alamininkota22@gmail.com</p>
-            <p><i class="fab fa-phone number"></i> 09057352833</p>
-        </div>
-        <div class="footer-section">
-            <h3>Links</h3>
-            <p><a href="index.html">Home</a> | <a href="dashboard.html">Library</a> | <a href="chatbot.html">AI Assistant</a></p>
-        </div>
-        <div class="footer-section">
-            <h3>© 2025 UMYU Biochemistry</h3>
-            <p>All academic materials are for educational use.</p>
-        </div>
-    </div>
-</footer> 
-         <!-- Simple Image Ad -->
-<div class="ad-simple" style="text-align: center; margin: 20px auto; max-width: 600px;">
-    <a href="https://www.inkotasub.com" target="_blank" rel="noopener noreferrer">
-        <img src="assets/ads/ad-image.jpg" alt="Special Offer: Instant Delivery No Delay! Download Now & Start Saving!" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+    <a class="nav-item" onclick="setTab('recent')">
+      <i class="fas fa-clock"></i> Recently Added
     </a>
+    <a class="nav-item" onclick="setTab('saved')">
+      <i class="fas fa-bookmark"></i> Saved Materials
+    </a>
+    <a class="nav-item" href="chatbot.html">
+      <i class="fas fa-robot"></i> AI Assistant
+    </a>
+
+    <div class="nav-section-label" style="margin-top:1rem">Course Categories</div>
+    <a class="nav-item" onclick="filterCategory('BCH')"><i class="fas fa-dna" style="color:var(--accent)"></i> Biochemistry (BCH)</a>
+    <a class="nav-item" onclick="filterCategory('CHM')"><i class="fas fa-flask" style="color:var(--blue)"></i> Chemistry (CHM)</a>
+    <a class="nav-item" onclick="filterCategory('BIO')"><i class="fas fa-leaf" style="color:#1abc9c"></i> Biology (BIO)</a>
+    <a class="nav-item" onclick="filterCategory('GST')"><i class="fas fa-university" style="color:var(--orange)"></i> GST Courses</a>
+
+    <div class="nav-section-label" style="margin-top:1rem">Resources</div>
+    <a class="nav-item" onclick="filterType('lecture_note')"><i class="fas fa-file-alt"></i> Lecture Notes</a>
+    <a class="nav-item" onclick="filterType('past_question')"><i class="fas fa-question-circle"></i> Past Questions</a>
+    <a class="nav-item" onclick="filterType('practical')"><i class="fas fa-vial"></i> Practicals</a>
+    <a class="nav-item" onclick="filterType('research')"><i class="fas fa-microscope"></i> Research Papers</a>
+
+    <div class="nav-section-label" style="margin-top:1rem">Tools</div>
+    <a class="nav-item" onclick="scrollToCalc()"><i class="fas fa-calculator"></i> CGPA Calculator</a>
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="user-avatar" id="sidebarAvatar">A</div>
+    <div class="user-info">
+      <div class="user-name" id="sidebarName">Loading…</div>
+      <div class="user-role" id="sidebarLevel">Biochemistry Student</div>
+    </div>
+    <i class="fas fa-sign-out-alt user-logout" onclick="handleLogout()" title="Logout"></i>
+  </div>
+</aside>
+
+<!-- ═══ TOPBAR ═══ -->
+<header class="topbar">
+  <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+  <div class="search-box">
+    <i class="fas fa-search"></i>
+    <input type="text" id="searchInput" placeholder="Search materials, courses, past questions…" oninput="handleSearch(this.value)">
+    <span class="search-kbd">⌘K</span>
+  </div>
+  <div class="topbar-actions">
+    <div class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
+      <i id="themeIcon" class="fas fa-sun"></i>
+    </div>
+    <div class="icon-btn" title="Notifications">
+      <i class="fas fa-bell"></i>
+      <span class="badge">3</span>
+    </div>
+    <div class="icon-btn" title="Profile" onclick="handleLogout()">
+      <i class="fas fa-user-circle"></i>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+  <!-- Greeting -->
+  <div class="greeting-bar">
+    <div class="greeting">
+      <h1>Good morning, <span id="greetName">Student</span> 👋</h1>
+      <p>Department of Biochemistry · Umaru Musa Yar'adua University, Katsina</p>
+    </div>
+    <div class="greeting-actions">
+      <button class="m-btn primary" onclick="openUploadPanel()" style="padding:0.55rem 1.1rem;font-size:0.85rem;border-radius:var(--r-sm)">
+        <i class="fas fa-upload"></i> Upload Material
+      </button>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="quick-stats" id="quickStats">
+    <div class="qstat">
+      <div class="qstat-icon" style="background:var(--accent-dim);color:var(--accent)"><i class="fas fa-file-alt"></i></div>
+      <div class="qstat-body">
+        <div class="qstat-val" id="statTotal">—</div>
+        <div class="qstat-label">Total Materials</div>
+      </div>
+    </div>
+    <div class="qstat">
+      <div class="qstat-icon" style="background:var(--blue-dim);color:var(--blue)"><i class="fas fa-download"></i></div>
+      <div class="qstat-body">
+        <div class="qstat-val" id="statDownloads">—</div>
+        <div class="qstat-label">My Downloads</div>
+      </div>
+    </div>
+    <div class="qstat">
+      <div class="qstat-icon" style="background:rgba(155,89,182,0.12);color:var(--purple)"><i class="fas fa-bookmark"></i></div>
+      <div class="qstat-body">
+        <div class="qstat-val" id="statSaved">0</div>
+        <div class="qstat-label">Saved Items</div>
+      </div>
+    </div>
+    <div class="qstat">
+      <div class="qstat-icon" style="background:rgba(230,126,34,0.12);color:var(--orange)"><i class="fas fa-graduation-cap"></i></div>
+      <div class="qstat-body">
+        <div class="qstat-val" id="statLevel">—</div>
+        <div class="qstat-label">Academic Level</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="setTab('all', this)">All Materials</div>
+    <div class="tab" onclick="setTab('recent', this)">Recent</div>
+    <div class="tab" onclick="setTab('saved', this)">Saved</div>
+    <div class="tab" onclick="setTab('popular', this)">Popular</div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-row">
+    <select class="filter-select" id="levelFilter" onchange="applyFilters()">
+      <option value="">All Levels</option>
+      <option value="100">100 Level</option>
+      <option value="200">200 Level</option>
+      <option value="300">300 Level</option>
+      <option value="400">400 Level</option>
+      <option value="500">500 Level</option>
+    </select>
+    <select class="filter-select" id="typeFilter" onchange="applyFilters()">
+      <option value="">All Types</option>
+      <option value="lecture_note">Lecture Notes</option>
+      <option value="past_question">Past Questions</option>
+      <option value="practical">Practical Manuals</option>
+      <option value="assignment">Assignments</option>
+      <option value="research">Research</option>
+      <option value="project">Project Materials</option>
+    </select>
+    <select class="filter-select" id="courseFilter" onchange="applyFilters()">
+      <option value="">All Courses</option>
+      <option value="BCH">Biochemistry (BCH)</option>
+      <option value="CHM">Chemistry (CHM)</option>
+      <option value="BIO">Biology (BIO)</option>
+      <option value="GST">GST Courses</option>
+    </select>
+    <div class="filter-chip active" onclick="toggleSort('newest', this)">Newest First</div>
+    <div class="filter-chip" onclick="toggleSort('alpha', this)">A–Z</div>
+    <span class="filter-clear" onclick="clearFilters()"><i class="fas fa-times"></i> Clear filters</span>
+    <div class="view-toggle" style="margin-left:0">
+      <button class="view-btn active" id="gridViewBtn" onclick="setViewMode('grid')" title="Grid view"><i class="fas fa-th-large"></i></button>
+      <button class="view-btn" id="listViewBtn" onclick="setViewMode('list')" title="List view"><i class="fas fa-list"></i></button>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="content-grid">
+    <!-- Left: Materials -->
+    <div>
+      <div class="section-title-row">
+        <h2><i class="fas fa-book-open" style="color:var(--accent)"></i> Academic Materials</h2>
+        <div style="display:flex;align-items:center;gap:0.8rem">
+          <span class="result-info" id="resultInfo">Loading…</span>
+        </div>
+      </div>
+      <div class="materials-grid" id="materialsGrid">
+        <!-- Skeleton loaders -->
+        <div class="material-card"><div class="skeleton" style="height:180px"></div></div>
+        <div class="material-card"><div class="skeleton" style="height:180px"></div></div>
+        <div class="material-card"><div class="skeleton" style="height:180px"></div></div>
+        <div class="material-card"><div class="skeleton" style="height:180px"></div></div>
+        <div class="material-card"><div class="skeleton" style="height:180px"></div></div>
+        <div class="material-card"><div class="skeleton" style="height:180px"></div></div>
+      </div>
+    </div>
+
+    <!-- Right: Panels -->
+    <div class="right-panel">
+      <!-- Categories -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3><i class="fas fa-folder" style="color:var(--orange)"></i> Categories</h3>
+        </div>
+        <div class="panel-body">
+          <div class="cat-grid">
+            <div class="cat-card" onclick="filterCategory('BCH')">
+              <i class="fas fa-dna" style="color:var(--accent)"></i>
+              <span>BCH</span><small>Biochemistry</small>
+            </div>
+            <div class="cat-card" onclick="filterCategory('CHM')">
+              <i class="fas fa-flask" style="color:var(--blue)"></i>
+              <span>CHM</span><small>Chemistry</small>
+            </div>
+            <div class="cat-card" onclick="filterCategory('BIO')">
+              <i class="fas fa-leaf" style="color:#1abc9c"></i>
+              <span>BIO</span><small>Biology</small>
+            </div>
+            <div class="cat-card" onclick="filterCategory('GST')">
+              <i class="fas fa-university" style="color:var(--orange)"></i>
+              <span>GST</span><small>General Studies</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved Materials -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3><i class="fas fa-bookmark" style="color:var(--purple)"></i> Saved</h3>
+          <a onclick="setTab('saved')">View all</a>
+        </div>
+        <div class="panel-body" id="savedPanel">
+          <div style="color:var(--text3);font-size:0.82rem;text-align:center;padding:1rem 0">
+            <i class="fas fa-bookmark" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;opacity:0.4"></i>
+            No saved materials yet
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Timetable -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3><i class="fas fa-calendar-week" style="color:var(--blue)"></i> Timetable</h3>
+        </div>
+        <div class="panel-body">
+          <div class="tt-row"><span class="tt-day">Mon</span><span class="tt-course">BCH 301 — 9:00 AM</span></div>
+          <div class="tt-row"><span class="tt-day">Tue</span><span class="tt-course">CHM 211 — 8:00 AM</span></div>
+          <div class="tt-row"><span class="tt-day">Wed</span><span class="tt-course">BCH 302 — 11:00 AM</span></div>
+          <div class="tt-row"><span class="tt-day">Thu</span><span class="tt-course">BIO 301 — 10:00 AM</span></div>
+          <div class="tt-row"><span class="tt-day">Fri</span><span class="tt-course">Practical — 2:00 PM</span></div>
+        </div>
+      </div>
+
+      <!-- CGPA Calculator -->
+      <div class="panel" id="cgpaSection">
+        <div class="panel-header">
+          <h3><i class="fas fa-calculator" style="color:var(--accent)"></i> CGPA Calculator</h3>
+        </div>
+        <div class="panel-body">
+          <div id="cgpaRows">
+            <div class="cgpa-row">
+              <input type="text" placeholder="Code" maxlength="10">
+              <select>
+                <option value="5.0">A (5.0)</option>
+                <option value="4.0">B (4.0)</option>
+                <option value="3.0">C (3.0)</option>
+                <option value="2.0">D (2.0)</option>
+                <option value="1.0">E (1.0)</option>
+                <option value="0.0">F (0.0)</option>
+              </select>
+              <input type="number" placeholder="Cr" value="3" min="1" max="6">
+              <i class="fas fa-times cgpa-del" onclick="removeCgpaRow(this)"></i>
+            </div>
+          </div>
+          <div class="cgpa-actions" style="margin-top:0.6rem">
+            <button class="cgpa-btn" onclick="addCgpaRow()"><i class="fas fa-plus"></i> Add</button>
+            <button class="cgpa-btn primary" onclick="calcCGPA()"><i class="fas fa-equals"></i> Calculate</button>
+          </div>
+          <div id="cgpaResult" style="display:none" class="cgpa-result"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ PDF VIEWER MODAL ═══ -->
+<div class="modal-overlay" id="pdfOverlay">
+  <div class="pdf-modal">
+    <div class="pdf-header">
+      <h3 id="pdfTitle">Document Viewer</h3>
+      <div class="pdf-header-actions">
+        <button class="pdf-close" id="pdfDownloadBtn" title="Download"><i class="fas fa-download"></i></button>
+        <button class="pdf-close" onclick="closePdfViewer()" title="Close"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="pdf-viewer" id="pdfViewerContainer">
+      <div class="pdf-placeholder">
+        <i class="fas fa-file-pdf"></i>
+        <h3>No document loaded</h3>
+        <p>Select a material to view it here.</p>
+      </div>
+    </div>
+  </div>
 </div>
-    </body>
+
+<!-- Toast container -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ═══ BACKGROUND MESH ═══ -->
+<style>
+.bg-mesh { position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden; }
+.bg-mesh::before { content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(46,204,113,0.06) 0%,transparent 70%);top:-200px;right:-100px;animation:mf1 20s ease-in-out infinite; }
+.bg-mesh::after { content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(61,155,233,0.05) 0%,transparent 70%);bottom:-100px;left:-100px;animation:mf2 25s ease-in-out infinite; }
+@keyframes mf1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-60px,80px)} }
+@keyframes mf2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(80px,-60px)} }
+</style>
+<div class="bg-mesh"></div>
+
+<script>
+// ═══════════ CONFIG ═══════════
+const SUPABASE_URL = 'https://psojlbbepzgqlighavti.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_U4ufzD0hkyrXvOJta235rg_jiHOGdWF';
+let sb = null;
+
+// ═══════════ STATE ═══════════
+let allMaterials = [];
+let filteredMaterials = [];
+let savedIds = JSON.parse(localStorage.getItem('umyu_saved') || '[]');
+let currentUser = null;
+let viewMode = 'grid';
+let currentSort = 'newest';
+let searchQuery = '';
+let activeTab = 'all';
+
+// ═══════════ INIT ═══════════
+window.addEventListener('load', async () => {
+  applyStoredTheme();
+  initUser();
+  initSupabase();
+  loadDemoMaterials();
+  renderSavedPanel();
+  updateSavedCount();
+
+  // Check URL for search param
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('search')) {
+    const q = params.get('search');
+    document.getElementById('searchInput').value = q;
+    searchQuery = q;
+  }
+
+  // Keyboard shortcut
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      document.getElementById('searchInput').focus();
+    }
+    if (e.key === 'Escape') closePdfViewer();
+  });
+});
+
+function initSupabase() {
+  const lib = window.supabaseJs || window.supabase;
+  if (lib) { sb = lib.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); loadFromSupabase(); }
+  else setTimeout(() => {
+    const lib2 = window.supabaseJs || window.supabase;
+    if (lib2) { sb = lib2.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); loadFromSupabase(); }
+  }, 1000);
+}
+
+function initUser() {
+  try {
+    const stored = localStorage.getItem('umyu_user');
+    if (stored) {
+      currentUser = JSON.parse(stored);
+      const name = currentUser.user_metadata?.full_name || currentUser.email?.split('@')[0] || 'Student';
+      const level = currentUser.user_metadata?.level;
+      const first = name.split(' ')[0];
+      document.getElementById('greetName').textContent = first;
+      document.getElementById('sidebarName').textContent = name;
+      document.getElementById('sidebarAvatar').textContent = first[0].toUpperCase();
+      if (level) {
+        document.getElementById('sidebarLevel').textContent = `${level} Level · BCH`;
+        document.getElementById('statLevel').textContent = level + 'L';
+      }
+    }
+    // Time-based greeting
+    const h = new Date().getHours();
+    const greet = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+    document.querySelector('.greeting h1').textContent = `${greet}, ${document.getElementById('greetName').textContent} 👋`;
+  } catch(e) {}
+}
+
+// ═══════════ DEMO DATA ═══════════
+function loadDemoMaterials() {
+  allMaterials = [
+    { id:1, title:'Introduction to Biochemistry', course:'BCH 101', type:'lecture_note', level:'100', lecturer:'Dr. Musa A.', uploaded:'2025-01-15', size:'2.4 MB', downloads:245, url:'', icon:'📄' },
+    { id:2, title:'BCH 201 Past Questions 2023–2024', course:'BCH 201', type:'past_question', level:'200', lecturer:'Dept. of BCH', uploaded:'2025-02-01', size:'1.1 MB', downloads:412, url:'', icon:'📋' },
+    { id:3, title:'Enzyme Kinetics & Mechanisms', course:'BCH 302', type:'lecture_note', level:'300', lecturer:'Prof. Ibrahim K.', uploaded:'2025-01-28', size:'5.8 MB', downloads:189, url:'', icon:'🧬' },
+    { id:4, title:'BCH 205 Practical Manual', course:'BCH 205', type:'practical', level:'200', lecturer:'Lab Coordinator', uploaded:'2025-01-20', size:'3.2 MB', downloads:321, url:'', icon:'🔬' },
+    { id:5, title:'Protein Structure & Function Notes', course:'BCH 301', type:'lecture_note', level:'300', lecturer:'Dr. Amina Y.', uploaded:'2025-02-05', size:'4.1 MB', downloads:267, url:'', icon:'📝' },
+    { id:6, title:'GST 111 Communication Skills', course:'GST 111', type:'lecture_note', level:'100', lecturer:'Dr. Sani M.', uploaded:'2025-01-10', size:'1.8 MB', downloads:502, url:'', icon:'📚' },
+    { id:7, title:'Carbohydrate Metabolism Past Questions', course:'BCH 302', type:'past_question', level:'300', lecturer:'Dept. of BCH', uploaded:'2025-02-10', size:'0.9 MB', downloads:356, url:'', icon:'❓' },
+    { id:8, title:'Molecular Biology Research Paper Collection', course:'BCH 401', type:'research', level:'400', lecturer:'Various Authors', uploaded:'2025-01-30', size:'12.3 MB', downloads:143, url:'', icon:'🔭' },
+    { id:9, title:'CHM 111 General Chemistry Notes', course:'CHM 111', type:'lecture_note', level:'100', lecturer:'Dr. Usman F.', uploaded:'2025-01-08', size:'6.7 MB', downloads:389, url:'', icon:'⚗️' },
+    { id:10, title:'Lipid Metabolism & Disorders', course:'BCH 401', type:'lecture_note', level:'400', lecturer:'Prof. Yakubu S.', uploaded:'2025-02-12', size:'4.9 MB', downloads:198, url:'', icon:'🧪' },
+    { id:11, title:'BIO 201 Cell Biology Notes', course:'BIO 201', type:'lecture_note', level:'200', lecturer:'Dr. Halima N.', uploaded:'2025-01-25', size:'3.5 MB', downloads:276, url:'', icon:'🌿' },
+    { id:12, title:'BCH 501 Thesis Project Guidelines', course:'BCH 501', type:'project', level:'500', lecturer:'Dept. of BCH', uploaded:'2025-02-08', size:'0.7 MB', downloads:95, url:'', icon:'🎓' },
+    { id:13, title:'Vitamins & Coenzymes — Complete Notes', course:'BCH 303', type:'lecture_note', level:'300', lecturer:'Dr. Fatima L.', uploaded:'2025-02-03', size:'3.8 MB', downloads:213, url:'', icon:'💊' },
+    { id:14, title:'CHM 211 Organic Chemistry Past Questions', course:'CHM 211', type:'past_question', level:'200', lecturer:'Dept. of CHM', uploaded:'2025-01-22', size:'1.3 MB', downloads:287, url:'', icon:'📋' },
+    { id:15, title:'BCH 402 Immunology Assignment Q&A', course:'BCH 402', type:'assignment', level:'400', lecturer:'Dr. Yusuf B.', uploaded:'2025-02-14', size:'0.5 MB', downloads:134, url:'', icon:'📌' },
+    { id:16, title:'Genetic Engineering Research Articles', course:'BCH 501', type:'research', level:'500', lecturer:'Various', uploaded:'2025-02-06', size:'8.2 MB', downloads:78, url:'', icon:'🧫' },
+  ];
+
+  document.getElementById('statTotal').textContent = allMaterials.length;
+  document.getElementById('statDownloads').textContent = Math.floor(Math.random() * 50) + 5;
+  document.getElementById('totalBadge').textContent = allMaterials.length;
+
+  applyFilters();
+}
+
+async function loadFromSupabase() {
+  try {
+    if (!sb) return;
+    const { data, error } = await sb.from('materials').select('*').order('created_at', { ascending: false });
+    if (!error && data && data.length > 0) {
+      allMaterials = data.map(d => ({
+        id: d.id, title: d.title, course: d.course_code, type: d.type,
+        level: d.level, lecturer: d.lecturer, uploaded: d.created_at?.split('T')[0],
+        size: d.file_size || '—', downloads: d.downloads || 0,
+        url: d.file_url || '', icon: getTypeIcon(d.type)
+      }));
+      document.getElementById('statTotal').textContent = allMaterials.length;
+      document.getElementById('totalBadge').textContent = allMaterials.length;
+      applyFilters();
+    }
+  } catch(e) { /* use demo data */ }
+}
+
+// ═══════════ RENDER ═══════════
+const TYPE_LABELS = {
+  lecture_note: 'Lecture Note', past_question: 'Past Question',
+  practical: 'Practical', assignment: 'Assignment',
+  research: 'Research', project: 'Project'
+};
+const TYPE_BADGE = {
+  lecture_note: 'badge-notes', past_question: 'badge-pq',
+  practical: 'badge-practical', assignment: 'badge-notes',
+  research: 'badge-research', project: 'badge-project'
+};
+const TYPE_COLOR = {
+  lecture_note: 'var(--accent)', past_question: 'var(--blue)',
+  practical: 'var(--orange)', assignment: 'var(--accent)',
+  research: 'var(--purple)', project: '#1abc9c'
+};
+function getTypeIcon(type) {
+  const m = { lecture_note:'📄', past_question:'📋', practical:'🔬', assignment:'📌', research:'🔭', project:'🎓' };
+  return m[type] || '📁';
+}
+
+function renderMaterials(list) {
+  const grid = document.getElementById('materialsGrid');
+  const q = searchQuery.toLowerCase();
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>No materials found.<br>Try adjusting your filters or search query.</p></div>`;
+    document.getElementById('resultInfo').textContent = '0 results';
+    return;
+  }
+
+  document.getElementById('resultInfo').textContent = `${list.length} material${list.length !== 1 ? 's' : ''} found`;
+  grid.className = `materials-grid${viewMode === 'list' ? ' list-view' : ''}`;
+
+  function highlight(text) {
+    if (!q) return text;
+    return text.replace(new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi'), '<mark>$1</mark>');
+  }
+
+  grid.innerHTML = list.map(m => {
+    const isSaved = savedIds.includes(m.id);
+    const color = TYPE_COLOR[m.type] || 'var(--accent)';
+    return `
+    <div class="material-card" data-id="${m.id}">
+      <div class="material-card-top">
+        <span class="material-type-badge ${TYPE_BADGE[m.type] || 'badge-notes'}">${TYPE_LABELS[m.type] || m.type}</span>
+        <button class="material-save-btn ${isSaved ? 'saved' : ''}" onclick="toggleSave(${m.id}, event)" title="${isSaved ? 'Remove from saved' : 'Save material'}">
+          <i class="${isSaved ? 'fas' : 'far'} fa-bookmark"></i>
+        </button>
+      </div>
+      <div class="material-ico" style="background:${color}22;font-size:1.6rem">${m.icon}</div>
+      <div class="material-title">${highlight(m.title)}</div>
+      <div class="material-meta">
+        <span><i class="fas fa-graduation-cap" style="color:${color};margin-right:4px"></i>${highlight(m.course)} · ${m.level} Level</span>
+        <span style="margin-top:2px"><i class="fas fa-user" style="color:var(--text3);margin-right:4px"></i>${m.lecturer}</span>
+        <span style="margin-top:2px"><i class="fas fa-download" style="color:var(--text3);margin-right:4px"></i>${m.downloads} downloads · ${m.size}</span>
+      </div>
+      <div class="material-actions">
+        <button class="m-btn" onclick="viewMaterial(${m.id})"><i class="fas fa-eye"></i> View</button>
+        <button class="m-btn primary" onclick="downloadMaterial(${m.id})"><i class="fas fa-download"></i></button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════ FILTERS & SEARCH ═══════════
+function applyFilters() {
+  const level = document.getElementById('levelFilter').value;
+  const type = document.getElementById('typeFilter').value;
+  const course = document.getElementById('courseFilter').value;
+  const q = searchQuery.toLowerCase();
+
+  let list = allMaterials.filter(m => {
+    if (activeTab === 'saved') return savedIds.includes(m.id);
+    if (activeTab === 'recent') { /* top 8 newest */ }
+    if (level && m.level !== level) return false;
+    if (type && m.type !== type) return false;
+    if (course && !m.course?.startsWith(course)) return false;
+    if (q && !m.title.toLowerCase().includes(q) && !m.course?.toLowerCase().includes(q) && !m.lecturer?.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  if (activeTab === 'recent') list = list.slice(0, 8);
+  if (currentSort === 'newest') list.sort((a,b) => new Date(b.uploaded) - new Date(a.uploaded));
+  else if (currentSort === 'alpha') list.sort((a,b) => a.title.localeCompare(b.title));
+  else if (currentSort === 'popular') list.sort((a,b) => b.downloads - a.downloads);
+
+  filteredMaterials = list;
+  renderMaterials(list);
+}
+
+function handleSearch(val) {
+  searchQuery = val;
+  applyFilters();
+}
+
+function setTab(tab, el) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if (el) el.classList.add('active');
+  // Reset filters for saved tab
+  if (tab === 'saved') {
+    document.getElementById('levelFilter').value = '';
+    document.getElementById('typeFilter').value = '';
+    document.getElementById('courseFilter').value = '';
+  }
+  applyFilters();
+}
+
+function filterCategory(cat) {
+  document.getElementById('courseFilter').value = cat;
+  applyFilters();
+  document.getElementById('materialsGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function filterType(type) {
+  document.getElementById('typeFilter').value = type;
+  applyFilters();
+}
+
+function toggleSort(sort, el) {
+  currentSort = sort;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  applyFilters();
+}
+
+function clearFilters() {
+  document.getElementById('levelFilter').value = '';
+  document.getElementById('typeFilter').value = '';
+  document.getElementById('courseFilter').value = '';
+  document.getElementById('searchInput').value = '';
+  searchQuery = '';
+  currentSort = 'newest';
+  applyFilters();
+}
+
+function setViewMode(mode) {
+  viewMode = mode;
+  document.getElementById('gridViewBtn').classList.toggle('active', mode === 'grid');
+  document.getElementById('listViewBtn').classList.toggle('active', mode === 'list');
+  applyFilters();
+}
+
+// ═══════════ SAVE ═══════════
+function toggleSave(id, e) {
+  e.stopPropagation();
+  const idx = savedIds.indexOf(id);
+  if (idx === -1) {
+    savedIds.push(id);
+    showToast('Material saved!', 'success');
+  } else {
+    savedIds.splice(idx, 1);
+    showToast('Removed from saved', 'info');
+  }
+  localStorage.setItem('umyu_saved', JSON.stringify(savedIds));
+  updateSavedCount();
+  renderSavedPanel();
+  // Re-render just the button
+  document.querySelectorAll(`.material-card[data-id="${id}"] .material-save-btn`).forEach(btn => {
+    const isSaved = savedIds.includes(id);
+    btn.className = `material-save-btn ${isSaved ? 'saved' : ''}`;
+    btn.querySelector('i').className = `${isSaved ? 'fas' : 'far'} fa-bookmark`;
+    btn.title = isSaved ? 'Remove from saved' : 'Save material';
+  });
+}
+
+function updateSavedCount() {
+  document.getElementById('statSaved').textContent = savedIds.length;
+}
+
+function renderSavedPanel() {
+  const panel = document.getElementById('savedPanel');
+  const saved = allMaterials.filter(m => savedIds.includes(m.id));
+  if (saved.length === 0) {
+    panel.innerHTML = `<div style="color:var(--text3);font-size:0.82rem;text-align:center;padding:1rem 0"><i class="fas fa-bookmark" style="font-size:1.5rem;display:block;margin-bottom:0.5rem;opacity:0.4"></i>No saved materials yet</div>`;
+    return;
+  }
+  panel.innerHTML = saved.slice(0, 5).map(m => `
+    <div class="saved-item">
+      <i class="fas fa-file-pdf"></i>
+      <span class="saved-item-title">${m.title}</span>
+      <i class="fas fa-times saved-item-del" onclick="toggleSave(${m.id}, event)" title="Remove"></i>
+    </div>`).join('');
+}
+
+// ═══════════ VIEW / DOWNLOAD ═══════════
+function viewMaterial(id) {
+  const m = allMaterials.find(x => x.id === id);
+  if (!m) return;
+  document.getElementById('pdfTitle').textContent = m.title;
+  const container = document.getElementById('pdfViewerContainer');
+  if (m.url) {
+    container.innerHTML = `<iframe src="${m.url}" title="${m.title}" allowfullscreen></iframe>`;
+    document.getElementById('pdfDownloadBtn').onclick = () => { window.open(m.url, '_blank'); };
+  } else {
+    container.innerHTML = `
+      <div class="pdf-placeholder">
+        <i class="fas fa-file-pdf"></i>
+        <h3>${m.title}</h3>
+        <p>${m.course} · ${m.level} Level · Uploaded by ${m.lecturer}</p>
+        <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--text3)">This material's file URL isn't configured yet. Contact your admin to attach the PDF file.</p>
+        <button class="dl-btn" onclick="showToast('Download not available for demo materials', 'info')">
+          <i class="fas fa-download"></i> Download (Demo)
+        </button>
+      </div>`;
+  }
+  document.getElementById('pdfOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePdfViewer() {
+  document.getElementById('pdfOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function downloadMaterial(id) {
+  const m = allMaterials.find(x => x.id === id);
+  if (!m) return;
+  if (m.url) { window.open(m.url, '_blank'); }
+  else { showToast('File not available in demo mode', 'info'); }
+  m.downloads++;
+}
+
+document.getElementById('pdfOverlay').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closePdfViewer();
+});
+
+// ═══════════ CGPA CALCULATOR ═══════════
+function addCgpaRow() {
+  const container = document.getElementById('cgpaRows');
+  const row = document.createElement('div');
+  row.className = 'cgpa-row';
+  row.innerHTML = `
+    <input type="text" placeholder="Code" maxlength="10">
+    <select>
+      <option value="5.0">A (5.0)</option>
+      <option value="4.0">B (4.0)</option>
+      <option value="3.0">C (3.0)</option>
+      <option value="2.0">D (2.0)</option>
+      <option value="1.0">E (1.0)</option>
+      <option value="0.0">F (0.0)</option>
+    </select>
+    <input type="number" placeholder="Cr" value="3" min="1" max="6">
+    <i class="fas fa-times cgpa-del" onclick="removeCgpaRow(this)"></i>
+  `;
+  container.appendChild(row);
+}
+
+function removeCgpaRow(el) {
+  const rows = document.querySelectorAll('.cgpa-row');
+  if (rows.length > 1) el.parentElement.remove();
+  else showToast('At least one course required', 'info');
+}
+
+function calcCGPA() {
+  const rows = document.querySelectorAll('.cgpa-row');
+  let totalPts = 0, totalCr = 0;
+  rows.forEach(r => {
+    const grade = parseFloat(r.querySelector('select').value);
+    const credits = parseFloat(r.querySelector('input[type="number"]').value);
+    if (!isNaN(grade) && !isNaN(credits) && credits > 0) {
+      totalPts += grade * credits;
+      totalCr += credits;
+    }
+  });
+  const cgpa = totalCr > 0 ? (totalPts / totalCr).toFixed(2) : 0;
+  const result = document.getElementById('cgpaResult');
+  result.style.display = 'block';
+  const cls = cgpa >= 4.5 ? 'First Class' : cgpa >= 3.5 ? 'Second Class Upper' : cgpa >= 2.4 ? 'Second Class Lower' : cgpa >= 1.5 ? 'Third Class' : 'Fail';
+  result.innerHTML = `CGPA: ${cgpa} / 5.00<br><small style="font-size:0.65rem;font-weight:500;color:var(--text2)">${cls}</small>`;
+}
+
+function scrollToCalc() {
+  document.getElementById('cgpaSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ═══════════ SIDEBAR MOBILE ═══════════
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+// ═══════════ THEME ═══════════
+function applyStoredTheme() {
+  const t = localStorage.getItem('umyu_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('themeIcon').className = t === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme');
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('umyu_theme', next);
+  document.getElementById('themeIcon').className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+}
+
+// ═══════════ AUTH ═══════════
+async function handleLogout() {
+  if (sb) await sb.auth.signOut().catch(() => {});
+  localStorage.removeItem('umyu_user');
+  showToast('Logged out', 'info');
+  setTimeout(() => { window.location.href = 'index.html'; }, 700);
+}
+
+function openUploadPanel() {
+  showToast('Upload feature available to authenticated users', 'info');
+}
+
+// ═══════════ TOAST ═══════════
+function showToast(msg, type = 'info') {
+  const wrap = document.getElementById('toastWrap');
+  const icons = { success:'fa-check-circle', error:'fa-exclamation-circle', info:'fa-info-circle' };
+  const colors = { success:'var(--accent)', error:'var(--red)', info:'var(--blue)' };
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<i class="fas ${icons[type]}" style="color:${colors[type]}"></i>${msg}`;
+  wrap.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(110%)'; setTimeout(()=>t.remove(),300); }, 3000);
+}
+</script>
+</body>
 </html>
